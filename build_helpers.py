@@ -9,7 +9,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parent
 
 
-def build_nir(build):
+def build_nir(build, source='compile_nir'):
     env = dict(os.environ, LC_ALL='C')
     commands = json.loads((build / 'compile_commands.json').read_text())
     command = next(c for c in commands if c['file'].endswith('/pan_compile.c'))
@@ -21,16 +21,18 @@ def build_nir(build):
     if '-MD' in args:
         args.remove('-MD')
     index = args.index('-o')
-    args[index + 1] = str(ROOT / 'compile_nir.o')
-    args[-1] = str(ROOT / 'compile_nir.c')
+    args[index + 1] = str(ROOT / (source + '.o'))
+    args[-1] = str(ROOT / (source + '.c'))
     subprocess.run(args, cwd=command['directory'], env=env, check=True)
     all_link = subprocess.run(['ninja', '-C', str(build), '-t', 'commands',
                                'src/panfrost/clc/panfrost_compile'],
                               check=True, capture_output=True, text=True).stdout
     link = shlex.split(all_link.splitlines()[-1])
-    link[link.index('-o') + 1] = str(ROOT / 'compile_nir')
-    link = [str(ROOT / 'compile_nir.o') if x.endswith('/pan_compile.c.o') else x
+    link[link.index('-o') + 1] = str(ROOT / source)
+    link = [str(ROOT / (source + '.o')) if x.endswith('/pan_compile.c.o') else x
             for x in link]
+    if source == 'replay_nir':
+        link.insert(1, '-rdynamic')
     subprocess.run(link, cwd=command['directory'], env=env, check=True)
 
 
@@ -60,6 +62,7 @@ if __name__ == '__main__':
     parser.add_argument('--android', action='store_true')
     args = parser.parse_args()
     build_nir(args.mesa_build)
+    build_nir(args.mesa_build, 'replay_nir')
     if args.android:
         build_android()
     print('Helpers built')

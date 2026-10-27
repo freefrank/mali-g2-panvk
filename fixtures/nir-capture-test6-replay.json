@@ -1,0 +1,192 @@
+[
+  {
+    "snapshot": "shader-3309-1-0-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=0\n"
+  },
+  {
+    "snapshot": "shader-3309-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=9 bytes=384\n"
+  },
+  {
+    "snapshot": "shader-3309-1-4-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=4\n"
+  },
+  {
+    "snapshot": "shader-3309-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-3465-1-5-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=5\n"
+  },
+  {
+    "snapshot": "shader-3465-1-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=12\nREPLAY_PASS stage=5 regs=64 tls=528 fau=59 bytes=45952\n"
+  },
+  {
+    "snapshot": "shader-4163-1-0-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=0\n"
+  },
+  {
+    "snapshot": "shader-4163-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-4163-1-4-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=4\n"
+  },
+  {
+    "snapshot": "shader-4163-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=6 bytes=128\n"
+  },
+  {
+    "snapshot": "shader-4167-1-0-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=0\n"
+  },
+  {
+    "snapshot": "shader-4167-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=9 bytes=384\n"
+  },
+  {
+    "snapshot": "shader-4167-1-4-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=4\n"
+  },
+  {
+    "snapshot": "shader-4167-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=128\n"
+  },
+  {
+    "snapshot": "shader-4170-1-0-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=0\n"
+  },
+  {
+    "snapshot": "shader-4170-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=9 bytes=384\n"
+  },
+  {
+    "snapshot": "shader-4170-1-4-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=4\n"
+  },
+  {
+    "snapshot": "shader-4170-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=128\n"
+  },
+  {
+    "snapshot": "shader-4173-1-0-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=0\n"
+  },
+  {
+    "snapshot": "shader-4173-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=9 bytes=384\n"
+  },
+  {
+    "snapshot": "shader-4173-1-4-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=4\n"
+  },
+  {
+    "snapshot": "shader-4173-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=128\n"
+  },
+  {
+    "snapshot": "shader-4176-1-0-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=0\n"
+  },
+  {
+    "snapshot": "shader-4176-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=9 bytes=640\n"
+  },
+  {
+    "snapshot": "shader-4176-1-4-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=4\n"
+  },
+  {
+    "snapshot": "shader-4176-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=6 bytes=128\n"
+  },
+  {
+    "snapshot": "shader-4179-1-0-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=0\n"
+  },
+  {
+    "snapshot": "shader-4179-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-4179-1-4-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=4\n"
+  },
+  {
+    "snapshot": "shader-4179-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-4183-1-0-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=0\n"
+  },
+  {
+    "snapshot": "shader-4183-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-4183-1-4-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=4\n"
+  },
+  {
+    "snapshot": "shader-4183-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-4186-1-0-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=0\n"
+  },
+  {
+    "snapshot": "shader-4186-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=9 bytes=384\n"
+  },
+  {
+    "snapshot": "shader-4186-1-4-0.bin",
+    "returncode": 0,
+    "output": "PIPELINE_NIR_READ_PASS stage=4\n"
+  },
+  {
+    "snapshot": "shader-4186-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=256\n"
+  }
+]
