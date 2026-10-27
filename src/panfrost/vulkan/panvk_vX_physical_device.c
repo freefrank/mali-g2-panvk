@@ -364,6 +364,7 @@ panvk_per_arch(get_physical_device_features)(
        * IDVS is off there (panvk_vX_shader.c), which is what speculative references came
        * from. */
       .vertexPipelineStoresAndAtomics =
+         PAN_ARCH == 15 ||
          PAN_ARCH < 9 ||
          (PAN_ARCH >= 13 && instance->drirc.misc.enable_vertex_pipeline_stores_atomics) ||
          instance->drirc.misc.force_enable_shader_atomics,
