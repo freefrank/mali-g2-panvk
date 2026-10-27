@@ -103,6 +103,8 @@ class Generator:
         supported = []
         unsupported = []
         for mask, value, source in self.old.patterns:
+            if source.get('alias'):
+                continue
             key = source.get('name'), source.get('variant', '')
             lines.append(f'   if ((w & {self.literal(mask)}) == {self.literal(value)}) {{')
             try:
