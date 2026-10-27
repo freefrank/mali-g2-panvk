@@ -42,6 +42,13 @@ def build_android():
     for source in ['kmd_probe', 'probe_binaries']:
         subprocess.run(base + [str(ROOT / (source + '.c')), '-o', str(ROOT / source), '-ldl'],
                        env=env, check=True)
+    includes = ['-I/root/MaliBridge-reference/third_party/Vulkan-Headers-1.4.341/include',
+                '-I/root/mali-panvk/include', '-I/root/mali-panvk/include/android_stub',
+                '-I/root/mali-panvk-diagnostics']
+    for source in ['vulkan_android', 'vulkan_draw']:
+        subprocess.run(base + includes + [str(ROOT / (source + '.c')), '-o',
+                                         str(ROOT / source), '-ldl'],
+                       env=env, check=True)
     subprocess.run(base + ['-fPIC', '-shared', str(ROOT / 'trace_ioctl.c'),
                            '-o', str(ROOT / 'libtrace_ioctl.so'), '-ldl', '-pthread'],
                    env=env, check=True)

@@ -1,5 +1,9 @@
 #define VK_NO_PROTOTYPES
+#define VK_USE_PLATFORM_ANDROID_KHR
+#define ANDROID_API_LEVEL 31
 #include <vulkan/vulkan.h>
+#include <vulkan/vk_android_native_buffer.h>
+#include <android/hardware_buffer.h>
 #include "hwvulkan.h"
 #include <dlfcn.h>
 #include <stdio.h>
@@ -42,8 +46,10 @@ int main(int argc, char **argv)
 {
     setbuf(stdout, NULL);
     if (argc < 4 || argc > 5) return 2;
-    int textured = argc == 5 && !strcmp(argv[4], "texture");
+    int textured = argc == 5 && !strncmp(argv[4], "texture", 7);
     int vertex_store = argc == 5 && !strcmp(argv[4], "vertex_store");
+    int native_image = argc == 5 && strstr(argv[4], "native");
+    int ahb_image = argc == 5 && strstr(argv[4], "ahb");
     void *library = dlopen(argv[1], RTLD_NOW | RTLD_LOCAL);
     if (!library) { fprintf(stderr, "%s\n", dlerror()); return 1; }
     PFN_vkGetInstanceProcAddr get = dlsym(library, "vk_icdGetInstanceProcAddr");
@@ -152,29 +158,87 @@ int main(int argc, char **argv)
         .queueFamilyIndex = family, .queueCount = 1, .pQueuePriorities = &priority};
     VkDeviceCreateInfo device_info = {.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         .queueCreateInfoCount = 1, .pQueueCreateInfos = &queue_info};
+    const char *android_extensions[] = {"VK_ANDROID_native_buffer",
+        "VK_ANDROID_external_memory_android_hardware_buffer"};
+    if (native_image || ahb_image) {
+        device_info.enabledExtensionCount = 2;
+        device_info.ppEnabledExtensionNames = android_extensions;
+    }
     VkPhysicalDeviceFeatures enabled = {.vertexPipelineStoresAndAtomics = vertex_store};
     device_info.pEnabledFeatures = &enabled;
     VkDevice device;
     CHECK(vkCreateDevice(physical, &device_info, NULL, &device));
     VkQueue queue;
     vkGetDeviceQueue(device, family, 0, &queue);
+    AHardwareBuffer *android_buffer = NULL;
+    void (*release_ahb)(AHardwareBuffer *) = NULL;
+    VkNativeBufferANDROID native_info = {.sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_ANDROID};
+    VkExternalMemoryImageCreateInfo external_info = {
+        .sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO,
+        .handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID};
+    if (native_image || ahb_image) {
+        void *nw = dlopen("libnativewindow.so", RTLD_NOW | RTLD_LOCAL);
+        if (!nw) { fprintf(stderr, "%s\n", dlerror()); return 1; }
+        int (*allocate_ahb)(const AHardwareBuffer_Desc *, AHardwareBuffer **) =
+            dlsym(nw, "AHardwareBuffer_allocate");
+        void (*describe_ahb)(const AHardwareBuffer *, AHardwareBuffer_Desc *) =
+            dlsym(nw, "AHardwareBuffer_describe");
+        const native_handle_t *(*native_handle)(const AHardwareBuffer *) =
+            dlsym(nw, "AHardwareBuffer_getNativeHandle");
+        release_ahb = dlsym(nw, "AHardwareBuffer_release");
+        if (!allocate_ahb || !describe_ahb || !native_handle || !release_ahb) return 1;
+        AHardwareBuffer_Desc desc = {.width = 16, .height = 16, .layers = 1,
+            .format = AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+            .usage = AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE |
+                     AHARDWAREBUFFER_USAGE_GPU_COLOR_OUTPUT |
+                     AHARDWAREBUFFER_USAGE_COMPOSER_OVERLAY | (1ull << 29)};
+        if (allocate_ahb(&desc, &android_buffer)) return 1;
+        describe_ahb(android_buffer, &desc);
+        native_info.handle = native_handle(android_buffer);
+        native_info.stride = desc.stride;
+        native_info.format = desc.format;
+        native_info.usage = desc.usage;
+        native_info.usage3 = desc.usage;
+        native_info.ahb = android_buffer;
+        printf("ANDROID_IMAGE %s stride=%u\n", native_image ? "native" : "ahb", desc.stride);
+    }
     VkImageCreateInfo image_info = {.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+        .pNext = native_image ? (void *)&native_info : ahb_image ? (void *)&external_info : NULL,
         .imageType = VK_IMAGE_TYPE_2D, .format = VK_FORMAT_R8G8B8A8_UNORM,
         .extent = {16, 16, 1}, .mipLevels = 1, .arrayLayers = 1,
         .samples = VK_SAMPLE_COUNT_1_BIT, .tiling = VK_IMAGE_TILING_OPTIMAL,
         .usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT};
     VkImage image;
     CHECK(vkCreateImage(device, &image_info, NULL, &image));
-    VkMemoryRequirements image_req;
-    vkGetImageMemoryRequirements(device, image, &image_req);
+    VkMemoryRequirements image_req = {0};
+    if (ahb_image) {
+        PFN_vkGetAndroidHardwareBufferPropertiesANDROID get_ahb =
+            (PFN_vkGetAndroidHardwareBufferPropertiesANDROID)get(
+                instance, "vkGetAndroidHardwareBufferPropertiesANDROID");
+        if (!get_ahb) return 1;
+        VkAndroidHardwareBufferPropertiesANDROID properties = {
+            .sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_PROPERTIES_ANDROID};
+        CHECK(get_ahb(device, android_buffer, &properties));
+        image_req.size = properties.allocationSize;
+        image_req.memoryTypeBits = properties.memoryTypeBits;
+    } else {
+        vkGetImageMemoryRequirements(device, image, &image_req);
+    }
     VkMemoryDedicatedAllocateInfo dedicated = {.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO,
         .image = image};
     VkMemoryAllocateInfo allocation = {.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
         .pNext = &dedicated, .allocationSize = image_req.size,
         .memoryTypeIndex = memory_type(&memory, image_req.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)};
-    VkDeviceMemory image_memory;
-    CHECK(vkAllocateMemory(device, &allocation, NULL, &image_memory));
-    CHECK(vkBindImageMemory(device, image, image_memory, 0));
+    VkImportAndroidHardwareBufferInfoANDROID import_info = {
+        .sType = VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID,
+        .pNext = &dedicated, .buffer = android_buffer};
+    if (ahb_image)
+        allocation.pNext = &import_info;
+    VkDeviceMemory image_memory = VK_NULL_HANDLE;
+    if (!native_image) {
+        CHECK(vkAllocateMemory(device, &allocation, NULL, &image_memory));
+        CHECK(vkBindImageMemory(device, image, image_memory, 0));
+    }
     VkBufferCreateInfo buffer_info = {.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
         .size = 4096,
         .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT |
@@ -210,6 +274,7 @@ int main(int argc, char **argv)
     if (textured || vertex_store) {
       if (textured) {
         VkImageCreateInfo ti = image_info;
+        ti.pNext = NULL;
         ti.extent.width = ti.extent.height = 2;
         ti.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
         CHECK(vkCreateImage(device, &ti, NULL, &texture_image));
@@ -442,6 +507,8 @@ int main(int argc, char **argv)
     vkDestroyImage(device, image, NULL);
     vkFreeMemory(device, buffer_memory, NULL);
     vkFreeMemory(device, image_memory, NULL);
+    if (android_buffer)
+        release_ahb(android_buffer);
     vkDestroyDevice(device, NULL);
     vkDestroyInstance(instance, NULL);
     if (hal) hal->common.close(&hal->common);

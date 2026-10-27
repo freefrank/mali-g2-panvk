@@ -31,8 +31,12 @@
   "remaining_compatibility_features": [
     "CSF geometry/tessellation emulation",
     "clip/cull distances",
-    "non-solid fill modes"
+    "non-solid fill modes",
+    "multiViewport"
   ],
   "vertex_storage_atomics": "PASS and enabled by 90d7de8",
-  "driver_zip_path": "/storage/emulated/0/Download/panvk-mali-g2-test1-90d7de8.zip"
+  "driver_zip_path": "/storage/emulated/0/Download/panvk-mali-g2-test2-354f23f.zip",
+  "eden_test1": "VK_ERROR_INVALID_EXTERNAL_HANDLE at renderer initialization; native GPU-only AHB stride=0 layout unsupported by old fallback",
+  "android_mapper5": "Fixed by 354f23f; three allocation usage patterns imported, native and AHB graphics pass 30 frames",
+  "eden_test2": "Awaiting user launch result"
 }
