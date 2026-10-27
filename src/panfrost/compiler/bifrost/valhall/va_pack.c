@@ -1244,6 +1244,8 @@ va_v15_preload_reg(mesa_shader_stage stage, unsigned reg)
    }
    if (stage == MESA_SHADER_FRAGMENT) {
       switch (reg) {
+      case 58: return 3;
+      case 59: return 2;
       case 60: return 0;
       case 61: return 1;
       default: UNREACHABLE("Unvalidated v15 fragment preload");
