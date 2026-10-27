@@ -1,0 +1,802 @@
+[   0.000421] Input <Info> input_common/drivers/udp_client.cpp:144:UDPClient: Udp Initialization started
+[   0.000474] Input <Info> input_common/drivers/udp_client.cpp:338:StartCommunication: Starting communication with UDP input server on 127.0.0.1:26760
+[   0.061937] Service.ACC <Info> main/jni/native.cpp:2182:Java_org_yuzu_yuzu_1emu_NativeLibrary_reloadProfiles: Profile manager reloaded, user count: 1
+[   0.063842] Frontend <Info> main/jni/native_freedreno.cpp:154:Java_org_yuzu_yuzu_1emu_utils_NativeFreedrenoConfig_initializeFreedrenoConfig: [Freedreno] Configuration system initialized
+[   0.069841] Frontend <Info> main/jni/native.cpp:1359:Java_org_yuzu_yuzu_1emu_NativeLibrary_logDeviceInfo: eden Version: master-de7e6e01d4-master
+[   0.069868] Frontend <Info> main/jni/native.cpp:1360:Java_org_yuzu_yuzu_1emu_NativeLibrary_logDeviceInfo: Host OS: Android API level 37
+[   0.069973] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: Device Manufacturer - Xiaomi
+[   0.069983] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: Device Model - M367FC
+[   0.069991] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: SoC Manufacturer - XRing
+[   0.069997] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: SoC Model - O3
+[   0.070639] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: CPU Info - Unknown
+[   0.091328] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: Vulkan Driver: - 56.0.0
+[   0.092661] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: Vulkan API Version: - 1.4.345
+[   0.093193] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: Total System Memory - 16.0GB
+[27225.127045] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27225.128223] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27225.132047] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27226.259675] Frontend <Info> frontend_common/update_checker.cpp:24:GetUpdate: Received update Eden Nightly - Oct 18 2026
+[27228.334894] Common.Filesystem <Error> common/fs/path_util.cpp:308:SetEdenPath: Filesystem object at new_path=/storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/tas is not a directory
+[27228.335381] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[27228.336448] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[27228.345379] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Game Specific configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/custom/0100000011D90000.ini
+[27228.345500] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Game Specific configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/custom/0100000011D90000.ini
+[27228.345585] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: [EmulationFragment] Loading custom settings for Pokémon Brilliant Diamond
+[27228.351160] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: [EmulationFragment] Starting view setup for game: Pokémon Brilliant Diamond
+[27228.352981] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[27228.382647] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[27228.382663] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[27228.382665] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[27228.382667] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[27228.382669] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[27228.382671] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[27228.382673] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[27228.382675] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[27228.382704] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[27228.382710] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[27228.382711] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[27228.382713] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[27228.382716] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[27228.382718] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[27228.382721] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[27228.382728] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[27228.382736] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[27228.382747] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[27228.386711] Frontend <Info> main/jni/native.cpp:1492:Java_org_yuzu_yuzu_1emu_NativeLibrary_firmwareVersion: Installed firmware: NintendoSDK Firmware for NX 22.1.0-1.0
+[27228.388898] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[27228.397115] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[27228.397138] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[27228.397140] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[27228.397143] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[27228.397145] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[27228.397146] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[27228.397148] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[27228.397150] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[27228.397176] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[27228.397184] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[27228.397185] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[27228.397187] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[27228.397197] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[27228.397199] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[27228.397202] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[27228.397209] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[27228.397211] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[27228.397221] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[27228.422450] Render <Info> video_core/post_processing/fx_effect.cpp:278:ReloadFxCatalog: Loaded 22 post-processing effects (22 usable)
+[27228.460505] Frontend <Info> main/jni/native.cpp:522:RunEmulation: starting
+[27228.460528] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[27228.460913] Config <Info> common/settings.cpp:135:LogSettings: Eden Configuration:
+[27228.460933] Config <Info> common/settings.cpp:137:LogSettings: M- Debugging.serial_unit: 2659595361
+[27228.460936] Config <Info> common/settings.cpp:137:LogSettings: M- Debugging.serial_battery: 801471945
+[27228.460938] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.output_engine: sdl3
+[27228.460939] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.output_device: auto
+[27228.460941] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.input_device: auto
+[27228.460943] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.volume: 100
+[27228.460946] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.audio_muted: false
+[27228.460948] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.dump_audio_commands: false
+[27228.460958] Config <Info> common/settings.cpp:137:LogSettings: -- Core.use_multi_core: true
+[27228.460960] Config <Info> common/settings.cpp:137:LogSettings: -- Core.memory_layout_mode: Memory_4Gb
+[27228.460961] Config <Info> common/settings.cpp:137:LogSettings: -- Core.use_speed_limit: true
+[27228.460963] Config <Info> common/settings.cpp:137:LogSettings: -- Core.speed_limit: 100
+[27228.460964] Config <Info> common/settings.cpp:137:LogSettings: -- Core.slow_speed_limit: 50
+[27228.460966] Config <Info> common/settings.cpp:137:LogSettings: -- Core.turbo_speed_limit: 200
+[27228.460968] Config <Info> common/settings.cpp:137:LogSettings: -- Core.current_speed_mode: Standard
+[27228.460969] Config <Info> common/settings.cpp:137:LogSettings: -- Core.sync_core_speed: false
+[27228.460971] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpu_backend: Nce
+[27228.460973] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpu_accuracy: Auto
+[27228.460975] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.use_custom_cpu_ticks: false
+[27228.460976] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpu_ticks: 16000
+[27228.460978] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_page_tables: true
+[27228.460980] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_block_linking: true
+[27228.461006] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_return_stack_buffer: true
+[27228.461008] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_fast_dispatcher: true
+[27228.461009] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_context_elimination: true
+[27228.461010] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_const_prop: true
+[27228.461012] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_misc_ir: true
+[27228.461013] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_reduce_misalign_checks: true
+[27228.461015] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_fastmem: true
+[27228.461016] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_fastmem_exclusives: true
+[27228.461018] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_recompile_exclusives: true
+[27228.461020] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_ignore_memory_aborts: true
+[27228.461021] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_host_mmu: true
+[27228.461022] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_unfuse_fma: true
+[27228.461024] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_reduce_fp_error: true
+[27228.461042] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_ignore_standard_fpcr: true
+[27228.461044] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_inaccurate_nan: true
+[27228.461045] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_fastmem_check: true
+[27228.461046] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_ignore_global_monitor: true
+[27228.461048] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.backend: Vulkan
+[27228.461049] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.vulkan_device: 0
+[27228.461050] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.resolution_setup: Res1X
+[27228.461052] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_vsync: Fifo
+[27228.461054] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.scaling_filter: NearestNeighbor
+[27228.461055] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.fsr_sharpening_slider: 0
+[27228.461065] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.aspect_ratio: R16_9
+[27228.461066] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.anti_aliasing: None
+[27228.461068] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.post_shader_chain: 
+[27228.461069] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.post_shader_preset: 
+[27228.461070] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.post_shader_enabled: true
+[27228.461072] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen: false
+[27228.461073] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_multiplier: 2
+[27228.461075] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_target_rate: 0
+[27228.461076] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_flow_scale_auto: true
+[27228.461077] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_flow_scale: 75
+[27228.461079] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_queue_target: 0
+[27228.461080] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_dump_flow: false
+[27228.461081] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_asynchronous_gpu_emulation: true
+[27228.461083] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.fullscreen_mode: Exclusive
+[27228.461084] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.bg_red: 0
+[27228.461094] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.bg_green: 0
+[27228.461095] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.bg_blue: 0
+[27228.461096] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_accuracy: Low
+[27228.461098] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.dma_accuracy: Default
+[27228.461099] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_fence_behavior: Default
+[27228.461100] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.vram_usage_mode: Conservative
+[27228.461102] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.nvdec_emulation: Cpu
+[27228.461103] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.max_anisotropy: Default
+[27228.461105] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.accelerate_astc: Gpu
+[27228.461106] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_pacing_mode: Target_Auto
+[27228.461108] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.astc_recompression: Uncompressed
+[27228.461109] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.sync_memory_operations: false
+[27228.461110] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.force_max_clock: false
+[27228.461112] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_disk_shader_cache: true
+[27228.461121] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_vulkan_driver_pipeline_cache: true
+[27228.461126] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.enable_compute_pipelines: false
+[27228.461127] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_video_framerate: false
+[27228.461129] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_reactive_flushing: false
+[27228.461130] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.barrier_feedback_loops: true
+[27228.461132] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.enable_buffer_history: false
+[27228.461133] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_optimized_vertex_buffers: false
+[27228.461135] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.skip_cpu_inner_invalidation: false
+[27228.461144] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.nce_invalidation_gpu_readback: false
+[27228.461145] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.async_presentation: true
+[27228.461146] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.fix_bloom_effects: false
+[27228.461148] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.emulate_bgr565: false
+[27228.461149] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_asynchronous_shaders: false
+[27228.461150] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_unswizzle_texture_size: Large
+[27228.461151] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_unswizzle_stream_size: Medium
+[27228.461153] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_unswizzle_chunk_size: Medium
+[27228.461154] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_unswizzle_enabled: false
+[27228.461155] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.dyna_state: Disabled
+[27228.461157] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.sample_shading_fraction: 0
+[27228.461158] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.vertex_input_dynamic_state: false
+[27228.461160] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.debug: false
+[27228.461169] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.shader_feedback: false
+[27228.461171] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.nsight_aftermath: false
+[27228.461172] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.disable_shader_loop_safety_checks: false
+[27228.461173] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.renderdoc_hotkey: false
+[27228.461175] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.patch_old_qcom_drivers: false
+[27228.461176] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.disable_buffer_reorder: false
+[27228.461178] Config <Info> common/settings.cpp:137:LogSettings: -- System.fast_cpu_time: Normal
+[27228.461179] Config <Info> common/settings.cpp:137:LogSettings: -- System.fast_gpu_time: Boost
+[27228.461180] Config <Info> common/settings.cpp:137:LogSettings: -- System.language_index: EnglishAmerican
+[27228.461181] Config <Info> common/settings.cpp:137:LogSettings: -- System.region_index: Usa
+[27228.461183] Config <Info> common/settings.cpp:137:LogSettings: -- System.time_zone_index: Auto
+[27228.461184] Config <Info> common/settings.cpp:137:LogSettings: -- System.custom_rtc_enabled: false
+[27228.461186] Config <Info> common/settings.cpp:137:LogSettings: -- System.custom_rtc: 0
+[27228.461187] Config <Info> common/settings.cpp:137:LogSettings: -- System.custom_rtc_offset: 0
+[27228.461193] Config <Info> common/settings.cpp:137:LogSettings: -- System.rng_seed_enabled: false
+[27228.461194] Config <Info> common/settings.cpp:137:LogSettings: -- System.rng_seed: 0
+[27228.461196] Config <Info> common/settings.cpp:137:LogSettings: -- System.device_name: Eden
+[27228.461197] Config <Info> common/settings.cpp:137:LogSettings: -- System.current_user: 0
+[27228.461198] Config <Info> common/settings.cpp:137:LogSettings: -- System.use_docked_mode: Handheld
+[27228.461209] Config <Info> common/settings.cpp:137:LogSettings: -- System.sound_index: Stereo
+[27228.461210] Config <Info> common/settings.cpp:137:LogSettings: -- Data Storage.use_virtual_sd: true
+[27228.461212] Config <Info> common/settings.cpp:137:LogSettings: -- Data Storage.gamecard_inserted: false
+[27228.461213] Config <Info> common/settings.cpp:137:LogSettings: -- Data Storage.gamecard_current_game: false
+[27228.461214] Config <Info> common/settings.cpp:137:LogSettings: -- Data Storage.gamecard_path: 
+[27228.461216] Config <Info> common/settings.cpp:137:LogSettings: -- Data Storage.ext_content_from_game_dirs: true
+[27228.461217] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.use_gdbstub: false
+[27228.461219] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gdbstub_port: 6543
+[27228.461220] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.program_args: 
+[27228.461221] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.dump_exefs: false
+[27228.461223] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.dump_nso: false
+[27228.461224] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.enable_fs_access_log: false
+[27228.461226] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.reporting_services: false
+[27228.461235] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.quest_flag: false
+[27228.461236] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.use_dev_keys: false
+[27228.461238] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.extended_logging: false
+[27228.461239] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.use_debug_asserts: false
+[27228.461240] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.use_auto_stub: false
+[27228.461241] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.enable_all_controllers: false
+[27228.461243] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.perform_vulkan_check: true
+[27228.461244] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.disable_web_applet: true
+[27228.461245] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_level: Off
+[27228.461247] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_vulkan_calls: true
+[27228.461248] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_shader_dumps: false
+[27228.461250] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_memory_tracking: true
+[27228.461259] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_driver_debug: true
+[27228.461261] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_ring_buffer_size: 512
+[27228.461262] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.debug_knobs: 0
+[27228.461263] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.dump_guest_shaders: false
+[27228.461264] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.dump_macros: false
+[27228.461266] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.disable_macro_jit: false
+[27228.461267] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.disable_macro_hle: false
+[27228.461269] Config <Info> common/settings.cpp:137:LogSettings: -- Miscellaneous.log_filter: *:Info
+[27228.461270] Config <Info> common/settings.cpp:137:LogSettings: -- Miscellaneous.flush_line: false
+[27228.461271] Config <Info> common/settings.cpp:137:LogSettings: -- Miscellaneous.censor_username: true
+[27228.461273] Config <Info> common/settings.cpp:137:LogSettings: -- Miscellaneous.first_launch: true
+[27228.461282] Config <Info> common/settings.cpp:137:LogSettings: -- Network.network_interface: 
+[27228.461284] Config <Info> common/settings.cpp:137:LogSettings: -- Network.airplane_mode: true
+[27228.461285] Config <Info> common/settings.cpp:137:LogSettings: -- WebService.web_api_url: api.ynet-fun.xyz
+[27228.461286] Config <Info> common/settings.cpp:137:LogSettings: -- WebService.eden_username: Eden
+[27228.461290] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.disable_wgi_xinput: false
+[27228.461291] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_raw_input: false
+[27228.461293] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.controller_navigation: true
+[27228.461294] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_joycon_driver: true
+[27228.461303] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_procon_driver: false
+[27228.461305] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.vibration_enabled: true
+[27228.461306] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_accurate_vibrations: false
+[27228.461307] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.motion_enabled: true
+[27228.461309] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.udp_input_servers: 127.0.0.1:26760
+[27228.461310] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_udp_controller: false
+[27228.461312] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.pause_tas_on_load: true
+[27228.461313] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.tas_enable: false
+[27228.461314] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.tas_loop: false
+[27228.461316] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.tas_show_recording_dialog: true
+[27228.461317] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning: false
+[27228.461326] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_sensitivity: 50
+[27228.461327] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_enabled: false
+[27228.461328] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_x_sensitivity: 50
+[27228.461330] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_y_sensitivity: 50
+[27228.461331] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_deadzone_counterweight: 20
+[27228.461333] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_decay_strength: 18
+[27228.461334] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_min_decay: 6
+[27228.461335] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.emulate_analog_keyboard: false
+[27228.461337] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.keyboard_enabled: false
+[27228.461338] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.debug_pad_enabled: false
+[27228.461339] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.touch_device: min_x:100,min_y:50,max_x:1800,max_y:850
+[27228.461348] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.touch_from_button_map: 0
+[27228.461350] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_ring_controller: true
+[27228.461351] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_ir_sensor: false
+[27228.461352] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.ir_sensor_device: auto
+[27228.461354] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.random_amiibo_id: false
+[27228.461356] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.cabinet_applet_mode: LLE
+[27228.461357] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.controller_applet_mode: HLE
+[27228.461358] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.data_erase_applet_mode: HLE
+[27228.461360] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.error_applet_mode: LLE
+[27228.461361] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.net_connect_applet_mode: LLE
+[27228.461363] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.player_select_applet_mode: LLE
+[27228.461372] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.swkbd_applet_mode: HLE
+[27228.461373] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.mii_edit_applet_mode: LLE
+[27228.461377] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.web_applet_mode: HLE
+[27228.461378] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.shop_applet_mode: HLE
+[27228.461380] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.photo_viewer_applet_mode: LLE
+[27228.461381] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.offline_web_applet_mode: LLE
+[27228.461382] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.login_share_applet_mode: HLE
+[27228.461384] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.wifi_web_auth_applet_mode: HLE
+[27228.461385] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.my_page_applet_mode: LLE
+[27228.461386] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.enable_overlay: false
+[27228.461397] Config <Info> common/settings.cpp:140:LogSettings: CacheDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/cache
+[27228.461398] Config <Info> common/settings.cpp:141:LogSettings: ConfigDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config
+[27228.461400] Config <Info> common/settings.cpp:142:LogSettings: LoadDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/load
+[27228.461401] Config <Info> common/settings.cpp:143:LogSettings: NANDDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/nand
+[27228.461403] Config <Info> common/settings.cpp:144:LogSettings: SaveDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/nand
+[27228.461405] Config <Info> common/settings.cpp:145:LogSettings: SDMCDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/sdmc
+[27228.507562] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27228.508796] Loader <Info> core/loader/nca.cpp:102:Load: Read heap size 0x6e6f69 bytes from main.npdm
+[27228.508826] Loader <Info> core/file_sys/patch_manager.cpp:199:PatchExeFS: Patching ExeFS for title_id=0100000011D90000
+[27228.509404] Loader <Info> core/file_sys/patch_manager.cpp:327:PatchExeFS:     ExeFS: Update (v0.0.0) applied successfully
+[27228.509507] Loader <Info> core/file_sys/patch_manager.cpp:358:PatchExeFS:     ExeFS: LayeredExeFS patches applied successfully
+[27228.748382] HW.Memory <Info> common/heap_tracker.cpp:25:GetMaxPermissibleResidentMapCount: Current maximum map count: 65530
+[27228.771594] Loader <Info> core/file_sys/patch_manager.cpp:475:HasNSOPatch: Querying NSO patch existence for build_id=6F8B1226CC8CD958021D6BFD226EBF23F892AB9B, name=rtld
+[27228.936864] Loader <Info> core/file_sys/patch_manager.cpp:475:HasNSOPatch: Querying NSO patch existence for build_id=94CEAE325C205C4B9D6F7235552F28FD, name=main
+[27228.958294] Loader <Info> core/file_sys/patch_manager.cpp:475:HasNSOPatch: Querying NSO patch existence for build_id=507F19D1240D09D00992248E8A0FD77EBD784EB4, name=subsdk0
+[27228.983953] Loader <Info> core/file_sys/patch_manager.cpp:475:HasNSOPatch: Querying NSO patch existence for build_id=2D369D9999E3E10E665106F840FFFF9BDAA0BB8E, name=sdk
+[27228.985113] Loader <Info> core/loader/nca.cpp:121:Load: Set pointer buffer size to 0x8000 bytes for ProgramID 0x0100000011d90000 (Heap size: 0x6e6f69)
+[27228.985186] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27228.985311] Loader <Info> core/loader/nca.cpp:128:Load: Control data for 0100000011D90000: name="Pokémon Brilliant Diamond" supported_languages=000070DD
+[27228.985384] Core <Info> core/core.cpp:351:Load: Loading Pokémon Brilliant Diamond (0100000011D90000) ...
+[27229.002069] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[27229.002085] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[27229.002106] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[27229.002108] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[27229.002110] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[27229.002112] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[27229.002113] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[27229.002115] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[27229.002128] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[27229.002129] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[27229.002131] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[27229.002133] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[27229.002135] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[27229.002137] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[27229.002140] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[27229.002148] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[27229.002151] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[27229.002169] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[27229.493656] Render.Vulkan <Info> video_core/renderer_vulkan/vk_pipeline_cache.cpp:506:PipelineCache: DynamicState setting value: 0
+[27229.493752] Render.Vulkan <Info> video_core/renderer_vulkan/renderer_vulkan.cpp:264:Report: Driver: Mali-G2-Ultra-NX MC16 56.0.0
+[27229.493785] Render.Vulkan <Info> video_core/renderer_vulkan/renderer_vulkan.cpp:265:Report: Device: Mali-G2-Ultra-NX MC16
+[27229.493787] Render.Vulkan <Info> video_core/renderer_vulkan/renderer_vulkan.cpp:266:Report: Vulkan: 1.4.345
+[27229.493791] Render.Vulkan <Info> video_core/renderer_vulkan/renderer_vulkan.cpp:267:Report: Available VRAM: 4.00 GiB
+[27229.496785] Audio.Sink <Info> audio_core/sink/sdl3_sink.cpp:42:InitializeAudio: SDL audio driver: openslES
+[27229.548495] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27229.548657] Core <Info> core/game_settings.cpp:137:LoadOverrides: Applied game settings for title ID 0100000011D90000 on OS 4, GPU vendor 5 (Mali)
+[27229.553865] Render.Vulkan <Info> video_core/renderer_vulkan/vk_pipeline_cache.cpp:1118:LoadVulkanPipelineCache: Loaded Vulkan driver pipeline cache: 
+[27229.571203] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:520:GetExternalSteadyClockSourceId: called, clock_source_id=03e3ded3-3152-3dd9-798e-0a68ac206f86
+[27229.571230] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:536:GetUserSystemClockContext: called
+[27229.571261] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:923:GetNetworkSystemClockContext: called
+[27229.571272] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:941:IsUserSystemClockAutomaticCorrectionEnabled: called, out_automatic_correction_enabled=true
+[27229.571274] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:1371:GetUserSystemClockAutomaticCorrectionUpdatedTime: called
+[27229.571278] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:897:GetDeviceTimeZoneLocationName: called
+[27229.571300] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:1354:GetDeviceTimeZoneLocationUpdatedTime: called
+[27229.571775] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:544:SetUserSystemClockContext: called
+[27229.572543] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:931:SetNetworkSystemClockContext: called
+[27229.572829] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:951:SetUserSystemClockAutomaticCorrectionEnabled: called, out_automatic_correction_enabled=true
+[27229.573998] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:1379:SetUserSystemClockAutomaticCorrectionUpdatedTime: called
+[27229.585962] Render.Vulkan <Info> video_core/renderer_vulkan/vk_pipeline_cache.cpp:715:LoadDiskResources: Total Pipeline Count: 2874
+[27248.900442] Render.Vulkan <Info> video_core/renderer_vulkan/vk_pipeline_cache.cpp:1061:SerializeVulkanPipelineCache: Vulkan driver pipelines cached at: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/cache/shader/0100000011d90000/vulkan_pipelines.bin
+[27248.903219] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:665:GetVibrationMasterVolume: called, vibration_master_volume=1
+[27248.948510] Service.VI <Warning> core/hle/service/vi/application_display_service.cpp:81:GetManagerDisplayService: (STUBBED) called
+[27248.948617] Service.AM <Info> core/hle/service/am/service/window_controller.cpp:38:GetAppletResourceUserId: called
+[27248.948747] Service.AM <Warning> core/hle/service/am/service/common_state_getter.cpp:353:SetRequestExitToLibraryAppletAtExecuteNextProgramEnabled: (STUBBED) called
+[27248.948819] Service.AM <Warning> core/hle/service/am/service/application_functions.cpp:495:GetGpuErrorDetectedSystemEvent: (STUBBED) called
+[27248.950349] Service.AM <Info> core/hle/service/am/service/window_controller.cpp:57:AcquireForegroundRights: called
+[27248.950395] Service.AM <Info> core/hle/service/am/service/self_controller.cpp:189:SetFocusHandlingMode: called, notify=false background=false suspend=true
+[27248.950444] Service.AM <Info> core/hle/service/am/service/self_controller.cpp:219:SetOutOfFocusSuspendingEnabled: called, enabled=false
+[27248.951746] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27248.990839] Service.NVDRV <Warning> core/hle/service/nvdrv/nvdrv_interface.cpp:158:Initialize: (STUBBED) called
+[27248.991499] Service.NVDRV <Warning> core/hle/service/nvdrv/nvdrv_interface.cpp:215:SetAruid: (STUBBED) called, pid=0x51
+[27248.991538] Service.NVDRV <Warning> core/hle/service/nvdrv/nvdrv_interface.cpp:223:SetGraphicsFirmwareMemoryMarginEnabled: (STUBBED) called
+[27248.992152] Service.VI <Warning> core/hle/service/vi/application_display_service.cpp:81:GetManagerDisplayService: (STUBBED) called
+[27248.992232] Service.VI <Warning> core/hle/service/vi/application_display_service.cpp:74:GetSystemDisplayService: (STUBBED) called
+[27248.992293] Service.VI <Warning> core/hle/service/vi/application_display_service.cpp:68:GetRelayService: (STUBBED) called
+[27248.992412] Service.AM <Info> core/hle/service/am/service/self_controller.cpp:200:SetRestartMessageEnabled: called, enabled=true
+[27248.992445] Service.AM <Info> core/hle/service/am/service/self_controller.cpp:180:SetPerformanceModeChangedNotification: called, enabled=true
+[27248.992612] Service.AM <Info> core/hle/service/am/service/self_controller.cpp:171:SetOperationModeChangedNotification: called, enabled=true
+[27249.005808] Loader <Info> core/file_sys/patch_manager.cpp:610:PatchRomFS: Patching RomFS for title_id=0100000011D90000, type=01
+[27249.006856] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27249.088962] Service <Warning> core/hle/service/sockets/bsd.cpp:152:RegisterClient: (STUBBED) called
+[27249.089126] Service <Warning> core/hle/service/sockets/bsd.cpp:161:StartMonitoring: (STUBBED) called
+[27249.280303] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:1428:GetTouchScreenMode: called, touch_screen_mode=1
+[27249.280982] Service.HID <Info> hid_core/frontend/emulated_controller.cpp:1330:SetPollingMode: Set polling mode 0, device_index=3
+[27249.289940] Service.NVDRV <Warning> core/hle/service/nvdrv/devices/nvhost_gpu.cpp:165:SetErrorNotifier: (STUBBED) called, offset=0, size=1000, mem=C
+[27249.290012] Service.NVDRV <Info> core/hle/service/nvdrv/devices/nvhost_gpu.cpp:441:ChannelSetTimeout: called, timeout=0x266
+[27249.290054] Service.NVDRV <Info> core/hle/service/nvdrv/devices/nvhost_gpu.cpp:447:ChannelSetTimeslice: called, timeslice=0x400
+[27249.291246] Service.AM <Warning> core/hle/service/am/service/self_controller.cpp:271:CreateManagedDisplaySeparableLayer: (STUBBED) called
+[27249.371852] Service.Audio <Info> audio_core/sink/sdl3_sink.cpp:124:SDLSinkStream: Opening SDL stream 0xb40000769e6c7ff0 with: rate 48000 channels 2 (system channels 2)  format 32784
+[27249.517297] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27249.517619] Service.NS <Info> core/hle/service/ns/read_only_application_control_data_interface.cpp:192:GetApplicationDesiredLanguage: called with supported_languages=000070DD
+[27249.540253] Service.ACC <Warning> core/hle/service/acc/acc.cpp:937:InitializeApplicationInfoRestricted: (Partial implementation) called
+[27249.540289] Service.ACC <Warning> core/hle/service/acc/acc.cpp:982:InitializeApplicationInfoBase: ApplicationInfo init required
+[27249.540363] Service.AM <Info> core/hle/service/am/service/application_functions.cpp:136:PopLaunchParameter: called, kind=2
+[27249.541444] Service.FS <Info> core/hle/service/filesystem/fsp/fsp_srv.cpp:273:OpenSaveDataFileSystem: called.
+[27249.557165] Service.FS <Info> core/hle/service/filesystem/fsp/fsp_srv.cpp:273:OpenSaveDataFileSystem: called.
+[27251.221941] Service.AM <Info> core/hle/service/am/service/self_controller.cpp:189:SetFocusHandlingMode: called, notify=false background=false suspend=true
+[27251.222675] Service.AM <Info> core/hle/service/am/service/self_controller.cpp:219:SetOutOfFocusSuspendingEnabled: called, enabled=false
+[27251.234075] Service.Audio <Info> audio_core/sink/sdl3_sink.cpp:124:SDLSinkStream: Opening SDL stream 0xb40000769e6abdf0 with: rate 48000 channels 2 (system channels 2)  format 33056
+[27252.275079] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27252.276555] Service.NS <Info> core/hle/service/ns/read_only_application_control_data_interface.cpp:192:GetApplicationDesiredLanguage: called with supported_languages=000070DD
+[27258.906775] Service.BCAT <Info> core/hle/service/bcat/service_creator.cpp:43:CreateBcatService: called, process_id=81
+[27260.549569] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27260.550872] Service.NS <Info> core/hle/service/ns/read_only_application_control_data_interface.cpp:192:GetApplicationDesiredLanguage: called with supported_languages=000070DD
+[27291.137169] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[27291.141477] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[27292.213603] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[27292.215125] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[27299.360081] Service.Nvnflinger <Error> core/hle/service/nvnflinger/buffer_queue_producer.cpp:132:WaitForFreeSlotThenRelock: BufferQueue has been abandoned
+[27299.360659] Service.AM <Info> core/hle/service/am/service/application_functions.cpp:209:SetTerminateResult: (STUBBED) called, result=0x1a80a (2010-0212)
+[27299.360774] Service.VI <Info> core/hle/service/am/display_layer_manager.cpp:220:SetOverlayZIndex: called, managed_layer=1 z=2
+[27299.361218] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:665:GetVibrationMasterVolume: called, vibration_master_volume=1
+[27299.361440] Common.Filesystem <Error> common/fs/path_util.cpp:308:SetEdenPath: Filesystem object at new_path=/storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/tas is not a directory
+[27299.362703] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[27299.366475] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[27299.432908] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:544:SetUserSystemClockContext: called
+[27299.434442] Service.SET <Info> core/hle/service/set/system_settings_server.cpp:931:SetNetworkSystemClockContext: called
+[27299.543460] Render.Vulkan <Info> video_core/renderer_vulkan/vk_pipeline_cache.cpp:1061:SerializeVulkanPipelineCache: Vulkan driver pipelines cached at: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/cache/shader/0100000011d90000/vulkan_pipelines.bin
+[27299.880658] Debug <Critical> common/host_memory.cpp:770:operator(): /home/runner/work/Workflow/Workflow/src/common/host_memory.cpp: assert virtual_offset + length <= virtual_size
+[27301.187507] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[27301.242627] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[27301.242665] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[27301.242671] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[27301.242676] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[27301.242680] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[27301.242684] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[27301.242688] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[27301.242691] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[27301.242757] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[27301.242765] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[27301.242769] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[27301.242772] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[27301.242783] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[27301.242788] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[27301.242799] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[27301.242816] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[27301.242827] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[27301.242831] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[27304.791339] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27304.832753] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[27304.835551] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[37873.280155] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[37873.326475] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[37873.328807] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[37875.952616] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[37875.978927] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[37875.978953] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[37875.978955] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[37875.978957] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[37875.978959] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[37875.978961] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[37875.978962] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[37875.978963] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[37875.979131] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[37875.979135] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[37875.979136] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[37875.979138] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[37875.979142] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[37875.979152] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[37875.979154] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[37875.979162] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[37875.979171] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[37875.979173] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[37875.985353] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[37875.993107] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[37875.993119] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[37875.993121] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[37875.993123] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[37875.993125] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[37875.993126] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[37875.993128] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[37875.993130] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[37875.993153] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[37875.993158] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[37875.993159] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[37875.993163] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[37875.993174] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[37875.993177] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[37875.993179] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[37875.993186] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[37875.993193] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[37875.993195] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[37876.001250] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[37876.009094] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[37876.009107] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[37876.009110] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[37876.009112] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[37876.009113] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[37876.009115] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[37876.009116] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[37876.009118] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[37876.009143] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[37876.009148] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[37876.009150] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[37876.009151] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[37876.009154] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[37876.009165] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[37876.009167] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[37876.009174] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[37876.009177] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[37876.009178] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[37885.316437] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[37885.327816] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[37885.327831] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[37885.327833] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[37885.327835] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[37885.327836] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[37885.327838] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[37885.327840] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[37885.327841] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[37885.327870] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[37885.327875] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[37885.327876] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[37885.327877] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[37885.327880] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[37885.327883] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[37885.327893] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[37885.327900] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[37885.327903] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[37885.327904] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[37885.341268] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[37885.349821] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[37885.349835] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[37885.349837] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[37885.349839] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[37885.349841] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[37885.349842] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[37885.349844] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[37885.349845] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[37885.349874] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[37885.349879] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[37885.349880] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[37885.349881] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[37885.349885] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[37885.349897] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[37885.349899] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[37885.349907] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[37885.349912] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[37885.349914] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[37892.243068] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[37892.248145] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[37893.630061] Common.Filesystem <Error> common/fs/path_util.cpp:308:SetEdenPath: Filesystem object at new_path=/storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/tas is not a directory
+[37893.630555] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[37893.631688] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Global configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini
+[37893.638353] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Game Specific configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/custom/0100000011D90000.ini
+[37893.638494] Config <Info> frontend_common/config.cpp:77:WriteToIni: Writing Game Specific configuration to: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/custom/0100000011D90000.ini
+[37893.638580] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: [EmulationFragment] Loading custom settings for Pokémon Brilliant Diamond
+[37893.642152] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: [EmulationFragment] Starting view setup for game: Pokémon Brilliant Diamond
+[37893.643171] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[37893.652009] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[37893.652025] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[37893.652027] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[37893.652029] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[37893.652030] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[37893.652032] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[37893.652034] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[37893.652035] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[37893.652061] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[37893.652066] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[37893.652067] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[37893.652069] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[37893.652081] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[37893.652083] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[37893.652085] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[37893.652092] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[37893.652098] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[37893.652099] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[37893.657940] Frontend <Info> main/jni/native.cpp:1492:Java_org_yuzu_yuzu_1emu_NativeLibrary_firmwareVersion: Installed firmware: NintendoSDK Firmware for NX 22.1.0-1.0
+[37893.659281] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[37893.666923] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[37893.666947] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[37893.666949] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[37893.666951] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[37893.666952] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[37893.666954] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[37893.666956] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[37893.666957] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[37893.666982] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[37893.666990] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[37893.666992] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[37893.666993] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[37893.666996] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[37893.666999] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[37893.667001] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[37893.667008] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[37893.667020] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[37893.667022] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[37893.805944] Frontend <Info> main/jni/native.cpp:522:RunEmulation: starting
+[37893.805968] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[37893.806860] Config <Info> common/settings.cpp:135:LogSettings: Eden Configuration:
+[37893.806867] Config <Info> common/settings.cpp:137:LogSettings: M- Debugging.serial_unit: 2659595361
+[37893.806868] Config <Info> common/settings.cpp:137:LogSettings: M- Debugging.serial_battery: 801471945
+[37893.806870] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.output_engine: sdl3
+[37893.806871] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.output_device: auto
+[37893.806872] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.input_device: auto
+[37893.806873] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.volume: 100
+[37893.806875] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.audio_muted: false
+[37893.806876] Config <Info> common/settings.cpp:137:LogSettings: -- Audio.dump_audio_commands: false
+[37893.806888] Config <Info> common/settings.cpp:137:LogSettings: -- Core.use_multi_core: true
+[37893.806889] Config <Info> common/settings.cpp:137:LogSettings: -- Core.memory_layout_mode: Memory_4Gb
+[37893.806890] Config <Info> common/settings.cpp:137:LogSettings: -- Core.use_speed_limit: true
+[37893.806891] Config <Info> common/settings.cpp:137:LogSettings: -- Core.speed_limit: 100
+[37893.806893] Config <Info> common/settings.cpp:137:LogSettings: -- Core.slow_speed_limit: 50
+[37893.806894] Config <Info> common/settings.cpp:137:LogSettings: -- Core.turbo_speed_limit: 200
+[37893.806895] Config <Info> common/settings.cpp:137:LogSettings: -- Core.current_speed_mode: Standard
+[37893.806896] Config <Info> common/settings.cpp:137:LogSettings: -- Core.sync_core_speed: false
+[37893.806898] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpu_backend: Nce
+[37893.806899] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpu_accuracy: Auto
+[37893.806900] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.use_custom_cpu_ticks: false
+[37893.806901] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpu_ticks: 16000
+[37893.806902] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_page_tables: true
+[37893.806904] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_block_linking: true
+[37893.806905] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_return_stack_buffer: true
+[37893.806913] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_fast_dispatcher: true
+[37893.806914] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_context_elimination: true
+[37893.806916] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_const_prop: true
+[37893.806917] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_misc_ir: true
+[37893.806918] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_reduce_misalign_checks: true
+[37893.806919] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_fastmem: true
+[37893.806920] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_fastmem_exclusives: true
+[37893.806921] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_recompile_exclusives: true
+[37893.806923] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_ignore_memory_aborts: true
+[37893.806924] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_host_mmu: true
+[37893.806925] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_unfuse_fma: true
+[37893.806927] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_reduce_fp_error: true
+[37893.806928] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_ignore_standard_fpcr: true
+[37893.806946] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_inaccurate_nan: true
+[37893.806947] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_fastmem_check: true
+[37893.806948] Config <Info> common/settings.cpp:137:LogSettings: -- Cpu.cpuopt_unsafe_ignore_global_monitor: true
+[37893.806949] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.backend: Vulkan
+[37893.806950] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.vulkan_device: 0
+[37893.806951] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.resolution_setup: Res1X
+[37893.806953] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_vsync: Fifo
+[37893.806954] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.scaling_filter: NearestNeighbor
+[37893.806955] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.fsr_sharpening_slider: 0
+[37893.806956] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.aspect_ratio: R16_9
+[37893.806958] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.anti_aliasing: None
+[37893.806959] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.post_shader_chain: 
+[37893.806960] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.post_shader_preset: 
+[37893.806961] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.post_shader_enabled: true
+[37893.806970] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen: false
+[37893.806972] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_multiplier: 2
+[37893.806973] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_target_rate: 0
+[37893.806974] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_flow_scale_auto: true
+[37893.806975] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_flow_scale: 75
+[37893.806976] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_queue_target: 0
+[37893.806977] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_gen_dump_flow: false
+[37893.806978] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_asynchronous_gpu_emulation: true
+[37893.806979] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.fullscreen_mode: Exclusive
+[37893.806981] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.bg_red: 0
+[37893.806982] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.bg_green: 0
+[37893.806983] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.bg_blue: 0
+[37893.806984] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_accuracy: Low
+[37893.806985] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.dma_accuracy: Default
+[37893.806986] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_fence_behavior: Default
+[37893.806987] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.vram_usage_mode: Conservative
+[37893.806997] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.nvdec_emulation: Cpu
+[37893.806998] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.max_anisotropy: Default
+[37893.806999] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.accelerate_astc: Gpu
+[37893.807000] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.frame_pacing_mode: Target_Auto
+[37893.807001] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.astc_recompression: Uncompressed
+[37893.807002] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.sync_memory_operations: false
+[37893.807004] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.force_max_clock: false
+[37893.807005] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_disk_shader_cache: true
+[37893.807006] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_vulkan_driver_pipeline_cache: true
+[37893.807007] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.enable_compute_pipelines: false
+[37893.807010] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_video_framerate: false
+[37893.807012] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_reactive_flushing: false
+[37893.807013] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.barrier_feedback_loops: true
+[37893.807014] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.enable_buffer_history: false
+[37893.807015] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_optimized_vertex_buffers: false
+[37893.807016] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.skip_cpu_inner_invalidation: false
+[37893.807017] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.nce_invalidation_gpu_readback: false
+[37893.807018] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.async_presentation: true
+[37893.807019] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.fix_bloom_effects: false
+[37893.807021] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.emulate_bgr565: false
+[37893.807022] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.use_asynchronous_shaders: false
+[37893.807023] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_unswizzle_texture_size: Large
+[37893.807024] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_unswizzle_stream_size: Medium
+[37893.807026] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_unswizzle_chunk_size: Medium
+[37893.807027] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.gpu_unswizzle_enabled: false
+[37893.807028] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.dyna_state: Disabled
+[37893.807029] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.sample_shading_fraction: 0
+[37893.807030] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.vertex_input_dynamic_state: false
+[37893.807032] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.debug: false
+[37893.807034] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.shader_feedback: false
+[37893.807035] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.nsight_aftermath: false
+[37893.807036] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.disable_shader_loop_safety_checks: false
+[37893.807038] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.renderdoc_hotkey: false
+[37893.807039] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.patch_old_qcom_drivers: false
+[37893.807040] Config <Info> common/settings.cpp:137:LogSettings: -- Renderer.disable_buffer_reorder: false
+[37893.807042] Config <Info> common/settings.cpp:137:LogSettings: -- System.fast_cpu_time: Normal
+[37893.807043] Config <Info> common/settings.cpp:137:LogSettings: -- System.fast_gpu_time: Boost
+[37893.807044] Config <Info> common/settings.cpp:137:LogSettings: -- System.language_index: EnglishAmerican
+[37893.807045] Config <Info> common/settings.cpp:137:LogSettings: -- System.region_index: Usa
+[37893.807046] Config <Info> common/settings.cpp:137:LogSettings: -- System.time_zone_index: Auto
+[37893.807047] Config <Info> common/settings.cpp:137:LogSettings: -- System.custom_rtc_enabled: false
+[37893.807049] Config <Info> common/settings.cpp:137:LogSettings: -- System.custom_rtc: 0
+[37893.807050] Config <Info> common/settings.cpp:137:LogSettings: -- System.custom_rtc_offset: 0
+[37893.807052] Config <Info> common/settings.cpp:137:LogSettings: -- System.rng_seed_enabled: false
+[37893.807053] Config <Info> common/settings.cpp:137:LogSettings: -- System.rng_seed: 0
+[37893.807054] Config <Info> common/settings.cpp:137:LogSettings: -- System.device_name: Eden
+[37893.807055] Config <Info> common/settings.cpp:137:LogSettings: -- System.current_user: 0
+[37893.807057] Config <Info> common/settings.cpp:137:LogSettings: -- System.use_docked_mode: Handheld
+[37893.807059] Config <Info> common/settings.cpp:137:LogSettings: -- System.sound_index: Stereo
+[37893.807062] Config <Info> common/settings.cpp:137:LogSettings: -- Data Storage.use_virtual_sd: true
+[37893.807064] Config <Info> common/settings.cpp:137:LogSettings: -- Data Storage.gamecard_inserted: false
+[37893.807065] Config <Info> common/settings.cpp:137:LogSettings: -- Data Storage.gamecard_current_game: false
+[37893.807066] Config <Info> common/settings.cpp:137:LogSettings: -- Data Storage.gamecard_path: 
+[37893.807067] Config <Info> common/settings.cpp:137:LogSettings: -- Data Storage.ext_content_from_game_dirs: true
+[37893.807069] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.use_gdbstub: false
+[37893.807076] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gdbstub_port: 6543
+[37893.807077] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.program_args: 
+[37893.807078] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.dump_exefs: false
+[37893.807079] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.dump_nso: false
+[37893.807080] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.enable_fs_access_log: false
+[37893.807081] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.reporting_services: false
+[37893.807083] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.quest_flag: false
+[37893.807084] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.use_dev_keys: false
+[37893.807085] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.extended_logging: false
+[37893.807086] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.use_debug_asserts: false
+[37893.807088] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.use_auto_stub: false
+[37893.807089] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.enable_all_controllers: false
+[37893.807090] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.perform_vulkan_check: true
+[37893.807099] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.disable_web_applet: true
+[37893.807100] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_level: Off
+[37893.807102] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_vulkan_calls: true
+[37893.807103] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_shader_dumps: false
+[37893.807104] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_memory_tracking: true
+[37893.807105] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_driver_debug: true
+[37893.807106] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.gpu_log_ring_buffer_size: 512
+[37893.807108] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.debug_knobs: 0
+[37893.807109] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.dump_guest_shaders: false
+[37893.807110] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.dump_macros: false
+[37893.807111] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.disable_macro_jit: false
+[37893.807112] Config <Info> common/settings.cpp:137:LogSettings: -- Debugging.disable_macro_hle: false
+[37893.807113] Config <Info> common/settings.cpp:137:LogSettings: -- Miscellaneous.log_filter: *:Info
+[37893.807114] Config <Info> common/settings.cpp:137:LogSettings: -- Miscellaneous.flush_line: false
+[37893.807116] Config <Info> common/settings.cpp:137:LogSettings: -- Miscellaneous.censor_username: true
+[37893.807117] Config <Info> common/settings.cpp:137:LogSettings: -- Miscellaneous.first_launch: true
+[37893.807118] Config <Info> common/settings.cpp:137:LogSettings: -- Network.network_interface: 
+[37893.807119] Config <Info> common/settings.cpp:137:LogSettings: -- Network.airplane_mode: true
+[37893.807121] Config <Info> common/settings.cpp:137:LogSettings: -- WebService.web_api_url: api.ynet-fun.xyz
+[37893.807122] Config <Info> common/settings.cpp:137:LogSettings: -- WebService.eden_username: Eden
+[37893.807123] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.disable_wgi_xinput: false
+[37893.807132] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_raw_input: false
+[37893.807134] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.controller_navigation: true
+[37893.807135] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_joycon_driver: true
+[37893.807136] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_procon_driver: false
+[37893.807137] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.vibration_enabled: true
+[37893.807138] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_accurate_vibrations: false
+[37893.807139] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.motion_enabled: true
+[37893.807141] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.udp_input_servers: 127.0.0.1:26760
+[37893.807142] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_udp_controller: false
+[37893.807143] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.pause_tas_on_load: true
+[37893.807144] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.tas_enable: false
+[37893.807145] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.tas_loop: false
+[37893.807146] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.tas_show_recording_dialog: true
+[37893.807147] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning: false
+[37893.807149] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_sensitivity: 50
+[37893.807158] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_enabled: false
+[37893.807159] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_x_sensitivity: 50
+[37893.807160] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_y_sensitivity: 50
+[37893.807161] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_deadzone_counterweight: 20
+[37893.807162] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_decay_strength: 18
+[37893.807163] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.mouse_panning_min_decay: 6
+[37893.807165] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.emulate_analog_keyboard: false
+[37893.807167] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.keyboard_enabled: false
+[37893.807168] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.debug_pad_enabled: false
+[37893.807169] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.touch_device: min_x:100,min_y:50,max_x:1800,max_y:850
+[37893.807171] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.touch_from_button_map: 0
+[37893.807172] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_ring_controller: true
+[37893.807174] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.enable_ir_sensor: false
+[37893.807175] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.ir_sensor_device: auto
+[37893.807176] Config <Info> common/settings.cpp:137:LogSettings: -- Controls.random_amiibo_id: false
+[37893.807177] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.cabinet_applet_mode: LLE
+[37893.807187] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.controller_applet_mode: HLE
+[37893.807188] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.data_erase_applet_mode: HLE
+[37893.807190] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.error_applet_mode: LLE
+[37893.807191] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.net_connect_applet_mode: LLE
+[37893.807192] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.player_select_applet_mode: LLE
+[37893.807193] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.swkbd_applet_mode: HLE
+[37893.807195] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.mii_edit_applet_mode: LLE
+[37893.807196] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.web_applet_mode: HLE
+[37893.807208] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.shop_applet_mode: HLE
+[37893.807209] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.photo_viewer_applet_mode: LLE
+[37893.807210] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.offline_web_applet_mode: LLE
+[37893.807212] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.login_share_applet_mode: HLE
+[37893.807213] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.wifi_web_auth_applet_mode: HLE
+[37893.807215] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.my_page_applet_mode: LLE
+[37893.807216] Config <Info> common/settings.cpp:137:LogSettings: -- LibraryApplet.enable_overlay: false
+[37893.807218] Config <Info> common/settings.cpp:140:LogSettings: CacheDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/cache
+[37893.807220] Config <Info> common/settings.cpp:141:LogSettings: ConfigDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config
+[37893.807222] Config <Info> common/settings.cpp:142:LogSettings: LoadDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/load
+[37893.807228] Config <Info> common/settings.cpp:143:LogSettings: NANDDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/nand
+[37893.807230] Config <Info> common/settings.cpp:144:LogSettings: SaveDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/nand
+[37893.807231] Config <Info> common/settings.cpp:145:LogSettings: SDMCDir: /storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/sdmc
+[37893.856490] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[37893.857080] Loader <Info> core/loader/nca.cpp:102:Load: Read heap size 0x6e6f69 bytes from main.npdm
+[37893.857117] Loader <Info> core/file_sys/patch_manager.cpp:199:PatchExeFS: Patching ExeFS for title_id=0100000011D90000
+[37893.857686] Loader <Info> core/file_sys/patch_manager.cpp:327:PatchExeFS:     ExeFS: Update (v0.0.0) applied successfully
+[37893.857858] Loader <Info> core/file_sys/patch_manager.cpp:358:PatchExeFS:     ExeFS: LayeredExeFS patches applied successfully
+[37894.112247] HW.Memory <Info> common/heap_tracker.cpp:25:GetMaxPermissibleResidentMapCount: Current maximum map count: 65530
+[37894.181221] Loader <Info> core/file_sys/patch_manager.cpp:475:HasNSOPatch: Querying NSO patch existence for build_id=6F8B1226CC8CD958021D6BFD226EBF23F892AB9B, name=rtld
+[37894.436768] Loader <Info> core/file_sys/patch_manager.cpp:475:HasNSOPatch: Querying NSO patch existence for build_id=94CEAE325C205C4B9D6F7235552F28FD, name=main
+[37894.469916] Loader <Info> core/file_sys/patch_manager.cpp:475:HasNSOPatch: Querying NSO patch existence for build_id=507F19D1240D09D00992248E8A0FD77EBD784EB4, name=subsdk0
+[37894.512210] Loader <Info> core/file_sys/patch_manager.cpp:475:HasNSOPatch: Querying NSO patch existence for build_id=2D369D9999E3E10E665106F840FFFF9BDAA0BB8E, name=sdk
+[37894.514570] Loader <Info> core/loader/nca.cpp:121:Load: Set pointer buffer size to 0x8000 bytes for ProgramID 0x0100000011d90000 (Heap size: 0x6e6f69)
+[37894.514714] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[37894.516136] Loader <Info> core/loader/nca.cpp:128:Load: Control data for 0100000011D90000: name="Pokémon Brilliant Diamond" supported_languages=000070DD
+[37894.516843] Core <Info> core/core.cpp:351:Load: Loading Pokémon Brilliant Diamond (0100000011D90000) ...
+[37894.588750] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[37894.588778] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[37894.588782] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[37894.588836] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[37894.588839] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[37894.588842] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[37894.588909] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[37894.588948] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature transformFeedback
+[37894.588955] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[37894.588963] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature geometryShader
+[37894.588968] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature multiViewport
+[37894.588972] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[37894.588986] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[37894.588990] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature tessellationShader
+[37894.588997] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:446:RemoveExtensionFeatureIfUnsuitable: Removing features for unsuitable extension VK_EXT_depth_bias_control
+[37894.589008] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxViewports has to be 16 or greater but it is 1
+[37894.589016] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0
+[37894.589020] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1296:GetSuitability: Extended Dynamic State disabled by user setting, clearing all EDS features
+[37894.589023] Render.Vulkan <Warning> video_core/vulkan_common/vulkan_device.cpp:474:Device: Unsuitable driver - continuing anyways
+[37894.647389] Render.Vulkan <Error> video_core/renderer_vulkan/renderer_vulkan.cpp:195:RendererVulkan: Vulkan initialization failed with error: VK_ERROR_INVALID_EXTERNAL_HANDLE
+[37894.647680] HW.GPU <Error> video_core/video_core.cpp:63:CreateGPU: Failed to initialize GPU: Vulkan initialization error VK_ERROR_INVALID_EXTERNAL_HANDLE
+[37894.652084] Core <Critical> core/core.cpp:365:Load: Failed to initialize system (Error 5)!

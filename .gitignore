@@ -16,4 +16,5 @@ __pycache__/
 /encoder-coverage.json
 /trace-vulkan-*/
 /vulkan_draw
+/vulkan_android
 *.spv
