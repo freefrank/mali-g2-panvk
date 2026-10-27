@@ -26,6 +26,9 @@ void va_merge_flow(bi_context *ctx);
 void va_mark_last(bi_context *ctx);
 void va_gather_hsr_info(bi_context *ctx, struct pan_shader_info *info);
 uint64_t va_pack_instr(const bi_instr *I, unsigned arch);
+bool va_v15_encode_from_valhall(uint64_t word, uint64_t *out);
+unsigned va_v15_compute_preload_reg(unsigned reg);
+uint64_t va_v15_compute_preload_mask(uint64_t preload);
 
 static inline unsigned
 va_fau_page(enum bir_fau value)

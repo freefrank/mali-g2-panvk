@@ -4581,6 +4581,11 @@ bi_compile_variant(nir_shader *nir,
    /* A register is preloaded <==> it is live before the first block */
    bi_block *first_block = list_first_entry(&ctx->blocks, bi_block, link);
    uint64_t preload = first_block->reg_live_in;
+   if (ctx->arch == 15) {
+      if (preload)
+         ctx->info.work_reg_count = MAX2(ctx->info.work_reg_count, 64);
+      preload = va_v15_compute_preload_mask(preload);
+   }
 
    /* If multisampling is used with a blend shader, the blend shader needs
     * to access the sample coverage mask in r60 and the sample ID in r61.

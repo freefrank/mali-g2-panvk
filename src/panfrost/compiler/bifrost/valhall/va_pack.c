@@ -1204,10 +1204,54 @@ va_lower_blend(bi_context *ctx)
    }
 }
 
+unsigned
+va_v15_compute_preload_reg(unsigned reg)
+{
+   switch (reg) {
+   case 55: return 4;
+   case 56: return 3;
+   case 57: return 5;
+   case 58: return 6;
+   case 59: return 7;
+   case 60: return 0;
+   case 61: return 1;
+   case 62: return 2;
+   default: UNREACHABLE("Unsupported v15 compute preload");
+   }
+}
+
+uint64_t
+va_v15_compute_preload_mask(uint64_t preload)
+{
+   uint64_t mask = 0;
+   u_foreach_bit64(reg, preload)
+      mask |= BITFIELD64_BIT(va_v15_compute_preload_reg(reg));
+   return mask;
+}
+
 void
 bi_pack_valhall(bi_context *ctx, struct util_dynarray *emission)
 {
    unsigned orig_size = emission->size;
+   unsigned preload_instrs = 0;
+
+   if (ctx->arch == 15) {
+      if (ctx->stage != MESA_SHADER_COMPUTE && ctx->stage != MESA_SHADER_KERNEL)
+         UNREACHABLE("v15 graphics stage ABI is not implemented");
+
+      const bi_block *first = list_first_entry(&ctx->blocks, bi_block, link);
+      uint64_t preload = first->reg_live_in;
+      u_foreach_bit64(reg, preload) {
+         uint64_t encoded;
+         unsigned input = va_v15_compute_preload_reg(reg);
+         uint64_t move = UINT64_C(0x0091c00000000000) |
+                         ((uint64_t)reg << 40) | input;
+         if (!va_v15_encode_from_valhall(move, &encoded))
+            UNREACHABLE("Invalid v15 preload move");
+         util_dynarray_append(emission, encoded);
+         preload_instrs++;
+      }
+   }
 
    va_validate(stderr, ctx);
 
@@ -1216,7 +1260,7 @@ bi_pack_valhall(bi_context *ctx, struct util_dynarray *emission)
       va_lower_blend(ctx);
 
    bool has_pool = false;
-   unsigned num_instrs = 0;
+   unsigned num_instrs = preload_instrs;
 
    bi_foreach_block(ctx, block) {
       bi_foreach_instr_in_block(block, I) {
@@ -1230,7 +1274,7 @@ bi_pack_valhall(bi_context *ctx, struct util_dynarray *emission)
    if (has_pool) {
       assert(ctx->nir->constant_data_size);
 
-      unsigned idx = 0;
+      unsigned idx = preload_instrs;
       bi_foreach_block(ctx, block) {
          bi_foreach_instr_in_block(block, I) {
             if (I->patch_imm_const_offset)
@@ -1245,7 +1289,13 @@ bi_pack_valhall(bi_context *ctx, struct util_dynarray *emission)
          if (I->op == BI_OPCODE_BRANCHZ_I16)
             va_lower_branch_target(ctx, block, I);
 
-         uint64_t hex = va_pack_instr(I, ctx->arch);
+         uint64_t hex = va_pack_instr(I, MIN2(ctx->arch, 14));
+         if (ctx->arch == 15) {
+            uint64_t encoded;
+            if (!va_v15_encode_from_valhall(hex, &encoded))
+               invalid_instruction(I, "v15 encoding");
+            hex = encoded;
+         }
          util_dynarray_append(emission, hex);
       }
    }

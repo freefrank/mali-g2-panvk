@@ -25,6 +25,14 @@ idep_valhall_enums_h = declare_dependency(
   include_directories : include_directories('.'),
 )
 
+valhall_v15_encoder_c = custom_target(
+  'valhall_v15_encoder',
+  input : ['va_v15_encode.py', 'isa/isa-v9-v14.xml', 'isa/isa-v15.xml'],
+  output : 'va_v15_encoder.c',
+  command : [prog_python, '@INPUT0@', '@OUTPUT@'],
+  depend_files : files('va_v15_isa.py'),
+)
+
 if with_panfrost_disassemble
   valhall_disasm_c = custom_target(
     'valhall_disasm_c',
