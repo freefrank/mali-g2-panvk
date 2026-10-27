@@ -7,7 +7,7 @@
   "mesa_v15_codegen": "Integrated C backend: all 13 hardware tests pass (integers, float, branch, loop, nine compute preload cases)",
   "complete_vulkan_backend": "basic graphics and textures working; full emulator compatibility unverified",
   "eden_validated": false,
-  "driver_zip_built": false,
+  "driver_zip_built": true,
   "reference_archive": "https://deb.debian.org/debian/pool/main/m/mesa/mesa_26.2.5.orig.tar.xz",
   "reference_sha256": "794b3d1729075dae7ebd47c7283b7ca0cdb5dec668f7f11cc0a5d82f6138a0a5",
   "v15_register_map_validated": {
@@ -33,5 +33,6 @@
     "clip/cull distances",
     "non-solid fill modes"
   ],
-  "vertex_storage_atomics": "PASS: three vertex SSBO values 7,8,11 and atomic OR mask 7; enabled by commit be verified from git"
+  "vertex_storage_atomics": "PASS and enabled by 90d7de8",
+  "driver_zip_path": "/storage/emulated/0/Download/panvk-mali-g2-test1-90d7de8.zip"
 }
