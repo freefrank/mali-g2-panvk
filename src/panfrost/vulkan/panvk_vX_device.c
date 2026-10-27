@@ -44,6 +44,7 @@
 #include "util/os_file.h"
 #include "util/u_printf.h"
 #include "pan_props.h"
+#include "git_sha1.h"
 #include "panvk_g2_trace.h"
 #include "pan_samples.h"
 #include "poly/geometry.h"
@@ -592,7 +593,8 @@ panvk_per_arch(create_device)(struct panvk_physical_device *physical_device,
                               VkDevice *pDevice)
 {
    if (PAN_ARCH == 15)
-      panvk_g2_trace("device begin queues=%u", pCreateInfo->queueCreateInfoCount);
+      panvk_g2_trace("device begin build=%s queues=%u", MESA_GIT_SHA1,
+                     pCreateInfo->queueCreateInfoCount);
    struct panvk_instance *instance =
       to_panvk_instance(physical_device->vk.instance);
    VkResult result;
