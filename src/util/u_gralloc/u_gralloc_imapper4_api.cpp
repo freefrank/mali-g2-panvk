@@ -13,9 +13,12 @@
 #include <aidl/android/hardware/graphics/common/ExtendableType.h>
 #include <aidl/android/hardware/graphics/common/PlaneLayoutComponent.h>
 #include <aidl/android/hardware/graphics/common/PlaneLayoutComponentType.h>
+#include <android/hardware/graphics/mapper/IMapper.h>
 #include <gralloctypes/Gralloc4.h>
 #include <system/window.h>
 
+#include <dlfcn.h>
+#include <glob.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -37,16 +40,84 @@ using android::hardware::graphics::mapper::V4_0::IMapper;
 using MetadataType =
    android::hardware::graphics::mapper::V4_0::IMapper::MetadataType;
 
+struct gralloc4 {
+   struct u_gralloc base;
+   android::sp<IMapper> mapper;
+   AIMapper *mapper5 = nullptr;
+   void *mapper5_library = nullptr;
+   /* XCLIPSE: handles the mapper cannot describe go to the handle parsers instead. */
+   struct u_gralloc *fallback;
+};
+
+static AIMapper *
+LoadMapper5(void **library)
+{
+   void *support = dlopen("libvndksupport.so", RTLD_NOW | RTLD_LOCAL);
+   auto load_sphal = support ? reinterpret_cast<void *(*)(const char *, int)>(
+      dlsym(support, "android_load_sphal_library")) : nullptr;
+   const char *patterns[] = {
+#ifdef __LP64__
+      "/vendor/lib64/hw/mapper.*.so", "/odm/lib64/hw/mapper.*.so",
+#else
+      "/vendor/lib/hw/mapper.*.so", "/odm/lib/hw/mapper.*.so",
+#endif
+   };
+   AIMapper *mapper = nullptr;
+   for (const char *pattern : patterns) {
+      glob_t paths = {};
+      if (glob(pattern, 0, nullptr, &paths) != 0) {
+         globfree(&paths);
+         continue;
+      }
+      for (size_t i = 0; i < paths.gl_pathc && !mapper; i++) {
+         const char *path = paths.gl_pathv[i];
+         void *module = load_sphal ? load_sphal(path, RTLD_NOW | RTLD_LOCAL) : nullptr;
+         if (!module)
+            module = dlopen(path, RTLD_NOW | RTLD_LOCAL);
+         if (!module)
+            continue;
+         auto load = reinterpret_cast<decltype(&AIMapper_loadIMapper)>(
+            dlsym(module, "AIMapper_loadIMapper"));
+         AIMapper *candidate = nullptr;
+         if (load && load(&candidate) == AIMAPPER_ERROR_NONE && candidate &&
+             candidate->version >= AIMAPPER_VERSION_5) {
+            mapper = candidate;
+            *library = module;
+         } else {
+            dlclose(module);
+         }
+      }
+      globfree(&paths);
+      if (mapper)
+         break;
+   }
+   if (support)
+      dlclose(support);
+   return mapper;
+}
+
 static Error
-GetMetadata(android::sp<IMapper> mapper, const native_handle_t *buffer,
+GetMetadata(const gralloc4 *gr, const native_handle_t *buffer,
             MetadataType type, hidl_vec<uint8_t> *metadata)
 {
+   if (gr->mapper5) {
+      AIMapper_MetadataType token = {type.name.c_str(), type.value};
+      auto get = gr->mapper5->v5.getMetadata;
+      int32_t size = get(buffer, token, nullptr, 0);
+      if (size <= 0 || size > 1048576)
+         return Error::BAD_VALUE;
+      metadata->resize(size);
+      if (get(buffer, token, metadata->data(), metadata->size()) != size)
+         return Error::BAD_VALUE;
+      return Error::NONE;
+   }
+
    Error error = Error::NONE;
 
    auto native_handle = const_cast<native_handle_t *>(buffer);
 
    auto ret =
-      mapper->get(native_handle, type,
+      gr->mapper->get(native_handle, type,
                   [&](const auto &get_error, const auto &get_metadata) {
                      error = get_error;
                      *metadata = get_metadata;
@@ -59,11 +130,11 @@ GetMetadata(android::sp<IMapper> mapper, const native_handle_t *buffer,
 }
 
 static std::optional<std::vector<PlaneLayout>>
-GetPlaneLayouts(android::sp<IMapper> mapper, const native_handle_t *buffer)
+GetPlaneLayouts(const gralloc4 *gr, const native_handle_t *buffer)
 {
    hidl_vec<uint8_t> encoded_layouts;
 
-   Error error = GetMetadata(mapper, buffer,
+   Error error = GetMetadata(gr, buffer,
                              android::gralloc4::MetadataType_PlaneLayouts,
                              &encoded_layouts);
 
@@ -80,13 +151,6 @@ GetPlaneLayouts(android::sp<IMapper> mapper, const native_handle_t *buffer)
 
    return plane_layouts;
 }
-
-struct gralloc4 {
-   struct u_gralloc base;
-   android::sp<IMapper> mapper;
-   /* XCLIPSE: handles the mapper cannot describe go to the handle parsers instead. */
-   struct u_gralloc *fallback;
-};
 
 extern "C" {
 
@@ -106,14 +170,14 @@ mapper4_query_buffer_basic_info(struct u_gralloc *gralloc,
 {
    gralloc4 *gr4 = (gralloc4 *)gralloc;
 
-   if (gr4->mapper == nullptr)
+   if (gr4->mapper == nullptr && !gr4->mapper5)
       return -EINVAL;
 
    if (!hnd->handle)
       return -EINVAL;
 
    hidl_vec<uint8_t> encoded_format;
-   auto err = GetMetadata(gr4->mapper, hnd->handle,
+   auto err = GetMetadata(gr4, hnd->handle,
                           android::gralloc4::MetadataType_PixelFormatFourCC,
                           &encoded_format);
    if (err != Error::NONE)
@@ -129,7 +193,7 @@ mapper4_query_buffer_basic_info(struct u_gralloc *gralloc,
    uint64_t drm_modifier;
 
    hidl_vec<uint8_t> encoded_modifier;
-   err = GetMetadata(gr4->mapper, hnd->handle,
+   err = GetMetadata(gr4, hnd->handle,
                      android::gralloc4::MetadataType_PixelFormatModifier,
                      &encoded_modifier);
    if (err != Error::NONE)
@@ -143,7 +207,7 @@ mapper4_query_buffer_basic_info(struct u_gralloc *gralloc,
    uint64_t alloc_size;
 
    hidl_vec<uint8_t> encoded_alloc_size;
-   err = GetMetadata(gr4->mapper, hnd->handle,
+   err = GetMetadata(gr4, hnd->handle,
                      android::gralloc4::MetadataType_AllocationSize,
                      &encoded_alloc_size);
    if (err != Error::NONE)
@@ -157,7 +221,7 @@ mapper4_query_buffer_basic_info(struct u_gralloc *gralloc,
    uint64_t layer_count;
 
    hidl_vec<uint8_t> encoded_layer_count;
-   err = GetMetadata(gr4->mapper, hnd->handle,
+   err = GetMetadata(gr4, hnd->handle,
                      android::gralloc4::MetadataType_LayerCount,
                      &encoded_layer_count);
    if (err != Error::NONE)
@@ -173,13 +237,15 @@ mapper4_query_buffer_basic_info(struct u_gralloc *gralloc,
    out->alloc_size = alloc_size;
    out->layer_count = layer_count;
 
-   auto layouts_opt = GetPlaneLayouts(gr4->mapper, hnd->handle);
+   auto layouts_opt = GetPlaneLayouts(gr4, hnd->handle);
 
    if (!layouts_opt)
       return -EINVAL;
 
    std::vector<PlaneLayout> &layouts = *layouts_opt;
 
+   if (layouts.empty() || layouts.size() > ARRAY_SIZE(out->fds))
+      return -EINVAL;
    out->num_planes = layouts.size();
 
    int fd_index = 0;
@@ -261,7 +327,7 @@ mapper4_get_buffer_color_info(struct u_gralloc *gralloc,
    /* optional attributes */
    hidl_vec<uint8_t> encoded_chroma_siting;
    std::optional<ChromaSiting> chroma_siting;
-   auto err = GetMetadata(gr4->mapper, hnd->handle,
+   auto err = GetMetadata(gr4, hnd->handle,
                           android::gralloc4::MetadataType_ChromaSiting,
                           &encoded_chroma_siting);
    if (err == Error::NONE) {
@@ -276,7 +342,7 @@ mapper4_get_buffer_color_info(struct u_gralloc *gralloc,
    }
 
    hidl_vec<uint8_t> encoded_dataspace;
-   err = GetMetadata(gr4->mapper, hnd->handle,
+   err = GetMetadata(gr4, hnd->handle,
                      android::gralloc4::MetadataType_Dataspace,
                      &encoded_dataspace);
    if (err == Error::NONE) {
@@ -368,6 +434,8 @@ destroy(struct u_gralloc *gralloc)
    gralloc4 *gr = (struct gralloc4 *)gralloc;
    if (gr->fallback)
       gr->fallback->ops.destroy(gr->fallback);
+   if (gr->mapper5_library)
+      dlclose(gr->mapper5_library);
    delete gr;
 
    return 0;
@@ -376,19 +444,21 @@ destroy(struct u_gralloc *gralloc)
 struct u_gralloc *
 u_gralloc_imapper_api_create()
 {
-   auto mapper = IMapper::getService();
-   if (!mapper)
-      return NULL;
-
    auto gr = new gralloc4;
-   gr->mapper = mapper;
+   gr->mapper5 = LoadMapper5(&gr->mapper5_library);
+   if (!gr->mapper5)
+      gr->mapper = IMapper::getService();
+   if (!gr->mapper5 && !gr->mapper) {
+      delete gr;
+      return NULL;
+   }
    gr->fallback = u_gralloc_fallback_create();
    gr->base.ops.get_buffer_basic_info = mapper4_get_buffer_basic_info;
    gr->base.ops.get_buffer_color_info = mapper4_get_buffer_color_info;
    gr->base.ops.get_front_rendering_usage = mapper4_get_front_rendering_usage;
    gr->base.ops.destroy = destroy;
 
-   mesa_logi("Using IMapper v4 API");
+   mesa_logi("Using IMapper v%d API", gr->mapper5 ? 5 : 4);
 
    return &gr->base;
 }

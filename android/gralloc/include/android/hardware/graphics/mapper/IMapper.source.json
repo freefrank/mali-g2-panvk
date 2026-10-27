@@ -1,0 +1,7 @@
+{
+  "source": "https://android.googlesource.com/platform/hardware/interfaces/+/refs/heads/main/graphics/mapper/stable-c/include/android/hardware/graphics/mapper/IMapper.h",
+  "retrieved_utc": "2026-10-27",
+  "sha256": "6ceeb9954652cc7fd3988a1e0ecb474f9be75fb59699a12e5c5b839cdf210442",
+  "license": "Apache-2.0",
+  "modified": false
+}
