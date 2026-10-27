@@ -25,6 +25,7 @@ static int trace_fd = -1;
 static int trace_file_fd = -1;
 static atomic_size_t trace_file_bytes;
 static unsigned capture_first, capture_last;
+static bool capture_pipeline;
 
 static void
 init_trace(void)
@@ -33,8 +34,9 @@ init_trace(void)
       return;
 
    trace_fd = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC | SOCK_NONBLOCK, 0);
-   capture_first = debug_get_num_option("PANVK_G2_CAPTURE_FIRST", 1152);
-   capture_last = debug_get_num_option("PANVK_G2_CAPTURE_LAST", 1232);
+   capture_first = debug_get_num_option("PANVK_G2_CAPTURE_FIRST", 1);
+   capture_last = debug_get_num_option("PANVK_G2_CAPTURE_LAST", UINT32_MAX);
+   capture_pipeline = debug_get_bool_option("PANVK_G2_CAPTURE_PIPELINE", false);
    const char *path = debug_get_option(
       "PANVK_G2_TRACE_FILE",
       "/storage/emulated/0/Download/panvk-g2-driver-events.log");
@@ -110,7 +112,8 @@ panvk_g2_trace_shader(uint32_t id, uint32_t point, const nir_shader *nir,
 {
    int saved_errno = errno;
    pthread_once(&trace_once, init_trace);
-   if (trace_fd < 0 || id < capture_first || id > capture_last)
+   if (trace_fd < 0 || id < capture_first || id > capture_last ||
+       (!point && !capture_pipeline))
       goto out;
 
    struct pan_compile_inputs saved_inputs = {.arch = 15};
