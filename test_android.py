@@ -20,7 +20,8 @@ def main():
     env['MESA_LOG'] = 'file'
     env['MALI_G2_TEST_FRAMES'] = '30'
     for shader in ['triangle.vert', 'triangle.frag', 'texture.vert',
-                   'texture.frag', 'vertex_store.vert', 'fragcoord.frag']:
+                   'texture.frag', 'vertex_store.vert', 'fragcoord.frag',
+                   'drawid.vert', 'drawid.frag']:
         subprocess.run(['glslangValidator', '-V', str(ROOT / 'fixtures' / shader),
                         '-o', str(ROOT / (shader + '.spv'))], check=True,
                        stdout=subprocess.DEVNULL)
@@ -33,6 +34,7 @@ def main():
         ('vertex-store', 'vertex_store.vert', 'triangle.frag', 'vertex_store'),
         ('fragcoord', 'triangle.vert', 'fragcoord.frag', 'fragcoord'),
         ('fragcoord-clockwise', 'triangle.vert', 'fragcoord.frag', 'fragcoord'),
+        ('drawid', 'drawid.vert', 'drawid.frag', 'drawid'),
     ]:
         tests.append((name, 'vulkan_draw',
                       [str(ROOT / (vert + '.spv')), str(ROOT / (frag + '.spv')), mode],

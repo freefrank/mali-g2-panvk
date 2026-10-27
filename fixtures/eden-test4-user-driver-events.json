@@ -1,0 +1,225 @@
+{"ready_for_eden_test4": 1793108115.2485843, "zip": "panvk-mali-g2-test4-95230ac.zip"}
+{"received": 1793108937.9520159, "event": "PANVK_G2_V1 pid=18685 t=71497.755248 device begin build= (git-95230acfbe) queues=1"}
+{"received": 1793108937.952366, "event": "PANVK_G2_V1 pid=18685 t=71497.766969 device ready"}
+{"received": 1793108937.9524598, "event": "PANVK_G2_V1 pid=18685 t=71498.009867 compile begin id=1 count=1 stages=0x20"}
+{"received": 1793108937.9525259, "event": "PANVK_G2_V1 pid=18685 t=71498.187572 shader ready stage=5 regs=64 tls=528 fau=92 bytes=45952"}
+{"received": 1793108937.9527197, "event": "PANVK_G2_V1 pid=18685 t=71498.187952 compile end id=1 result=0"}
+{"received": 1793108937.9527614, "event": "PANVK_G2_V1 pid=18685 t=71498.189523 compile begin id=2 count=1 stages=0x20"}
+{"received": 1793108937.9529448, "event": "PANVK_G2_V1 pid=18685 t=71498.190912 shader ready stage=5 regs=64 tls=0 fau=11 bytes=896"}
+{"received": 1793108937.9530485, "event": "PANVK_G2_V1 pid=18685 t=71498.190992 compile end id=2 result=0"}
+{"received": 1793108937.9533505, "event": "PANVK_G2_V1 pid=18685 t=71498.191139 compile begin id=3 count=1 stages=0x20"}
+{"received": 1793108937.9536397, "event": "PANVK_G2_V1 pid=18685 t=71498.191405 shader ready stage=5 regs=64 tls=0 fau=9 bytes=256"}
+{"received": 1793108937.953836, "event": "PANVK_G2_V1 pid=18685 t=71498.191419 compile end id=3 result=0"}
+{"received": 1793108937.9539576, "event": "PANVK_G2_V1 pid=18685 t=71498.196219 compile begin id=4 count=1 stages=0x20"}
+{"received": 1793108937.9539883, "event": "PANVK_G2_V1 pid=18685 t=71498.208490 shader ready stage=5 regs=64 tls=0 fau=22 bytes=6784"}
+{"received": 1793108937.9540358, "event": "PANVK_G2_V1 pid=18685 t=71498.208618 compile end id=4 result=0"}
+{"received": 1793108937.9540787, "event": "PANVK_G2_V1 pid=18685 t=71498.209927 compile begin id=5 count=1 stages=0x20"}
+{"received": 1793108937.9541583, "event": "PANVK_G2_V1 pid=18685 t=71498.210231 shader ready stage=5 regs=32 tls=0 fau=5 bytes=384"}
+{"received": 1793108937.9541898, "event": "PANVK_G2_V1 pid=18685 t=71498.210241 compile end id=5 result=0"}
+{"received": 1793108937.9542513, "event": "PANVK_G2_V1 pid=18685 t=71500.930725 compile begin id=6 count=2 stages=0x11"}
+{"received": 1793108937.954326, "event": "PANVK_G2_V1 pid=18685 t=71500.934068 shader ready stage=0 regs=64 tls=0 fau=18 bytes=896"}
+{"received": 1793108937.9543757, "event": "PANVK_G2_V1 pid=18685 t=71500.936013 shader ready stage=4 regs=64 tls=0 fau=7 bytes=1152"}
+{"received": 1793108937.9544346, "event": "PANVK_G2_V1 pid=18685 t=71500.936088 compile end id=6 result=0"}
+{"received": 1793108937.9544604, "event": "PANVK_G2_V1 pid=18685 t=71500.960315 compile begin id=7 count=2 stages=0x11"}
+{"received": 1793108937.9544833, "event": "PANVK_G2_V1 pid=18685 t=71500.960791 compile begin id=8 count=2 stages=0x11"}
+{"received": 1793108937.9545481, "event": "PANVK_G2_V1 pid=18685 t=71500.961798 compile begin id=9 count=1 stages=0x20"}
+{"received": 1793108937.9546366, "event": "PANVK_G2_V1 pid=18685 t=71500.962256 shader ready stage=5 regs=64 tls=0 fau=18 bytes=512"}
+{"received": 1793108937.954666, "event": "PANVK_G2_V1 pid=18685 t=71500.962282 compile end id=9 result=0"}
+{"received": 1793108937.9546912, "event": "PANVK_G2_V1 pid=18685 t=71500.962580 compile begin id=10 count=1 stages=0x20"}
+{"received": 1793108937.9547145, "event": "PANVK_G2_V1 pid=18685 t=71500.962745 shader ready stage=0 regs=64 tls=0 fau=18 bytes=896"}
+{"received": 1793108937.954738, "event": "PANVK_G2_V1 pid=18685 t=71500.962773 shader ready stage=5 regs=64 tls=0 fau=10 bytes=256"}
+{"received": 1793108937.9547598, "event": "PANVK_G2_V1 pid=18685 t=71500.962794 compile end id=10 result=0"}
+{"received": 1793108937.954808, "event": "PANVK_G2_V1 pid=18685 t=71500.962803 shader ready stage=0 regs=64 tls=0 fau=18 bytes=896"}
+{"received": 1793108937.9548516, "event": "PANVK_G2_V1 pid=18685 t=71500.963033 compile begin id=11 count=2 stages=0x11"}
+{"received": 1793108937.9548821, "event": "PANVK_G2_V1 pid=18685 t=71500.963369 shader ready stage=0 regs=64 tls=0 fau=7 bytes=384"}
+{"received": 1793108937.9549272, "event": "PANVK_G2_V1 pid=18685 t=71500.963843 shader ready stage=4 regs=64 tls=0 fau=13 bytes=384"}
+{"received": 1793108937.954953, "event": "PANVK_G2_V1 pid=18685 t=71500.963857 compile end id=11 result=0"}
+{"received": 1793108937.9550035, "event": "PANVK_G2_V1 pid=18685 t=71500.963886 shader ready stage=4 regs=64 tls=0 fau=10 bytes=1408"}
+{"received": 1793108937.9551072, "event": "PANVK_G2_V1 pid=18685 t=71500.963914 compile end id=7 result=0"}
+{"received": 1793108937.9551592, "event": "PANVK_G2_V1 pid=18685 t=71500.964250 shader ready stage=4 regs=64 tls=0 fau=15 bytes=1536"}
+{"received": 1793108937.9551876, "event": "PANVK_G2_V1 pid=18685 t=71500.964340 compile end id=8 result=0"}
+{"received": 1793108937.9552114, "event": "PANVK_G2_V1 pid=18685 t=71500.964513 compile begin id=12 count=2 stages=0x11"}
+{"received": 1793108937.9552352, "event": "PANVK_G2_V1 pid=18685 t=71500.964517 compile begin id=13 count=2 stages=0x11"}
+{"received": 1793108937.9552584, "event": "PANVK_G2_V1 pid=18685 t=71500.964865 shader ready stage=0 regs=64 tls=0 fau=7 bytes=384"}
+{"received": 1793108937.9553065, "event": "PANVK_G2_V1 pid=18685 t=71500.964882 compile begin id=14 count=2 stages=0x11"}
+{"received": 1793108937.9553633, "event": "PANVK_G2_V1 pid=18685 t=71500.965177 shader ready stage=4 regs=64 tls=0 fau=13 bytes=384"}
+{"received": 1793108937.955392, "event": "PANVK_G2_V1 pid=18685 t=71500.965190 compile end id=13 result=0"}
+{"received": 1793108937.955432, "event": "PANVK_G2_V1 pid=18685 t=71500.965579 shader ready stage=0 regs=64 tls=0 fau=21 bytes=1024"}
+{"received": 1793108937.9555056, "event": "PANVK_G2_V1 pid=18685 t=71500.965756 shader ready stage=0 regs=64 tls=0 fau=17 bytes=640"}
+{"received": 1793108937.955538, "event": "PANVK_G2_V1 pid=18685 t=71500.965830 shader ready stage=4 regs=64 tls=0 fau=9 bytes=256"}
+{"received": 1793108937.955617, "event": "PANVK_G2_V1 pid=18685 t=71500.965854 compile end id=12 result=0"}
+{"received": 1793108937.9556723, "event": "PANVK_G2_V1 pid=18685 t=71500.966180 shader ready stage=4 regs=64 tls=0 fau=9 bytes=384"}
+{"received": 1793108937.955731, "event": "PANVK_G2_V1 pid=18685 t=71500.966205 compile end id=14 result=0"}
+{"received": 1793108937.9557655, "event": "PANVK_G2_V1 pid=18685 t=71500.967051 compile begin id=15 count=2 stages=0x11"}
+{"received": 1793108937.9557917, "event": "PANVK_G2_V1 pid=18685 t=71500.967303 compile begin id=16 count=2 stages=0x11"}
+{"received": 1793108937.955816, "event": "PANVK_G2_V1 pid=18685 t=71500.968453 shader ready stage=0 regs=64 tls=0 fau=24 bytes=1152"}
+{"received": 1793108937.95584, "event": "PANVK_G2_V1 pid=18685 t=71500.968738 shader ready stage=0 regs=64 tls=0 fau=21 bytes=1024"}
+{"received": 1793108937.9558647, "event": "PANVK_G2_V1 pid=18685 t=71500.968871 shader ready stage=4 regs=64 tls=0 fau=6 bytes=128"}
+{"received": 1793108937.9558876, "event": "PANVK_G2_V1 pid=18685 t=71500.968887 compile end id=16 result=0"}
+{"received": 1793108937.9559104, "event": "PANVK_G2_V1 pid=18685 t=71500.969465 compile begin id=17 count=2 stages=0x11"}
+{"received": 1793108937.9559333, "event": "PANVK_G2_V1 pid=18685 t=71500.969572 shader ready stage=4 regs=64 tls=0 fau=18 bytes=1152"}
+{"received": 1793108937.9559562, "event": "PANVK_G2_V1 pid=18685 t=71500.969609 compile end id=15 result=0"}
+{"received": 1793108937.9559808, "event": "PANVK_G2_V1 pid=18685 t=71500.970616 shader ready stage=0 regs=64 tls=0 fau=21 bytes=1024"}
+{"received": 1793108937.9560049, "event": "PANVK_G2_V1 pid=18685 t=71500.970750 shader ready stage=4 regs=64 tls=0 fau=6 bytes=128"}
+{"received": 1793108937.9560275, "event": "PANVK_G2_V1 pid=18685 t=71500.970763 compile end id=17 result=0"}
+{"received": 1793108937.9560504, "event": "PANVK_G2_V1 pid=18685 t=71500.971629 compile begin id=18 count=2 stages=0x11"}
+{"received": 1793108937.9560733, "event": "PANVK_G2_V1 pid=18685 t=71500.974777 shader ready stage=0 regs=64 tls=0 fau=31 bytes=2176"}
+{"received": 1793108937.9560957, "event": "PANVK_G2_V1 pid=18685 t=71500.975535 compile begin id=19 count=2 stages=0x11"}
+{"received": 1793108937.9561257, "event": "PANVK_G2_V1 pid=18685 t=71500.976526 shader ready stage=4 regs=64 tls=0 fau=25 bytes=2048"}
+{"received": 1793108937.9561481, "event": "PANVK_G2_V1 pid=18685 t=71500.976573 compile end id=18 result=0"}
+{"received": 1793108937.9561808, "event": "PANVK_G2_V1 pid=18685 t=71500.979892 shader ready stage=0 regs=64 tls=0 fau=34 bytes=2560"}
+{"received": 1793108937.9562302, "event": "PANVK_G2_V1 pid=18685 t=71500.979969 compile begin id=20 count=2 stages=0x11"}
+{"received": 1793108937.9562583, "event": "PANVK_G2_V1 pid=18685 t=71500.983291 shader ready stage=0 regs=64 tls=0 fau=35 bytes=2816"}
+{"received": 1793108937.9562829, "event": "PANVK_G2_V1 pid=18685 t=71500.985547 shader ready stage=4 regs=64 tls=0 fau=41 bytes=4480"}
+{"received": 1793108937.9563062, "event": "PANVK_G2_V1 pid=18685 t=71500.985590 compile end id=19 result=0"}
+{"received": 1793108937.9563303, "event": "PANVK_G2_V1 pid=18685 t=71500.988422 shader ready stage=4 regs=64 tls=0 fau=42 bytes=4480"}
+{"received": 1793108937.9563532, "event": "PANVK_G2_V1 pid=18685 t=71500.988465 compile end id=20 result=0"}
+{"received": 1793108937.956376, "event": "PANVK_G2_V1 pid=18685 t=71500.989235 compile begin id=21 count=2 stages=0x11"}
+{"received": 1793108937.9563975, "event": "PANVK_G2_V1 pid=18685 t=71500.991717 shader ready stage=0 regs=64 tls=0 fau=34 bytes=2560"}
+{"received": 1793108937.9564283, "event": "PANVK_G2_V1 pid=18685 t=71500.992084 compile begin id=22 count=2 stages=0x11"}
+{"received": 1793108937.9564598, "event": "PANVK_G2_V1 pid=18685 t=71500.994764 shader ready stage=0 regs=64 tls=0 fau=35 bytes=2816"}
+{"received": 1793108937.956625, "event": "PANVK_G2_V1 pid=18685 t=71500.999739 shader ready stage=4 regs=64 tls=0 fau=47 bytes=6528"}
+{"received": 1793108937.9566762, "event": "PANVK_G2_V1 pid=18685 t=71500.999790 compile end id=21 result=0"}
+{"received": 1793108937.9567428, "event": "PANVK_G2_V1 pid=18685 t=71501.000296 compile begin id=23 count=2 stages=0x11"}
+{"received": 1793108937.9567776, "event": "PANVK_G2_V1 pid=18685 t=71501.001471 shader ready stage=0 regs=64 tls=0 fau=20 bytes=1408"}
+{"received": 1793108937.9568028, "event": "PANVK_G2_V1 pid=18685 t=71501.001552 shader ready stage=4 regs=64 tls=0 fau=6 bytes=128"}
+{"received": 1793108937.9568827, "event": "PANVK_G2_V1 pid=18685 t=71501.001561 compile end id=23 result=0"}
+{"received": 1793108937.9569104, "event": "PANVK_G2_V1 pid=18685 t=71501.001960 compile begin id=24 count=2 stages=0x11"}
+{"received": 1793108937.956929, "event": "PANVK_G2_V1 pid=18685 t=71501.002310 shader ready stage=4 regs=64 tls=0 fau=48 bytes=6656"}
+{"received": 1793108937.956966, "event": "PANVK_G2_V1 pid=18685 t=71501.002376 compile end id=22 result=0"}
+{"received": 1793108937.9569955, "event": "PANVK_G2_V1 pid=18685 t=71501.002848 compile begin id=25 count=2 stages=0x11"}
+{"received": 1793108937.9570315, "event": "PANVK_G2_V1 pid=18685 t=71501.003060 shader ready stage=0 regs=64 tls=0 fau=20 bytes=1408"}
+{"received": 1793108937.957078, "event": "PANVK_G2_V1 pid=18685 t=71501.003141 shader ready stage=4 regs=64 tls=0 fau=6 bytes=128"}
+{"received": 1793108937.9571311, "event": "PANVK_G2_V1 pid=18685 t=71501.003151 compile end id=24 result=0"}
+{"received": 1793108937.9571512, "event": "PANVK_G2_V1 pid=18685 t=71501.003569 compile begin id=26 count=2 stages=0x11"}
+{"received": 1793108937.9571686, "event": "PANVK_G2_V1 pid=18685 t=71501.003866 shader ready stage=0 regs=64 tls=0 fau=25 bytes=1024"}
+{"received": 1793108937.9572055, "event": "PANVK_G2_V1 pid=18685 t=71501.003958 shader ready stage=4 regs=64 tls=0 fau=6 bytes=128"}
+{"received": 1793108937.9572387, "event": "PANVK_G2_V1 pid=18685 t=71501.003968 compile end id=25 result=0"}
+{"received": 1793108937.9572797, "event": "PANVK_G2_V1 pid=18685 t=71501.004343 compile begin id=27 count=2 stages=0x11"}
+{"received": 1793108937.9573116, "event": "PANVK_G2_V1 pid=18685 t=71501.004374 shader ready stage=0 regs=64 tls=0 fau=8 bytes=1024"}
+{"received": 1793108937.9573324, "event": "PANVK_G2_V1 pid=18685 t=71501.004638 shader ready stage=4 regs=64 tls=0 fau=9 bytes=512"}
+{"received": 1793108937.9573946, "event": "PANVK_G2_V1 pid=18685 t=71501.004650 compile end id=26 result=0"}
+{"received": 1793108937.9575074, "event": "PANVK_G2_V1 pid=18685 t=71501.004784 compile begin id=28 count=2 stages=0x11"}
+{"received": 1793108937.9575644, "event": "PANVK_G2_V1 pid=18685 t=71501.005063 shader ready stage=0 regs=64 tls=0 fau=18 bytes=896"}
+{"received": 1793108937.9576132, "event": "PANVK_G2_V1 pid=18685 t=71501.005221 shader ready stage=4 regs=64 tls=0 fau=8 bytes=256"}
+{"received": 1793108937.95764, "event": "PANVK_G2_V1 pid=18685 t=71501.005231 compile end id=27 result=0"}
+{"received": 1793108937.9576643, "event": "PANVK_G2_V1 pid=18685 t=71501.005391 compile begin id=29 count=2 stages=0x11"}
+{"received": 1793108937.9576874, "event": "PANVK_G2_V1 pid=18685 t=71501.005510 shader ready stage=0 regs=64 tls=0 fau=18 bytes=896"}
+{"received": 1793108937.9577105, "event": "PANVK_G2_V1 pid=18685 t=71501.005698 shader ready stage=4 regs=64 tls=0 fau=7 bytes=256"}
+{"received": 1793108937.9577332, "event": "PANVK_G2_V1 pid=18685 t=71501.005710 compile end id=28 result=0"}
+{"received": 1793108937.9577572, "event": "PANVK_G2_V1 pid=18685 t=71501.005884 compile begin id=30 count=2 stages=0x11"}
+{"received": 1793108937.9577796, "event": "PANVK_G2_V1 pid=18685 t=71501.006076 shader ready stage=0 regs=64 tls=0 fau=18 bytes=896"}
+{"received": 1793108937.957803, "event": "PANVK_G2_V1 pid=18685 t=71501.006295 shader ready stage=4 regs=64 tls=0 fau=9 bytes=384"}
+{"received": 1793108937.9578254, "event": "PANVK_G2_V1 pid=18685 t=71501.006305 compile end id=29 result=0"}
+{"received": 1793108937.957847, "event": "PANVK_G2_V1 pid=18685 t=71501.006570 shader ready stage=0 regs=64 tls=0 fau=18 bytes=896"}
+{"received": 1793108937.957869, "event": "PANVK_G2_V1 pid=18685 t=71501.006831 shader ready stage=4 regs=64 tls=0 fau=7 bytes=384"}
+{"received": 1793108937.9578912, "event": "PANVK_G2_V1 pid=18685 t=71501.006843 compile end id=30 result=0"}
+{"received": 1793108937.957915, "event": "PANVK_G2_V1 pid=18685 t=71501.007036 compile begin id=31 count=1 stages=0x20"}
+{"received": 1793108937.9579377, "event": "PANVK_G2_V1 pid=18685 t=71501.007087 compile begin id=32 count=2 stages=0x11"}
+{"received": 1793108937.95796, "event": "PANVK_G2_V1 pid=18685 t=71501.007384 shader ready stage=5 regs=64 tls=0 fau=18 bytes=512"}
+{"received": 1793108937.9579825, "event": "PANVK_G2_V1 pid=18685 t=71501.007400 compile end id=31 result=0"}
+{"received": 1793108937.9580286, "event": "PANVK_G2_V1 pid=18685 t=71501.007855 compile begin id=33 count=2 stages=0x11"}
+{"received": 1793108937.9580805, "event": "PANVK_G2_V1 pid=18685 t=71501.008058 shader ready stage=0 regs=64 tls=0 fau=21 bytes=1152"}
+{"received": 1793108937.958108, "event": "PANVK_G2_V1 pid=18685 t=71501.008696 shader ready stage=4 regs=64 tls=0 fau=24 bytes=896"}
+{"received": 1793108937.9581451, "event": "PANVK_G2_V1 pid=18685 t=71501.008712 compile end id=32 result=0"}
+{"received": 1793108937.9581676, "event": "PANVK_G2_V1 pid=18685 t=71501.009386 shader ready stage=0 regs=64 tls=0 fau=10 bytes=1920"}
+{"received": 1793108937.9582055, "event": "PANVK_G2_V1 pid=18685 t=71501.009613 compile begin id=34 count=2 stages=0x11"}
+{"received": 1793108937.95826, "event": "PANVK_G2_V1 pid=18685 t=71501.010017 shader ready stage=4 regs=64 tls=0 fau=24 bytes=896"}
+{"received": 1793108937.9582887, "event": "PANVK_G2_V1 pid=18685 t=71501.010038 compile end id=33 result=0"}
+{"received": 1793108937.95833, "event": "PANVK_G2_V1 pid=18685 t=71501.010636 shader ready stage=0 regs=64 tls=0 fau=10 bytes=1280"}
+{"received": 1793108937.958355, "event": "PANVK_G2_V1 pid=18685 t=71501.011458 shader ready stage=4 regs=64 tls=0 fau=32 bytes=1152"}
+{"received": 1793108937.958379, "event": "PANVK_G2_V1 pid=18685 t=71501.011473 compile end id=34 result=0"}
+{"received": 1793108937.9584033, "event": "PANVK_G2_V1 pid=18685 t=71501.011655 compile begin id=35 count=2 stages=0x11"}
+{"received": 1793108937.958428, "event": "PANVK_G2_V1 pid=18685 t=71501.012321 compile begin id=36 count=2 stages=0x11"}
+{"received": 1793108937.958514, "event": "PANVK_G2_V1 pid=18685 t=71501.013007 shader ready stage=0 regs=64 tls=0 fau=11 bytes=1664"}
+{"received": 1793108937.9585395, "event": "PANVK_G2_V1 pid=18685 t=71501.014549 shader ready stage=0 regs=64 tls=0 fau=41 bytes=2432"}
+{"received": 1793108937.9585633, "event": "PANVK_G2_V1 pid=18685 t=71501.014756 shader ready stage=4 regs=64 tls=0 fau=12 bytes=2432"}
+{"received": 1793108937.9585872, "event": "PANVK_G2_V1 pid=18685 t=71501.014789 compile end id=35 result=0"}
+{"received": 1793108937.9586089, "event": "PANVK_G2_V1 pid=18685 t=71501.015329 shader ready stage=4 regs=64 tls=0 fau=24 bytes=896"}
+{"received": 1793108937.9588037, "event": "PANVK_G2_V1 pid=18685 t=71501.015357 compile end id=36 result=0"}
+{"received": 1793108937.9589345, "event": "PANVK_G2_V1 pid=18685 t=71501.015586 compile begin id=37 count=2 stages=0x11"}
+{"received": 1793108937.9589932, "event": "PANVK_G2_V1 pid=18685 t=71501.016312 compile begin id=38 count=2 stages=0x11"}
+{"received": 1793108937.9590259, "event": "PANVK_G2_V1 pid=18685 t=71501.017548 shader ready stage=0 regs=64 tls=0 fau=7 bytes=1536"}
+{"received": 1793108937.9590445, "event": "PANVK_G2_V1 pid=18685 t=71501.017853 shader ready stage=0 regs=64 tls=0 fau=38 bytes=2176"}
+{"received": 1793108937.9590607, "event": "PANVK_G2_V1 pid=18685 t=71501.018139 shader ready stage=4 regs=64 tls=0 fau=24 bytes=896"}
+{"received": 1793108937.9590766, "event": "PANVK_G2_V1 pid=18685 t=71501.018258 compile end id=38 result=0"}
+{"received": 1793108937.9590926, "event": "PANVK_G2_V1 pid=18685 t=71501.019471 shader ready stage=4 regs=64 tls=0 fau=12 bytes=2432"}
+{"received": 1793108937.959109, "event": "PANVK_G2_V1 pid=18685 t=71501.019498 compile end id=37 result=0"}
+{"received": 1793108937.959135, "event": "PANVK_G2_V1 pid=18685 t=71501.019900 compile begin id=39 count=2 stages=0x11"}
+{"received": 1793108937.959151, "event": "PANVK_G2_V1 pid=18685 t=71501.020493 compile begin id=40 count=2 stages=0x11"}
+{"received": 1793108937.9591682, "event": "PANVK_G2_V1 pid=18685 t=71501.021582 shader ready stage=0 regs=64 tls=0 fau=21 bytes=2048"}
+{"received": 1793108937.9591844, "event": "PANVK_G2_V1 pid=18685 t=71501.021773 shader ready stage=0 regs=64 tls=0 fau=18 bytes=1536"}
+{"received": 1793108937.9592006, "event": "PANVK_G2_V1 pid=18685 t=71501.022623 shader ready stage=4 regs=64 tls=0 fau=32 bytes=1152"}
+{"received": 1793108937.959217, "event": "PANVK_G2_V1 pid=18685 t=71501.022644 compile end id=40 result=0"}
+{"received": 1793108937.9592457, "event": "PANVK_G2_V1 pid=18685 t=71501.023337 shader ready stage=4 regs=64 tls=0 fau=36 bytes=2560"}
+{"received": 1793108937.9593, "event": "PANVK_G2_V1 pid=18685 t=71501.023362 compile end id=39 result=0"}
+{"received": 1793108937.959325, "event": "PANVK_G2_V1 pid=18685 t=71501.024376 compile begin id=41 count=2 stages=0x11"}
+{"received": 1793108937.9593425, "event": "PANVK_G2_V1 pid=18685 t=71501.024520 compile begin id=42 count=2 stages=0x11"}
+{"received": 1793108937.9593594, "event": "PANVK_G2_V1 pid=18685 t=71501.026192 shader ready stage=0 regs=64 tls=0 fau=17 bytes=2176"}
+{"received": 1793108937.959533, "event": "PANVK_G2_V1 pid=18685 t=71501.027173 shader ready stage=0 regs=64 tls=0 fau=32 bytes=2816"}
+{"received": 1793108937.9595714, "event": "PANVK_G2_V1 pid=18685 t=71501.028583 shader ready stage=4 regs=64 tls=0 fau=28 bytes=2944"}
+{"received": 1793108937.9595919, "event": "PANVK_G2_V1 pid=18685 t=71501.028681 compile end id=42 result=0"}
+{"received": 1793108937.9596105, "event": "PANVK_G2_V1 pid=18685 t=71501.029034 shader ready stage=4 regs=64 tls=0 fau=36 bytes=2560"}
+{"received": 1793108937.9597127, "event": "PANVK_G2_V1 pid=18685 t=71501.029065 compile end id=41 result=0"}
+{"received": 1793108937.9597692, "event": "PANVK_G2_V1 pid=18685 t=71501.029816 compile begin id=43 count=2 stages=0x11"}
+{"received": 1793108937.9600003, "event": "PANVK_G2_V1 pid=18685 t=71501.030051 compile begin id=44 count=2 stages=0x11"}
+{"received": 1793108937.960067, "event": "PANVK_G2_V1 pid=18685 t=71501.031167 shader ready stage=0 regs=64 tls=0 fau=25 bytes=1408"}
+{"received": 1793108937.9601247, "event": "PANVK_G2_V1 pid=18685 t=71501.031950 shader ready stage=4 regs=64 tls=0 fau=27 bytes=1152"}
+{"received": 1793108937.9603434, "event": "PANVK_G2_V1 pid=18685 t=71501.031967 compile end id=44 result=0"}
+{"received": 1793108937.9605625, "event": "PANVK_G2_V1 pid=18685 t=71501.032307 compile begin id=45 count=2 stages=0x11"}
+{"received": 1793108937.9608371, "event": "PANVK_G2_V1 pid=18685 t=71501.032733 shader ready stage=0 regs=64 tls=0 fau=33 bytes=2816"}
+{"received": 1793108937.9609404, "event": "PANVK_G2_V1 pid=18685 t=71501.033196 shader ready stage=0 regs=64 tls=0 fau=21 bytes=1152"}
+{"received": 1793108937.9609864, "event": "PANVK_G2_V1 pid=18685 t=71501.033794 shader ready stage=4 regs=64 tls=0 fau=24 bytes=896"}
+{"received": 1793108937.961019, "event": "PANVK_G2_V1 pid=18685 t=71501.033810 compile end id=45 result=0"}
+{"received": 1793108937.9611917, "event": "PANVK_G2_V1 pid=18685 t=71501.034901 compile begin id=46 count=2 stages=0x11"}
+{"received": 1793108937.9612665, "event": "PANVK_G2_V1 pid=18685 t=71501.035070 shader ready stage=4 regs=64 tls=0 fau=28 bytes=2944"}
+{"received": 1793108937.9612877, "event": "PANVK_G2_V1 pid=18685 t=71501.035142 compile end id=43 result=0"}
+{"received": 1793108937.9613218, "event": "PANVK_G2_V1 pid=18685 t=71501.035481 compile begin id=47 count=1 stages=0x20"}
+{"received": 1793108937.9613366, "event": "PANVK_G2_V1 pid=18685 t=71501.035805 compile begin id=48 count=2 stages=0x11"}
+{"received": 1793108937.9613519, "event": "PANVK_G2_V1 pid=18685 t=71501.036099 shader ready stage=0 regs=64 tls=0 fau=25 bytes=1408"}
+{"received": 1793108937.9613695, "event": "PANVK_G2_V1 pid=18685 t=71501.036051 shader ready stage=5 regs=64 tls=0 fau=18 bytes=384"}
+{"received": 1793108937.9614017, "event": "PANVK_G2_V1 pid=18685 t=71501.036133 compile end id=47 result=0"}
+{"received": 1793108937.9614165, "event": "PANVK_G2_V1 pid=18685 t=71501.037059 shader ready stage=0 regs=64 tls=0 fau=25 bytes=1408"}
+{"received": 1793108937.9614348, "event": "PANVK_G2_V1 pid=18685 t=71501.037079 shader ready stage=4 regs=64 tls=0 fau=31 bytes=1280"}
+{"received": 1793108937.961452, "event": "PANVK_G2_V1 pid=18685 t=71501.037216 compile end id=46 result=0"}
+{"received": 1793108937.961727, "event": "PANVK_G2_V1 pid=18685 t=71501.037421 compile begin id=49 count=1 stages=0x20"}
+{"received": 1793108937.9631217, "event": "PANVK_G2_V1 pid=18685 t=71501.037786 shader ready stage=5 regs=64 tls=0 fau=18 bytes=512"}
+{"received": 1793108937.9632022, "event": "PANVK_G2_V1 pid=18685 t=71501.037802 compile end id=49 result=0"}
+{"received": 1793108937.9632359, "event": "PANVK_G2_V1 pid=18685 t=71501.038008 shader ready stage=4 regs=64 tls=0 fau=29 bytes=1280"}
+{"received": 1793108937.9633024, "event": "PANVK_G2_V1 pid=18685 t=71501.038032 compile end id=48 result=0"}
+{"received": 1793108937.9634082, "event": "PANVK_G2_V1 pid=18685 t=71501.038154 compile begin id=50 count=2 stages=0x11"}
+{"received": 1793108937.9635084, "event": "PANVK_G2_V1 pid=18685 t=71501.038391 compile begin id=51 count=2 stages=0x11"}
+{"received": 1793108937.963564, "event": "PANVK_G2_V1 pid=18685 t=71501.039181 shader ready stage=0 regs=64 tls=0 fau=20 bytes=1024"}
+{"received": 1793108937.9635978, "event": "PANVK_G2_V1 pid=18685 t=71501.039292 shader ready stage=4 regs=64 tls=0 fau=6 bytes=128"}
+{"received": 1793108937.9636261, "event": "PANVK_G2_V1 pid=18685 t=71501.039287 shader ready stage=0 regs=64 tls=0 fau=25 bytes=1280"}
+{"received": 1793108937.9638648, "event": "PANVK_G2_V1 pid=18685 t=71501.039303 compile end id=51 result=0"}
+{"received": 1793108937.9639316, "event": "PANVK_G2_V1 pid=18685 t=71501.039668 compile begin id=52 count=2 stages=0x11"}
+{"received": 1793108937.9639845, "event": "PANVK_G2_V1 pid=18685 t=71501.040040 shader ready stage=4 regs=64 tls=0 fau=31 bytes=1152"}
+{"received": 1793108937.964026, "event": "PANVK_G2_V1 pid=18685 t=71501.040059 compile end id=50 result=0"}
+{"received": 1793108937.9641223, "event": "PANVK_G2_V1 pid=18685 t=71501.040693 compile begin id=53 count=2 stages=0x11"}
+{"received": 1793108937.9642084, "event": "PANVK_G2_V1 pid=18685 t=71501.040737 shader ready stage=0 regs=64 tls=0 fau=7 bytes=1408"}
+{"received": 1793108937.9642427, "event": "PANVK_G2_V1 pid=18685 t=71501.040846 shader ready stage=4 regs=64 tls=0 fau=6 bytes=128"}
+{"received": 1793108937.964708, "event": "PANVK_G2_V1 pid=18685 t=71501.040857 compile end id=52 result=0"}
+{"received": 1793108937.9649732, "event": "PANVK_G2_V1 pid=18685 t=71501.040983 compile begin id=54 count=2 stages=0x11"}
+{"received": 1793108937.9656126, "event": "PANVK_G2_V1 pid=18685 t=71501.042187 shader ready stage=0 regs=64 tls=0 fau=33 bytes=1920"}
+{"received": 1793108937.9657772, "event": "PANVK_G2_V1 pid=18685 t=71501.042434 shader ready stage=4 regs=64 tls=0 fau=9 bytes=384"}
+{"received": 1793108937.965847, "event": "PANVK_G2_V1 pid=18685 t=71501.042470 shader ready stage=0 regs=64 tls=0 fau=33 bytes=1920"}
+{"received": 1793108937.9659002, "event": "PANVK_G2_V1 pid=18685 t=71501.042496 compile end id=53 result=0"}
+{"received": 1793108937.966224, "event": "PANVK_G2_V1 pid=18685 t=71501.042849 shader ready stage=4 regs=64 tls=0 fau=9 bytes=256"}
+{"received": 1793108937.9662828, "event": "PANVK_G2_V1 pid=18685 t=71501.042869 compile end id=54 result=0"}
+{"received": 1793108937.966332, "event": "PANVK_G2_V1 pid=18685 t=71501.043358 compile begin id=55 count=2 stages=0x11"}
+{"received": 1793108937.9663632, "event": "PANVK_G2_V1 pid=18685 t=71501.043713 compile begin id=56 count=2 stages=0x11"}
+{"received": 1793108937.9664483, "event": "PANVK_G2_V1 pid=18685 t=71501.045162 shader ready stage=0 regs=64 tls=0 fau=11 bytes=2304"}
+{"received": 1793108937.9671483, "event": "PANVK_G2_V1 pid=18685 t=71501.045427 shader ready stage=4 regs=64 tls=0 fau=9 bytes=384"}
+{"received": 1793108937.9672186, "event": "PANVK_G2_V1 pid=18685 t=71501.045474 compile end id=55 result=0"}
+{"received": 1793108937.967253, "event": "PANVK_G2_V1 pid=18685 t=71501.045622 compile begin id=57 count=2 stages=0x11"}
+{"received": 1793108937.967324, "event": "PANVK_G2_V1 pid=18685 t=71501.045799 shader ready stage=0 regs=64 tls=0 fau=8 bytes=2688"}
+{"received": 1793108937.9673557, "event": "PANVK_G2_V1 pid=18685 t=71501.046039 shader ready stage=4 regs=64 tls=0 fau=9 bytes=384"}
+{"received": 1793108937.9673936, "event": "PANVK_G2_V1 pid=18685 t=71501.046053 compile end id=56 result=0"}
+{"received": 1793108937.9674203, "event": "PANVK_G2_V1 pid=18685 t=71501.046191 compile begin id=58 count=2 stages=0x11"}
+{"received": 1793108937.9674475, "event": "PANVK_G2_V1 pid=18685 t=71501.047362 shader ready stage=0 regs=64 tls=0 fau=11 bytes=2304"}
+{"received": 1793108937.9675024, "event": "PANVK_G2_V1 pid=18685 t=71501.047567 shader ready stage=4 regs=64 tls=0 fau=9 bytes=256"}
+{"received": 1793108937.9676368, "event": "PANVK_G2_V1 pid=18685 t=71501.047579 compile end id=57 result=0"}
+{"received": 1793108937.9676948, "event": "PANVK_G2_V1 pid=18685 t=71501.048040 compile begin id=59 count=2 stages=0x11"}
+{"received": 1793108937.9677496, "event": "PANVK_G2_V1 pid=18685 t=71501.048225 shader ready stage=0 regs=64 tls=0 fau=8 bytes=2688"}
+{"received": 1793108937.9678605, "event": "PANVK_G2_V1 pid=18685 t=71501.048438 shader ready stage=4 regs=64 tls=0 fau=9 bytes=256"}

@@ -13,12 +13,15 @@ def main():
     parser.add_argument('--seconds', type=int, default=3600)
     args = parser.parse_args()
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 33554432)
     sock.bind(('127.0.0.1', 28643))
     sock.settimeout(1)
     deadline = time.monotonic() + args.seconds
     written = 0
     with args.output.open('a', buffering=1) as output:
-        output.write(json.dumps({'monitor_started': time.time(), 'pid': os.getpid()}) + '\n')
+        output.write(json.dumps({'monitor_started': time.time(), 'pid': os.getpid(),
+                                 'receive_buffer_bytes': sock.getsockopt(socket.SOL_SOCKET,
+                                                                         socket.SO_RCVBUF)}) + '\n')
         print('Monitoring G2 driver:', args.output, flush=True)
         while time.monotonic() < deadline and written < 8388608:
             try:

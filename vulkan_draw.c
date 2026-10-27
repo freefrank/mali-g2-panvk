@@ -49,6 +49,7 @@ int main(int argc, char **argv)
     int textured = argc == 5 && !strncmp(argv[4], "texture", 7);
     int vertex_store = argc == 5 && !strcmp(argv[4], "vertex_store");
     int fragcoord = argc == 5 && !strcmp(argv[4], "fragcoord");
+    int drawid = argc == 5 && !strcmp(argv[4], "drawid");
     int clockwise = getenv("MALI_G2_TEST_CLOCKWISE") != NULL;
     int native_image = argc == 5 && strstr(argv[4], "native");
     int ahb_image = argc == 5 && strstr(argv[4], "ahb");
@@ -107,6 +108,7 @@ int main(int argc, char **argv)
     LOAD(vkCmdBindDescriptorSets);
     LOAD(vkCmdCopyBufferToImage);
     LOAD(vkCmdDraw);
+    LOAD(vkCmdDrawIndirect);
     LOAD(vkCmdEndRenderPass);
     LOAD(vkCmdPipelineBarrier);
     LOAD(vkCmdCopyImageToBuffer);
@@ -166,7 +168,13 @@ int main(int argc, char **argv)
         device_info.enabledExtensionCount = 2;
         device_info.ppEnabledExtensionNames = android_extensions;
     }
-    VkPhysicalDeviceFeatures enabled = {.vertexPipelineStoresAndAtomics = vertex_store};
+    VkPhysicalDeviceFeatures enabled = {.vertexPipelineStoresAndAtomics = vertex_store,
+        .multiDrawIndirect = drawid};
+    VkPhysicalDeviceShaderDrawParametersFeatures draw_features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
+        .shaderDrawParameters = VK_TRUE};
+    if (drawid)
+        device_info.pNext = &draw_features;
     device_info.pEnabledFeatures = &enabled;
     VkDevice device;
     CHECK(vkCreateDevice(physical, &device_info, NULL, &device));
@@ -244,7 +252,7 @@ int main(int argc, char **argv)
     VkBufferCreateInfo buffer_info = {.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
         .size = 4096,
         .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT |
-                 VK_BUFFER_USAGE_STORAGE_BUFFER_BIT};
+                 VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT};
     VkBuffer buffer;
     CHECK(vkCreateBuffer(device, &buffer_info, NULL, &buffer));
     VkMemoryRequirements buffer_req;
@@ -259,6 +267,10 @@ int main(int argc, char **argv)
     void *pixels;
     CHECK(vkMapMemory(device, buffer_memory, 0, VK_WHOLE_SIZE, 0, &pixels));
     memset(pixels, 0, 4096);
+    if (drawid) {
+        const VkDrawIndirectCommand draws[2] = {{3, 1, 0, 0}, {3, 1, 0, 0}};
+        memcpy((uint8_t *)pixels + 2048, draws, sizeof(draws));
+    }
     VkImageViewCreateInfo view_info = {.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
         .image = image, .viewType = VK_IMAGE_VIEW_TYPE_2D, .format = image_info.format,
         .subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1}};
@@ -422,7 +434,10 @@ int main(int argc, char **argv)
     if (textured || vertex_store)
         vkCmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, layout,
                                  0, 1, &descriptor_set, 0, NULL);
-    vkCmdDraw(command, 3, 1, 0, 0);
+    if (drawid)
+        vkCmdDrawIndirect(command, buffer, 2048, 2, sizeof(VkDrawIndirectCommand));
+    else
+        vkCmdDraw(command, 3, 1, 0, 0);
     vkCmdEndRenderPass(command);
     VkImageMemoryBarrier barrier = {.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
         .srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, .dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT,
@@ -465,6 +480,11 @@ int main(int argc, char **argv)
         correct = 0;
         for (unsigned i = 0; i < 256; i++) {
             uint8_t expected[4] = {255,0,255,255};
+            if (drawid) {
+                expected[0] = i % 16 < 8 ? 255 : 0;
+                expected[1] = i % 16 < 8 ? 0 : 255;
+                expected[2] = 0;
+            }
             if (fragcoord) {
                 expected[0] = (i % 16) * 17;
                 expected[1] = (i / 16) * 17;
