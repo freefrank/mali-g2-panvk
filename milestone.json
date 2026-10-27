@@ -1,0 +1,13 @@
+{
+  "base_commit": "d896b0a9c10b92f0f9d53ef3373006b79ed709e8",
+  "gpu_id": "0x0f080600f0000103",
+  "architecture": 15,
+  "csf_legacy_kernel_api": "1.21",
+  "native_shader_direct_kernel_submission": "pass,32 integer results",
+  "mesa_v15_codegen": "in progress, shader executes but output validation fails",
+  "complete_vulkan_backend": false,
+  "eden_validated": false,
+  "driver_zip_built": false,
+  "reference_archive": "https://deb.debian.org/debian/pool/main/m/mesa/mesa_26.2.5.orig.tar.xz",
+  "reference_sha256": "794b3d1729075dae7ebd47c7283b7ca0cdb5dec668f7f11cc0a5d82f6138a0a5"
+}

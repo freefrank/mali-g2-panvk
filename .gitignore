@@ -1,0 +1,13 @@
+__pycache__/
+*.o
+*.so
+/probe_binaries
+/kmd_probe
+/compile_nir
+/host-compile-command.json
+/host-link-command.json
+/trace-opencl-*/
+/upstream-reference/
+/upstream-kraid/
+*.bin
+*.log
