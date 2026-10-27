@@ -62,7 +62,7 @@ test_models(void)
       {0xc8001000, 12, 8, 0, 0, 1, 0, 0, 4, "Mali-G720"},
       {0xd8000000, 13, 8, 0, 0, 0, 0, 0, 4, "Mali-G725"},
       {0xe8000000, 14, 8, 0, 0, 0, 0, 0, 4, "Mali-G1-Ultra"},
-      {UINT64_C(0x0f080600f0000103), 15, 8, 6, 0, 0, 1, 3, 4, NULL},
+      {UINT64_C(0x0f080600f0000103), 15, 8, 6, 0, 0, 1, 3, 4, "Mali-G2-Ultra-NX"},
       {UINT64_C(0x12345678f09abcde), 18, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 4, NULL},
    };
 
@@ -164,7 +164,9 @@ test_device(const char *path)
    expect("live G2 GPU ID", id, UINT64_C(0x0f080600f0000103));
    expect("live G2 architecture", pan_arch(id), 15);
    expect("live G2 product", pan_prod_id(id), 0x0f0800);
-   expect("live unsupported model", model == NULL, true);
+   expect("live G2 model exists", model != NULL, true);
+   if (model)
+      expect("live G2 model name", strcmp(model->name, "Mali-G2-Ultra-NX"), 0);
    free(buffer);
 }
 

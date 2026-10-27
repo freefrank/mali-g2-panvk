@@ -60,7 +60,7 @@ class ISA:
         if 'identifier' in e.attrib:
             return values[e.get('identifier')]
         if 'literal' in e.attrib:
-            return self.number(e.get('literal'), e.get('type'))
+            return self.number(e.get('literal'), e.get('type', e.get('enum')))
         op = e.get('operator')
         children = list(e)
         if op == 'if':
@@ -74,6 +74,8 @@ class ISA:
             return (1 << args[0]) - 1
         if op == 'countones':
             return args[0].bit_count()
+        if op == 'inside':
+            return args[0] in args[1:]
         a, b = args
         operations = {
             'bitwise_or': lambda: a | b,

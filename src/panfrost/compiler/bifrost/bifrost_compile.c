@@ -3980,7 +3980,8 @@ static void
 va_normalize_stats(struct valhall_stats *stats, const bi_context *ctx)
 {
    const struct pan_model *model = ctx->inputs->model;
-   if (!model)
+   if (!model || !model->rates.fma || !model->rates.cvt || !model->rates.sfu ||
+       !model->rates.varying || !model->rates.texel)
       return;
 
    assert(model->rates.fma != 0 && model->rates.cvt != 0 &&
@@ -4581,11 +4582,6 @@ bi_compile_variant(nir_shader *nir,
    /* A register is preloaded <==> it is live before the first block */
    bi_block *first_block = list_first_entry(&ctx->blocks, bi_block, link);
    uint64_t preload = first_block->reg_live_in;
-   if (ctx->arch == 15) {
-      if (preload)
-         ctx->info.work_reg_count = MAX2(ctx->info.work_reg_count, 64);
-      preload = va_v15_compute_preload_mask(preload);
-   }
 
    /* If multisampling is used with a blend shader, the blend shader needs
     * to access the sample coverage mask in r60 and the sample ID in r61.
@@ -4600,6 +4596,12 @@ bi_compile_variant(nir_shader *nir,
     */
    if (nir->info.stage == MESA_SHADER_FRAGMENT && ctx->arch >= 9)
       preload |= BITFIELD64_BIT(60) | BITFIELD64_BIT(61);
+
+   if (ctx->arch == 15) {
+      if (preload)
+         ctx->info.work_reg_count = MAX2(ctx->info.work_reg_count, 64);
+      preload = va_v15_preload_mask(ctx->stage, preload);
+   }
 
    info->ubo_mask |= ctx->ubo_mask;
    info->tls_size = MAX2(info->tls_size, ctx->info.tls_size);

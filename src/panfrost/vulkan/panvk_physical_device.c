@@ -76,6 +76,7 @@ PER_ARCH_FUNCS(11);
 PER_ARCH_FUNCS(12);
 PER_ARCH_FUNCS(13);
 PER_ARCH_FUNCS(14);
+PER_ARCH_FUNCS(15);
 
 static VkResult
 create_kmod_dev(struct panvk_physical_device *device,
@@ -408,6 +409,14 @@ panvk_physical_device_init(struct panvk_physical_device *device,
    }
 
    switch (arch) {
+   case 15:
+      if (!debug_get_bool_option("PANVK_G2_EXPERIMENTAL", true)) {
+         result = panvk_errorf(instance, VK_ERROR_INCOMPATIBLE_DRIVER,
+                               "v15 graphics bringup requires PANVK_G2_EXPERIMENTAL=1");
+         goto fail;
+      }
+      mesa_logw("panvk v15 graphics bringup is experimental");
+      break;
    case 6:
    case 7:
    case 9:

@@ -1229,6 +1229,38 @@ va_v15_compute_preload_mask(uint64_t preload)
    return mask;
 }
 
+unsigned
+va_v15_preload_reg(mesa_shader_stage stage, unsigned reg)
+{
+   if (stage == MESA_SHADER_COMPUTE || stage == MESA_SHADER_KERNEL)
+      return va_v15_compute_preload_reg(reg);
+   if (stage == MESA_SHADER_VERTEX) {
+      switch (reg) {
+      case 59: return 2;
+      case 60: return 0;
+      case 61: return 1;
+      default: UNREACHABLE("Unvalidated v15 vertex preload");
+      }
+   }
+   if (stage == MESA_SHADER_FRAGMENT) {
+      switch (reg) {
+      case 60: return 0;
+      case 61: return 1;
+      default: UNREACHABLE("Unvalidated v15 fragment preload");
+      }
+   }
+   UNREACHABLE("Unsupported v15 shader stage");
+}
+
+uint64_t
+va_v15_preload_mask(mesa_shader_stage stage, uint64_t preload)
+{
+   uint64_t mask = 0;
+   u_foreach_bit64(reg, preload)
+      mask |= BITFIELD64_BIT(va_v15_preload_reg(stage, reg));
+   return mask;
+}
+
 void
 bi_pack_valhall(bi_context *ctx, struct util_dynarray *emission)
 {
@@ -1236,14 +1268,13 @@ bi_pack_valhall(bi_context *ctx, struct util_dynarray *emission)
    unsigned preload_instrs = 0;
 
    if (ctx->arch == 15) {
-      if (ctx->stage != MESA_SHADER_COMPUTE && ctx->stage != MESA_SHADER_KERNEL)
-         UNREACHABLE("v15 graphics stage ABI is not implemented");
-
       const bi_block *first = list_first_entry(&ctx->blocks, bi_block, link);
       uint64_t preload = first->reg_live_in;
+      if (ctx->stage == MESA_SHADER_FRAGMENT)
+         preload |= BITFIELD64_BIT(60) | BITFIELD64_BIT(61);
       u_foreach_bit64(reg, preload) {
          uint64_t encoded;
-         unsigned input = va_v15_compute_preload_reg(reg);
+         unsigned input = va_v15_preload_reg(ctx->stage, reg);
          uint64_t move = UINT64_C(0x0091c00000000000) |
                          ((uint64_t)reg << 40) | input;
          if (!va_v15_encode_from_valhall(move, &encoded))
