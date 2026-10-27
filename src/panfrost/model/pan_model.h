@@ -22,14 +22,30 @@ struct pan_tiler_features {
    unsigned max_levels;
 };
 
-#define PAN_ARCH_MAJOR(x)    (((x) & BITFIELD_RANGE(28, 4)) >> 28)
-#define PAN_ARCH_MINOR(x)    (((x) & BITFIELD_RANGE(24, 4)) >> 24)
-#define PAN_ARCH_REV(x)      (((x) & BITFIELD_RANGE(20, 4)) >> 20)
-#define PAN_PRODUCT_MAJOR(x) (((x) & BITFIELD_RANGE(16, 4)) >> 16)
+static inline bool
+pan_gpu_id_is_64bit(uint64_t gpu_id)
+{
+   return ((gpu_id >> 28) & 0xf) == 0xf;
+}
 
-#define PAN_VERSION_MAJOR(x)  (((x) & BITFIELD_RANGE(12, 4)) >> 12)
-#define PAN_VERSION_MINOR(x)  (((x) & BITFIELD_RANGE(4, 8)) >> 4)
-#define PAN_VERSION_STATUS(x) ((x) & BITFIELD_RANGE(0, 4))
+static inline uint32_t
+pan_gpu_id_field(uint64_t gpu_id, unsigned shift32, unsigned shift64,
+                 uint32_t mask32)
+{
+   if (pan_gpu_id_is_64bit(gpu_id))
+      return (gpu_id >> shift64) & 0xff;
+
+   return (gpu_id >> shift32) & mask32;
+}
+
+#define PAN_ARCH_MAJOR(x)    pan_gpu_id_field((x), 28, 56, 0xf)
+#define PAN_ARCH_MINOR(x)    pan_gpu_id_field((x), 24, 48, 0xf)
+#define PAN_ARCH_REV(x)      pan_gpu_id_field((x), 20, 40, 0xf)
+#define PAN_PRODUCT_MAJOR(x) pan_gpu_id_field((x), 16, 32, 0xf)
+
+#define PAN_VERSION_MAJOR(x)  pan_gpu_id_field((x), 12, 16, 0xf)
+#define PAN_VERSION_MINOR(x)  pan_gpu_id_field((x), 4, 8, 0xff)
+#define PAN_VERSION_STATUS(x) pan_gpu_id_field((x), 0, 0, 0xf)
 
 /* GPU product id for Midgard */
 #define MIDGARD_PROD_ID(x) (((x) & BITFIELD_RANGE(16, 16)) >> 16)
@@ -107,6 +123,9 @@ const struct pan_model *pan_get_model(uint64_t gpu_id, uint32_t gpu_variant,
 static inline unsigned
 pan_arch(uint64_t gpu_id)
 {
+   if (pan_gpu_id_is_64bit(gpu_id))
+      return PAN_ARCH_MAJOR(gpu_id);
+
    switch (MIDGARD_PROD_ID(gpu_id)) {
    case 0x600:
    case 0x620:
