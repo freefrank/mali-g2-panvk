@@ -1,0 +1,103 @@
+{"ready_for_eden_test4": 1793108010.7983656, "zip": "panvk-mali-g2-test4-95230ac.zip"}
+{"received": 1793108081.8593774, "event": "PANVK_G2_V1 pid=30816 t=70656.724637 device begin build= (git-95230acfbe) queues=1"}
+{"received": 1793108081.8781314, "event": "PANVK_G2_V1 pid=30816 t=70656.743278 device ready"}
+{"received": 1793108082.0199172, "event": "PANVK_G2_V1 pid=30816 t=70656.885306 compile begin id=1 count=1 stages=0x20"}
+{"received": 1793108082.2517564, "event": "PANVK_G2_V1 pid=30816 t=70657.117183 shader ready stage=5 regs=64 tls=528 fau=92 bytes=45952"}
+{"received": 1793108082.2523658, "event": "PANVK_G2_V1 pid=30816 t=70657.117790 compile end id=1 result=0"}
+{"received": 1793108082.2539413, "event": "PANVK_G2_V1 pid=30816 t=70657.119396 compile begin id=2 count=1 stages=0x20"}
+{"received": 1793108082.254893, "event": "PANVK_G2_V1 pid=30816 t=70657.120517 shader ready stage=5 regs=64 tls=0 fau=11 bytes=768"}
+{"received": 1793108082.2550745, "event": "PANVK_G2_V1 pid=30816 t=70657.120658 compile end id=2 result=0"}
+{"received": 1793108082.2553906, "event": "PANVK_G2_V1 pid=30816 t=70657.121029 compile begin id=3 count=1 stages=0x20"}
+{"received": 1793108082.2556345, "event": "PANVK_G2_V1 pid=30816 t=70657.121278 shader ready stage=5 regs=64 tls=0 fau=8 bytes=256"}
+{"received": 1793108082.255829, "event": "PANVK_G2_V1 pid=30816 t=70657.121321 compile end id=3 result=0"}
+{"received": 1793108082.2606342, "event": "PANVK_G2_V1 pid=30816 t=70657.125516 compile begin id=4 count=1 stages=0x20"}
+{"received": 1793108082.2726278, "event": "PANVK_G2_V1 pid=30816 t=70657.137822 shader ready stage=5 regs=64 tls=0 fau=19 bytes=6400"}
+{"received": 1793108082.272765, "event": "PANVK_G2_V1 pid=30816 t=70657.138357 compile end id=4 result=0"}
+{"received": 1793108082.2761674, "event": "PANVK_G2_V1 pid=30816 t=70657.141343 compile begin id=5 count=1 stages=0x20"}
+{"received": 1793108082.279492, "event": "PANVK_G2_V1 pid=30816 t=70657.144723 shader ready stage=5 regs=64 tls=0 fau=5 bytes=2816"}
+{"received": 1793108082.2797189, "event": "PANVK_G2_V1 pid=30816 t=70657.145121 compile end id=5 result=0"}
+{"received": 1793108082.2803202, "event": "PANVK_G2_V1 pid=30816 t=70657.145856 compile begin id=6 count=1 stages=0x20"}
+{"received": 1793108082.2807188, "event": "PANVK_G2_V1 pid=30816 t=70657.146306 shader ready stage=5 regs=32 tls=0 fau=4 bytes=256"}
+{"received": 1793108082.2807672, "event": "PANVK_G2_V1 pid=30816 t=70657.146390 compile end id=6 result=0"}
+{"received": 1793108082.2822351, "event": "PANVK_G2_V1 pid=30816 t=70657.147744 compile begin id=7 count=1 stages=0x20"}
+{"received": 1793108082.2837136, "event": "PANVK_G2_V1 pid=30816 t=70657.149299 shader ready stage=5 regs=64 tls=0 fau=34 bytes=1280"}
+{"received": 1793108082.2837777, "event": "PANVK_G2_V1 pid=30816 t=70657.149414 compile end id=7 result=0"}
+{"received": 1793108082.427652, "event": "PANVK_G2_V1 pid=30820 t=70657.292908 device begin build= (git-95230acfbe) queues=1"}
+{"received": 1793108082.4446867, "event": "PANVK_G2_V1 pid=30820 t=70657.310012 device ready"}
+{"received": 1793108082.5912795, "event": "PANVK_G2_V1 pid=30820 t=70657.456444 compile begin id=1 count=1 stages=0x20"}
+{"received": 1793108082.8294704, "event": "PANVK_G2_V1 pid=30820 t=70657.694491 shader ready stage=5 regs=64 tls=528 fau=92 bytes=45952"}
+{"received": 1793108082.83057, "event": "PANVK_G2_V1 pid=30820 t=70657.695725 compile end id=1 result=0"}
+{"received": 1793108082.832611, "event": "PANVK_G2_V1 pid=30820 t=70657.698155 compile begin id=2 count=1 stages=0x20"}
+{"received": 1793108082.8347387, "event": "PANVK_G2_V1 pid=30820 t=70657.700144 shader ready stage=5 regs=64 tls=0 fau=11 bytes=896"}
+{"received": 1793108082.834962, "event": "PANVK_G2_V1 pid=30820 t=70657.700607 compile end id=2 result=0"}
+{"received": 1793108082.835549, "event": "PANVK_G2_V1 pid=30820 t=70657.701146 compile begin id=3 count=1 stages=0x20"}
+{"received": 1793108082.8359709, "event": "PANVK_G2_V1 pid=30820 t=70657.701588 shader ready stage=5 regs=64 tls=0 fau=9 bytes=256"}
+{"received": 1793108082.836001, "event": "PANVK_G2_V1 pid=30820 t=70657.701656 compile end id=3 result=0"}
+{"received": 1793108082.841295, "event": "PANVK_G2_V1 pid=30820 t=70657.706869 compile begin id=4 count=1 stages=0x20"}
+{"received": 1793108082.856429, "event": "PANVK_G2_V1 pid=30820 t=70657.721946 shader ready stage=5 regs=64 tls=0 fau=22 bytes=6784"}
+{"received": 1793108082.856671, "event": "PANVK_G2_V1 pid=30820 t=70657.722145 compile end id=4 result=0"}
+{"received": 1793108082.8594773, "event": "PANVK_G2_V1 pid=30820 t=70657.724946 compile begin id=5 count=1 stages=0x20"}
+{"received": 1793108082.862139, "event": "PANVK_G2_V1 pid=30820 t=70657.727701 shader ready stage=5 regs=64 tls=0 fau=18 bytes=3072"}
+{"received": 1793108082.8622873, "event": "PANVK_G2_V1 pid=30820 t=70657.727805 compile end id=5 result=0"}
+{"received": 1793108082.8627021, "event": "PANVK_G2_V1 pid=30820 t=70657.728306 compile begin id=6 count=1 stages=0x20"}
+{"received": 1793108082.863068, "event": "PANVK_G2_V1 pid=30820 t=70657.728702 shader ready stage=5 regs=32 tls=0 fau=5 bytes=384"}
+{"received": 1793108082.8631196, "event": "PANVK_G2_V1 pid=30820 t=70657.728752 compile end id=6 result=0"}
+{"received": 1793108082.8644493, "event": "PANVK_G2_V1 pid=30820 t=70657.730064 compile begin id=7 count=1 stages=0x20"}
+{"received": 1793108082.8659544, "event": "PANVK_G2_V1 pid=30820 t=70657.731550 shader ready stage=5 regs=64 tls=0 fau=36 bytes=1408"}
+{"received": 1793108082.8660192, "event": "PANVK_G2_V1 pid=30820 t=70657.731664 compile end id=7 result=0"}
+{"received": 1793108082.9975226, "event": "PANVK_G2_V1 pid=30829 t=70657.862696 device begin build= (git-95230acfbe) queues=1"}
+{"received": 1793108083.011994, "event": "PANVK_G2_V1 pid=30829 t=70657.877295 device ready"}
+{"received": 1793108083.1452124, "event": "PANVK_G2_V1 pid=30829 t=70658.010607 compile begin id=1 count=1 stages=0x20"}
+{"received": 1793108083.387555, "event": "PANVK_G2_V1 pid=30829 t=70658.253119 shader ready stage=5 regs=64 tls=528 fau=92 bytes=45952"}
+{"received": 1793108083.3878338, "event": "PANVK_G2_V1 pid=30829 t=70658.253462 compile end id=1 result=0"}
+{"received": 1793108083.3887267, "event": "PANVK_G2_V1 pid=30829 t=70658.254248 compile begin id=2 count=1 stages=0x20"}
+{"received": 1793108083.3892267, "event": "PANVK_G2_V1 pid=30829 t=70658.254779 shader ready stage=5 regs=64 tls=0 fau=20 bytes=512"}
+{"received": 1793108083.389355, "event": "PANVK_G2_V1 pid=30829 t=70658.254988 compile end id=2 result=0"}
+{"received": 1793108083.3979418, "event": "PANVK_G2_V1 pid=30829 t=70658.263525 submit begin id=1 cmds=1 waits=0 signals=1"}
+{"received": 1793108083.3982651, "event": "PANVK_G2_V1 pid=30829 t=70658.263882 submit end id=1 result=0"}
+{"received": 1793108083.3999734, "event": "PANVK_G2_V1 pid=30829 t=70658.265527 gpu complete id=1 ok=1"}
+{"received": 1793108083.4001694, "event": "PANVK_G2_V1 pid=30829 t=70658.265719 submit begin id=2 cmds=0 waits=0 signals=1"}
+{"received": 1793108083.400442, "event": "PANVK_G2_V1 pid=30829 t=70658.266088 submit end id=2 result=0"}
+{"received": 1793108083.4008331, "event": "PANVK_G2_V1 pid=30829 t=70658.266456 gpu complete id=2 ok=1"}
+{"received": 1793108084.3894196, "event": "PANVK_G2_V1 pid=30839 t=70659.254690 device begin build= (git-95230acfbe) queues=1"}
+{"received": 1793108084.4026582, "event": "PANVK_G2_V1 pid=30839 t=70659.267958 device ready"}
+{"received": 1793108084.5413487, "event": "PANVK_G2_V1 pid=30839 t=70659.406592 compile begin id=1 count=1 stages=0x20"}
+{"received": 1793108084.7743094, "event": "PANVK_G2_V1 pid=30839 t=70659.639738 shader ready stage=5 regs=64 tls=528 fau=92 bytes=45952"}
+{"received": 1793108084.7748413, "event": "PANVK_G2_V1 pid=30839 t=70659.640382 compile end id=1 result=0"}
+{"received": 1793108084.776171, "event": "PANVK_G2_V1 pid=30839 t=70659.641751 compile begin id=2 count=1 stages=0x20"}
+{"received": 1793108084.7765877, "event": "PANVK_G2_V1 pid=30839 t=70659.642226 shader ready stage=5 regs=64 tls=0 fau=20 bytes=512"}
+{"received": 1793108084.7767015, "event": "PANVK_G2_V1 pid=30839 t=70659.642348 compile end id=2 result=0"}
+{"received": 1793108084.7811294, "event": "PANVK_G2_V1 pid=30839 t=70659.646459 submit begin id=1 cmds=1 waits=0 signals=1"}
+{"received": 1793108084.7815707, "event": "PANVK_G2_V1 pid=30839 t=70659.647151 submit end id=1 result=0"}
+{"received": 1793108084.7851934, "event": "PANVK_G2_V1 pid=30839 t=70659.650750 gpu complete id=1 ok=1"}
+{"received": 1793108084.7859044, "event": "PANVK_G2_V1 pid=30839 t=70659.651456 submit begin id=2 cmds=0 waits=0 signals=1"}
+{"received": 1793108084.7862535, "event": "PANVK_G2_V1 pid=30839 t=70659.651893 submit end id=2 result=0"}
+{"received": 1793108084.7866924, "event": "PANVK_G2_V1 pid=30839 t=70659.652252 gpu complete id=2 ok=1"}
+{"received": 1793108085.786353, "event": "PANVK_G2_V1 pid=30863 t=70660.651650 device begin build= (git-95230acfbe) queues=1"}
+{"received": 1793108085.8034248, "event": "PANVK_G2_V1 pid=30863 t=70660.668719 device ready"}
+{"received": 1793108085.9643147, "event": "PANVK_G2_V1 pid=30863 t=70660.829182 compile begin id=1 count=1 stages=0x20"}
+{"received": 1793108086.2063975, "event": "PANVK_G2_V1 pid=30863 t=70661.071717 shader ready stage=5 regs=64 tls=528 fau=92 bytes=45952"}
+{"received": 1793108086.2069514, "event": "PANVK_G2_V1 pid=30863 t=70661.072538 compile end id=1 result=0"}
+{"received": 1793108086.209101, "event": "PANVK_G2_V1 pid=30863 t=70661.074669 compile begin id=2 count=1 stages=0x20"}
+{"received": 1793108086.2096202, "event": "PANVK_G2_V1 pid=30863 t=70661.075249 shader ready stage=5 regs=64 tls=0 fau=20 bytes=512"}
+{"received": 1793108086.2097385, "event": "PANVK_G2_V1 pid=30863 t=70661.075379 compile end id=2 result=0"}
+{"received": 1793108086.214986, "event": "PANVK_G2_V1 pid=30863 t=70661.080591 submit begin id=1 cmds=1 waits=0 signals=1"}
+{"received": 1793108086.2158544, "event": "PANVK_G2_V1 pid=30863 t=70661.081020 submit end id=1 result=0"}
+{"received": 1793108086.2189264, "event": "PANVK_G2_V1 pid=30863 t=70661.084470 gpu complete id=1 ok=1"}
+{"received": 1793108086.2198453, "event": "PANVK_G2_V1 pid=30863 t=70661.085404 submit begin id=2 cmds=0 waits=0 signals=1"}
+{"received": 1793108086.22016, "event": "PANVK_G2_V1 pid=30863 t=70661.085796 submit end id=2 result=0"}
+{"received": 1793108086.2205849, "event": "PANVK_G2_V1 pid=30863 t=70661.086130 gpu complete id=2 ok=1"}
+{"received": 1793108087.2507632, "event": "PANVK_G2_V1 pid=30881 t=70662.115716 device begin build= (git-95230acfbe) queues=1"}
+{"received": 1793108087.2690744, "event": "PANVK_G2_V1 pid=30881 t=70662.133920 device ready"}
+{"received": 1793108087.4185953, "event": "PANVK_G2_V1 pid=30881 t=70662.283814 compile begin id=1 count=1 stages=0x20"}
+{"received": 1793108087.6497018, "event": "PANVK_G2_V1 pid=30881 t=70662.515206 shader ready stage=5 regs=64 tls=528 fau=92 bytes=45952"}
+{"received": 1793108087.6501982, "event": "PANVK_G2_V1 pid=30881 t=70662.515726 compile end id=1 result=0"}
+{"received": 1793108087.6514773, "event": "PANVK_G2_V1 pid=30881 t=70662.517089 compile begin id=2 count=1 stages=0x20"}
+{"received": 1793108087.6520267, "event": "PANVK_G2_V1 pid=30881 t=70662.517636 shader ready stage=5 regs=64 tls=0 fau=20 bytes=512"}
+{"received": 1793108087.6521523, "event": "PANVK_G2_V1 pid=30881 t=70662.517794 compile end id=2 result=0"}
+{"received": 1793108087.6572444, "event": "PANVK_G2_V1 pid=30881 t=70662.522788 submit begin id=1 cmds=1 waits=0 signals=1"}
+{"received": 1793108087.657657, "event": "PANVK_G2_V1 pid=30881 t=70662.523238 submit end id=1 result=0"}
+{"received": 1793108087.6623356, "event": "PANVK_G2_V1 pid=30881 t=70662.527851 gpu complete id=1 ok=1"}
+{"received": 1793108087.6640658, "event": "PANVK_G2_V1 pid=30881 t=70662.529656 submit begin id=2 cmds=0 waits=0 signals=1"}
+{"received": 1793108087.6644323, "event": "PANVK_G2_V1 pid=30881 t=70662.530057 submit end id=2 result=0"}
+{"received": 1793108087.6649477, "event": "PANVK_G2_V1 pid=30881 t=70662.530505 gpu complete id=2 ok=1"}

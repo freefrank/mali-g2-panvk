@@ -1,13 +1,13 @@
 {
   "objective": "Complete Eden-required Mali-G2 PanVK capabilities and deliver driver ZIP to Android Download",
-  "user_latest": "test2 stuck loading; user requested direct Eden log directory access",
+  "user_latest": "test3 exits back to game selector; user says eden_log.txt in Android Download; then asked continue",
   "driver_repo": "/root/mali-panvk",
   "backend_repo": "/root/mali-g2-backend",
-  "current_status": "Test1 immediate initialization failure fixed by Mapper 5 import (354f23f). User test2 now stuck loading. Direct Android app files directory is denied by OS permissions, including Android run-as. Independently fixed fragment XY/front-face ABI (04098e1): wrong test2 pixel outputs became 256/256 correct for 30 frames in both face orientations. Added local-only G2 diagnostics (216a5b8) and delivered test3. Await user launch retest; local monitor can now capture driver events without reading Eden private directory.",
-  "next": "Read /storage/emulated/0/Download/panvk-g2-test3-driver.log after user launches Eden with test3. Find last compile begin/end, submit begin/end, gpu complete. Then fix actual loading hang. Still need full CSF feature implementation and remaining graphics preload ABI validation.",
-  "candidate_packaging": "DELIVERED /storage/emulated/0/Download/panvk-mali-g2-test3-216a5b8.zip (4362146 bytes), SHA256 adffc7772ad8194ce6e9f9aafd1359927ba82b5623fd75bb9745dac36a6d9c81.",
+  "current_status": "Fixed Eden test3 ASTC compiler crash (1242dda) and real G2 FAU uniform-bank rendering bug (d2177b3). Diagnostic build/shader-allocation logging95230ac. Final stripped test4 built and packaged. All 4 encoder test groups pass; 14 original Eden compute-pipeline compiles, 4 ASTC GPU tests (3 normal inputs byte-exact against native driver), 8 graphics groups and 13 native compute tests pass. Full Eden test4 launch validation remains pending; six compatibility features still missing.",
+  "next": "User should install/select test4-95230ac and launch same game. Read public Download/panvk-g2-test4-driver.log directly; new device event includes build=git-95230acfbe so version can be verified. Inspect compile end/error and GPU completion, then fix next actual failure. Remaining six CSF capabilities still pending.",
+  "candidate_packaging": "DELIVERED /storage/emulated/0/Download/panvk-mali-g2-test4-95230ac.zip (4364188 bytes), SHA256 0f11e6161d9d4eefb540bb944ce27ea6e01dd4512b5434ec066a15b92b25c6bf.",
   "build": "Android clang wrappers and NDK static C++ ready. PATH=/root/mali-panvk/build-host/bin:/root/mali-panvk-tools/bin:/usr/bin:/bin:/usr/sbin:/sbin ninja -C /root/mali-panvk/build-android-arm -j3 src/panfrost/vulkan/libvulkan_panfrost.so",
-  "tests": "test_android.py DRIVER --tag NAME: 8 test groups, each graphics group 30 frames. build_helpers.py --android now also builds vulkan helpers. Fragcoord reference stock validated both frontFace settings. All final stripped test3 groups pass.",
+  "tests": "test_eden_compute.py DRIVER --tag NAME uses exact Eden commitde7e6e source and native stock shader output references; test_android.py8 groups; test_backend.py13 native GPU cases. All final artifact tests pass. Native test helper no longer inserts unnecessary DeviceWaitIdle before readback; final Eden suite rerun after that helper-only cleanup also passed.",
   "git": "User requires frequent local commits. AGENTS: Generated-by: LLM and biblioklept marker in messages, no upstream posting. Private user requested Panfrost edits override local prohibition. No code comments.",
   "goal": "Goal tool still reports paused from older pause; user explicitly resumed via \u7ee7\u7eed. Tool cannot resume, do not create another goal or falsely mark complete.",
   "remaining_capabilities": [
@@ -19,12 +19,13 @@
     "multiViewport (maxViewports=1)"
   ],
   "monitor": {
-    "exec_session_id": 94875,
+    "exec_session_id": 10281,
+    "pid": 28897,
     "script": "/root/mali-g2-backend/driver_monitor.py",
     "bind": "127.0.0.1:28643/UDP",
-    "output": "/storage/emulated/0/Download/panvk-g2-test3-driver.log",
-    "lifetime_seconds": 3600,
-    "restart": "python3 -u /root/mali-g2-backend/driver_monitor.py",
-    "note": "Currently running; helper validation events archived to fixtures and shared log reset to ready_for_eden_test3 marker. Monitor allows at most 8 MiB per invocation. No external networking."
-  }
+    "output": "/storage/emulated/0/Download/panvk-g2-test4-driver.log",
+    "lifetime_seconds": 7200,
+    "note": "Running session10281/PID28897 for7200s. Helper events archived and shared log reset to ready_for_eden_test4; ready for user launch."
+  },
+  "fresh_eden_log": "/sdcard/Download/eden_log.txt exists5168bytesmtime09:34 but OS denies content reads even/system/bin/cat. Do not repeatedly ask for export; actualdriverdiagnostics givefirstcomputecrash and exactASTCreproduction."
 }

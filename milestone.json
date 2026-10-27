@@ -35,11 +35,14 @@
     "multiViewport"
   ],
   "vertex_storage_atomics": "PASS and enabled by 90d7de8",
-  "driver_zip_path": "/storage/emulated/0/Download/panvk-mali-g2-test3-216a5b8.zip",
+  "driver_zip_path": "/storage/emulated/0/Download/panvk-mali-g2-test4-95230ac.zip",
   "eden_test1": "VK_ERROR_INVALID_EXTERNAL_HANDLE at renderer initialization; native GPU-only AHB stride=0 layout unsupported by old fallback",
   "android_mapper5": "Fixed by 354f23f; three allocation usage patterns imported, native and AHB graphics pass 30 frames",
   "eden_test2": "User reports stuck loading; fresh Eden app logs inaccessible due Android permissions",
   "fragment_preloads": "04098e1: v15 FS logical58->R3 primitive flags, logical59->R2 XY; 30-frame gradient+front-face tests pass in both frontFace settings",
   "diagnostics": "216a5b8: local loopback-only initialization/compile/submit/completion events, received on phone into public Download",
-  "eden_test3": "Awaiting user launch with test3; monitor running"
+  "eden_test3": "First compute shader ASTC compile crashes at invalid v15 encoding; reproduced independently, fixed1242dda.",
+  "g2_uniform_addressing": "Fixed d2177b3. Native G2 uniform source indices0..84 on page0; legacy indices64..127 now translated to flat operand indices, special FAU pages preserved and incompatible mixed reads separated.",
+  "astc_gpu_validation": "4 cases:256-pixel void-extent colors plus3 deterministic 16-block normal ASTC inputs; all byte-exact to native Vulkan executing original Eden kernel.",
+  "eden_test4": "Driver delivered in Android Download; awaiting user retest"
 }

@@ -46,8 +46,13 @@ def inspect(directory):
                     walk(ptr, registers[n], depth + 1)
                 elif op == 4:
                     ptr = registers[16] | (registers[17] << 32)
+                    if not ptr:
+                        continue
                     spd = ptr & ~31
-                    descriptor = read(spd, 32)
+                    try:
+                        descriptor = read(spd, 32)
+                    except ValueError:
+                        continue
                     code = struct.unpack_from('<Q', descriptor, 8)[0]
                     capture = {'kick': kick, 'cs_address': hex(address + i * 8),
                                'shader_pointer': hex(ptr),
