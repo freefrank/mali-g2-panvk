@@ -1,0 +1,178 @@
+[
+  {
+    "name": "global_y",
+    "source": "__kernel void probe(__global int *out) { uint i=get_global_id(0); out[32+i]=get_global_id(1); out[i]=i*i+7; }",
+    "trace_directory": "/root/mali-g2-backend/trace-opencl-global_y-m6_bhir1",
+    "exit_code": 0,
+    "captures": [
+      {
+        "kick": 1,
+        "cs_address": "0x765a4772b8",
+        "shader_pointer": "0x765a477181",
+        "shader_descriptor": "1800100003000000001000000080000000000000000000000000000000000000",
+        "shader_binary": "0x800000001000",
+        "workgroup_size_register": "0x1f",
+        "resources": [
+          "0x765a477088",
+          "0x10000765a477130",
+          "0x765a477181",
+          "0x765a477140"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "global_z",
+    "source": "__kernel void probe(__global int *out) { uint i=get_global_id(0); out[32+i]=get_global_id(2); out[i]=i*i+7; }",
+    "trace_directory": "/root/mali-g2-backend/trace-opencl-global_z-ev3des78",
+    "exit_code": 0,
+    "captures": [
+      {
+        "kick": 1,
+        "cs_address": "0x762bf1c2b8",
+        "shader_pointer": "0x762bf1c181",
+        "shader_descriptor": "1800100005000000001000000080000000000000000000000000000000000000",
+        "shader_binary": "0x800000001000",
+        "workgroup_size_register": "0x1f",
+        "resources": [
+          "0x762bf1c088",
+          "0x10000762bf1c130",
+          "0x762bf1c181",
+          "0x762bf1c140"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "local_x",
+    "source": "__kernel void probe(__global int *out) { uint i=get_global_id(0); out[32+i]=get_local_id(0); out[i]=i*i+7; }",
+    "trace_directory": "/root/mali-g2-backend/trace-opencl-local_x-3wq54773",
+    "exit_code": 0,
+    "captures": [
+      {
+        "kick": 1,
+        "cs_address": "0x700cbda2b8",
+        "shader_pointer": "0x700cbda181",
+        "shader_descriptor": "1800100011000000001000000080000000000000000000000000000000000000",
+        "shader_binary": "0x800000001000",
+        "workgroup_size_register": "0x1f",
+        "resources": [
+          "0x700cbda088",
+          "0x10000700cbda130",
+          "0x700cbda181",
+          "0x700cbda140"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "local_y",
+    "source": "__kernel void probe(__global int *out) { uint i=get_global_id(0); out[32+i]=get_local_id(1); out[i]=i*i+7; }",
+    "trace_directory": "/root/mali-g2-backend/trace-opencl-local_y-zc6fobgd",
+    "exit_code": 0,
+    "captures": [
+      {
+        "kick": 1,
+        "cs_address": "0x735809b2b8",
+        "shader_pointer": "0x735809b181",
+        "shader_descriptor": "1800100011000000001000000080000000000000000000000000000000000000",
+        "shader_binary": "0x800000001000",
+        "workgroup_size_register": "0x1f",
+        "resources": [
+          "0x735809b088",
+          "0x10000735809b130",
+          "0x735809b181",
+          "0x735809b140"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "local_z",
+    "source": "__kernel void probe(__global int *out) { uint i=get_global_id(0); out[32+i]=get_local_id(2); out[i]=i*i+7; }",
+    "trace_directory": "/root/mali-g2-backend/trace-opencl-local_z-emlve66z",
+    "exit_code": 0,
+    "captures": [
+      {
+        "kick": 1,
+        "cs_address": "0x79fe4e92b8",
+        "shader_pointer": "0x79fe4e9181",
+        "shader_descriptor": "1800100009000000001000000080000000000000000000000000000000000000",
+        "shader_binary": "0x800000001000",
+        "workgroup_size_register": "0x1f",
+        "resources": [
+          "0x79fe4e9088",
+          "0x1000079fe4e9130",
+          "0x79fe4e9181",
+          "0x79fe4e9140"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "group_x",
+    "source": "__kernel void probe(__global int *out) { uint i=get_global_id(0); out[32+i]=get_group_id(0); out[i]=i*i+7; }",
+    "trace_directory": "/root/mali-g2-backend/trace-opencl-group_x-cxxqjq5v",
+    "exit_code": 0,
+    "captures": [
+      {
+        "kick": 1,
+        "cs_address": "0x744bafc2f8",
+        "shader_pointer": "0x744bafc1c1",
+        "shader_descriptor": "1800100021000000001000000080000000000000000000000000000000000000",
+        "shader_binary": "0x800000001000",
+        "workgroup_size_register": "0x1f",
+        "resources": [
+          "0x744bafc088",
+          "0x20000744bafc150",
+          "0x744bafc1c1",
+          "0x744bafc180"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "group_y",
+    "source": "__kernel void probe(__global int *out) { uint i=get_global_id(0); out[32+i]=get_group_id(1); out[i]=i*i+7; }",
+    "trace_directory": "/root/mali-g2-backend/trace-opencl-group_y-bxs7_13r",
+    "exit_code": 0,
+    "captures": [
+      {
+        "kick": 1,
+        "cs_address": "0x6ffa1bc2f8",
+        "shader_pointer": "0x6ffa1bc1c1",
+        "shader_descriptor": "1800100041000000001000000080000000000000000000000000000000000000",
+        "shader_binary": "0x800000001000",
+        "workgroup_size_register": "0x1f",
+        "resources": [
+          "0x6ffa1bc088",
+          "0x200006ffa1bc150",
+          "0x6ffa1bc1c1",
+          "0x6ffa1bc180"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "group_z",
+    "source": "__kernel void probe(__global int *out) { uint i=get_global_id(0); out[32+i]=get_group_id(2); out[i]=i*i+7; }",
+    "trace_directory": "/root/mali-g2-backend/trace-opencl-group_z-xxucs8nu",
+    "exit_code": 0,
+    "captures": [
+      {
+        "kick": 1,
+        "cs_address": "0x6fe0b262f8",
+        "shader_pointer": "0x6fe0b261c1",
+        "shader_descriptor": "1800100081000000001000000080000000000000000000000000000000000000",
+        "shader_binary": "0x800000001000",
+        "workgroup_size_register": "0x1f",
+        "resources": [
+          "0x6fe0b26088",
+          "0x200006fe0b26150",
+          "0x6fe0b261c1",
+          "0x6fe0b26180"
+        ]
+      }
+    ]
+  }
+]

@@ -64,6 +64,9 @@ int main(int argc, char **argv)
     int extended = argc > 2 ? atoi(argv[2]) : 1;
     int modern_group = argc > 3 ? atoi(argv[3]) : 1;
     unsigned register_allocation = argc > 5 ? strtoul(argv[5], NULL, 0) : 1;
+    if (register_allocation > 15)
+        return 2;
+    unsigned preload = argc > 6 ? strtoul(argv[6], NULL, 0) : 1;
     int fd = open("/dev/mali0", O_RDWR | O_CLOEXEC | O_NONBLOCK);
     if (fd < 0) { perror("/dev/mali0"); return 1; }
     uint16_t version[2] = {1, minor};
@@ -107,7 +110,8 @@ int main(int argc, char **argv)
         d[0x130 / 8] = event.gpu;
         d[0x140 / 8] = UINT64_C(0x0000001f00000000);
         d[0x148 / 8] = UINT64_C(0x1000000000000000);
-        d[0x180 / 8] = UINT64_C(0x0000000100100018);
+        d[0x180 / 8] = UINT64_C(0x18) | ((uint64_t)preload << 32) |
+                       ((uint64_t)register_allocation << 20);
         d[0x188 / 8] = shader.gpu;
         for (unsigned i = 0; i < 32; i++) ((uint32_t *)event.cpu)[i] = 0xdeadbeef;
     }
@@ -203,6 +207,19 @@ int main(int argc, char **argv)
         }
         printf("CSF_COMPUTE_%s first=%u last=%u\n", result ? "FAIL" : "PASS",
                values[0], values[31]);
+        if (!result && argc > 7) {
+            int x = !strcmp(argv[7], "local_x") || !strcmp(argv[7], "global_x");
+            for (unsigned i = 0; i < 32; i++) {
+                unsigned expected = x ? i : 0;
+                if (values[32 + i] != expected) {
+                    printf("preload mismatch index=%u actual=%u expected=%u\n",
+                           i, values[32 + i], expected);
+                    result = 1;
+                    break;
+                }
+            }
+            printf("CSF_PRELOAD_%s %s\n", result ? "FAIL" : "PASS", argv[7]);
+        }
     }
 out:
     if (group_created) {

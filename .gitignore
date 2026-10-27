@@ -11,3 +11,6 @@ __pycache__/
 /upstream-kraid/
 *.bin
 *.log
+/*.bin.json
+/generated_v15.c
+/encoder-coverage.json

@@ -59,6 +59,7 @@ int main(int argc,char **argv){
  DECL(cl_int,clSetKernelArg,(cl_kernel,cl_uint,size_t,const void*));
  DECL(cl_int,clEnqueueNDRangeKernel,(cl_command_queue,cl_kernel,cl_uint,const size_t*,const size_t*,const size_t*,cl_uint,const void*,void*));
  DECL(cl_int,clEnqueueReadBuffer,(cl_command_queue,cl_mem,cl_uint,size_t,size_t,void*,cl_uint,const void*,void*));
+ DECL(cl_int,clEnqueueWriteBuffer,(cl_command_queue,cl_mem,cl_uint,size_t,size_t,const void*,cl_uint,const void*,void*));
  DECL(cl_int,clReleaseKernel,(cl_kernel));
  DECL(cl_int,clReleaseProgram,(cl_program));
  DECL(cl_int,clReleaseMemObject,(cl_mem));
@@ -66,7 +67,7 @@ int main(int argc,char **argv){
  DECL(cl_int,clReleaseContext,(cl_context));
  cl_context ctx=clCreateContext(NULL,1,&dev,NULL,NULL,&e);printf("CREATE_CONTEXT: %d\n",e);if(e)return 5;
  cl_command_queue q=clCreateCommandQueue(ctx,dev,0,&e);printf("CREATE_QUEUE: %d\n",e);if(e)return 6;
- int out[32]={0};cl_mem b=clCreateBuffer(ctx,1,sizeof(out),NULL,&e);if(e){printf("BUFFER_ERROR: %d\n",e);return 7;}
+ int out[4096]={0};cl_mem b=clCreateBuffer(ctx,1,sizeof(out),NULL,&e);if(e){printf("BUFFER_ERROR: %d\n",e);return 7;}
  const char *src=argc>2?argv[2]:"__kernel void probe(__global int *out) { out[0]=0x12345678; }";
  cl_program prog=clCreateProgramWithSource(ctx,1,&src,NULL,&e);if(e){printf("PROGRAM_ERROR: %d\n",e);return 8;}
  e=clBuildProgram(prog,1,&dev,"",NULL,NULL);printf("BUILD_KERNEL: %d\n",e);
@@ -81,8 +82,11 @@ int main(int argc,char **argv){
  FILE *file=fopen(argc>1?argv[1]:"/root/mali-g2-backend/constant.bin","wb");
  if(!file)return 22;
  fwrite(binary,1,bytes,file);fclose(file);free(binary);
- clReleaseProgram(prog);clReleaseMemObject(b);clReleaseCommandQueue(q);clReleaseContext(ctx);
- return 0;
+ if(argc<4||strcmp(argv[3],"run")){
+  clReleaseProgram(prog);clReleaseMemObject(b);clReleaseCommandQueue(q);clReleaseContext(ctx);
+  return 0;
+ }
+ e=clEnqueueWriteBuffer(q,b,1,0,sizeof(out),out,0,NULL,NULL);if(e)return 23;
  cl_kernel k=clCreateKernel(prog,"probe",&e);if(e){printf("KERNEL_ERROR: %d\n",e);return 10;}
  e=clSetKernelArg(k,0,sizeof(b),&b);if(e){printf("ARG_ERROR: %d\n",e);return 11;}
  size_t n=32;e=clEnqueueNDRangeKernel(q,k,1,NULL,&n,NULL,0,NULL,NULL);printf("DISPATCH: %d\n",e);if(e)return 12;

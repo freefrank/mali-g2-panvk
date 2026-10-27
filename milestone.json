@@ -4,7 +4,7 @@
   "architecture": 15,
   "csf_legacy_kernel_api": "1.21",
   "native_shader_direct_kernel_submission": "pass,32 integer results",
-  "mesa_v15_codegen": "NIR to v14 IR to v15 encoding and remapped registers: pass,32 integer results",
+  "mesa_v15_codegen": "Integrated C backend: all 13 hardware tests pass (integers, float, branch, loop, nine compute preload cases)",
   "complete_vulkan_backend": false,
   "eden_validated": false,
   "driver_zip_built": false,
@@ -14,5 +14,14 @@
     "preloaded_global_invocation_x": 0,
     "work_register_offset": 2,
     "compute_pointer_low_bits": 1
+  },
+  "v15_register_allocation": {
+    "bits": "shader descriptor word0[23:20], compute SPD pointer[3:0]",
+    "validated_modes": {
+      "1": 16,
+      "7": 64,
+      "15": 128
+    },
+    "mode_formula": "ceil(register_count/8)-1"
   }
 }
