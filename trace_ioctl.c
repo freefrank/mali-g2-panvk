@@ -27,6 +27,7 @@ static pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t map_mutex = PTHREAD_MUTEX_INITIALIZER;
 static _Atomic unsigned event_counter;
 static _Atomic unsigned kick_counter;
+static unsigned max_kicks = 4;
 static _Thread_local int inside;
 static char directory[2048];
 
@@ -44,6 +45,12 @@ __attribute__((constructor)) static void initialize_directory(void)
     const char *value = getenv("MALI_G2_TRACE_DIR");
     if (value)
         snprintf(directory, sizeof(directory), "%s", value);
+    value = getenv("MALI_G2_TRACE_KICKS");
+    if (value) {
+        unsigned requested = strtoul(value, NULL, 0);
+        if (requested && requested <= 32)
+            max_kicks = requested;
+    }
 }
 
 static ssize_t read_self(void *destination, const void *source, size_t size)
@@ -63,7 +70,7 @@ static ssize_t read_self(void *destination, const void *source, size_t size)
     return result;
 }
 
-static void snapshot(unsigned kick)
+static void snapshot(unsigned kick, int gpu_fd)
 {
     FILE *maps = fopen("/proc/self/maps", "r");
     if (!maps)
@@ -91,7 +98,14 @@ static void snapshot(unsigned kick)
         if (sscanf(line, "%lx-%lx %4s %lx", &start, &end, permissions, &offset) != 4 ||
             end <= start || permissions[0] != 'r')
             continue;
+        uint64_t query[2] = {offset, 1};
+        if (original_ioctl(gpu_fd, (int)_IOWR(0x80, 6, query), query) < 0)
+            continue;
         size_t size = end - start;
+        if (query[0] < size / 4096)
+            size = query[0] * 4096;
+        if (!size)
+            continue;
         if (size > 1024 * 1024)
             size = 1024 * 1024;
         if (size > remaining)
@@ -235,8 +249,8 @@ int ioctl(int fd, int operation, ...)
             before_count = read_self(before, argument, size);
         if (_IOC_NR(request) == 37) {
             unsigned kick = atomic_fetch_add(&kick_counter, 1);
-            if (kick < 4)
-                snapshot(kick);
+            if (kick < max_kicks)
+                snapshot(kick, fd);
         }
     }
     errno = entry_errno;

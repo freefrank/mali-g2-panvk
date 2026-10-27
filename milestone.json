@@ -5,7 +5,7 @@
   "csf_legacy_kernel_api": "1.21",
   "native_shader_direct_kernel_submission": "pass,32 integer results",
   "mesa_v15_codegen": "Integrated C backend: all 13 hardware tests pass (integers, float, branch, loop, nine compute preload cases)",
-  "complete_vulkan_backend": false,
+  "complete_vulkan_backend": "basic graphics and textures working; full emulator compatibility unverified",
   "eden_validated": false,
   "driver_zip_built": false,
   "reference_archive": "https://deb.debian.org/debian/pool/main/m/mesa/mesa_26.2.5.orig.tar.xz",
@@ -23,5 +23,15 @@
       "15": 128
     },
     "mode_formula": "ceil(register_count/8)-1"
-  }
+  },
+  "panvk_offscreen_draw": "256/256 pixels pass",
+  "panvk_textured_draw": "256/256 pixels pass",
+  "panvk_repeated_texture_draw": "30 frames alternating host texture uploads: all pass",
+  "v15_graphics_default": "experimental enabled for local candidate",
+  "remaining_compatibility_features": [
+    "CSF geometry/tessellation emulation",
+    "clip/cull distances",
+    "non-solid fill modes"
+  ],
+  "vertex_storage_atomics": "PASS: three vertex SSBO values 7,8,11 and atomic OR mask 7; enabled by commit be verified from git"
 }
