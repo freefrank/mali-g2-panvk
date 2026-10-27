@@ -156,6 +156,23 @@ va_validate_fau(bi_instr *I)
 void
 va_repair_fau(bi_builder *b, bi_instr *I)
 {
+   if (b->shader->arch == 15) {
+      bool uniform = false;
+      bi_foreach_src(I, s) {
+         bi_index src = I->src[s];
+         uniform |= src.type == BI_INDEX_FAU &&
+                    !(src.value & BIR_FAU_IMMEDIATE) &&
+                    (src.value & BIR_FAU_UNIFORM);
+      }
+      if (uniform) {
+         bi_foreach_src(I, s) {
+            bi_index src = I->src[s];
+            if (src.type == BI_INDEX_FAU &&
+                !(src.value & (BIR_FAU_UNIFORM | BIR_FAU_IMMEDIATE)))
+               bi_replace_src(I, s, bi_mov_i32(b, bi_strip_index(src)));
+         }
+      }
+   }
    struct fau_state fau = {.uniform_slot = -1};
    unsigned fau_page = va_select_fau_page(I);
 

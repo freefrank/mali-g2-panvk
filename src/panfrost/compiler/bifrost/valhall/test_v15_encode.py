@@ -60,6 +60,36 @@ class EncoderTest(unittest.TestCase):
                     fields['src1'] = 448
                     self.assertEqual(result.value, self.new.encode('FADD', variant, **fields))
 
+    def test_uniform_sources_past_first_page(self):
+        for index in [0, 1, 31, 32, 63, 64, 65, 84, 91, 127]:
+            for name, variant in [('MOV', 'i32'), ('FADD', 'f32')]:
+                fields = {'src0': 128 + (index & 63), 'dest_register_index': 12,
+                          'flow': 'none', 'fau_page_index': index // 64}
+                if name == 'FADD':
+                    fields.update(src1=192, dest_width_narrow='none')
+                else:
+                    fields.update(dest_width='none')
+                old = self.old.encode(name, variant, **fields)
+                result = ctypes.c_uint64()
+                with self.subTest(index=index, instruction=name):
+                    self.assertTrue(self.encode(old, ctypes.byref(result)))
+                    fields['src0'] = 256 + index
+                    fields['fau_page_index'] = 0
+                    if name == 'FADD':
+                        fields['src1'] = 448
+                    self.assertEqual(result.value, self.new.encode(name, variant, **fields))
+
+    def test_special_sources_keep_their_page(self):
+        for page, source in itertools.product([0, 1, 3], [224, 225, 230, 231]):
+            old = self.old.encode('MOV', 'i32', src0=source, dest_register_index=12,
+                                  dest_width='none', flow='none', fau_page_index=page)
+            result = ctypes.c_uint64()
+            self.assertTrue(self.encode(old, ctypes.byref(result)))
+            expected = self.new.encode('MOV', 'i32', src0=480 + (source & 31),
+                                       dest_register_index=12, dest_width='none',
+                                       flow='none', fau_page_index=page)
+            self.assertEqual(result.value, expected)
+
 
 if __name__ == '__main__':
     unittest.main()

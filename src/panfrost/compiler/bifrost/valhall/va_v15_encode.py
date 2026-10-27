@@ -72,10 +72,18 @@ class Generator:
             elif old_key in old_defs:
                 of = old_defs[old_key]
                 value = raw_old(old_key)
+                if key == 'fau_page_index':
+                    special = [f'(({raw_old(name)} & UINT64_C(224)) == UINT64_C(224))'
+                               for name, field in old_defs.items()
+                               if field.get('type', '').startswith('SourceEncoding')]
+                    has_special = ' || '.join(special) if special else 'false'
+                    value = f'(({has_special}) ? {value} : ({value} >> 1))'
                 if of.get('type', '').startswith('SourceEncoding'):
+                    page = raw_old('fau_page_index') if 'fau_page_index' in old_defs else '0'
+                    uniform = f'(UINT64_C(256) | ({page} << 6))'
                     value = (f'(({value} & UINT64_C(63)) | '
                              f'(({value} & UINT64_C(128)) ? '
-                             f'(({value} & UINT64_C(64)) ? UINT64_C(448) : UINT64_C(256)) : '
+                             f'(({value} & UINT64_C(64)) ? UINT64_C(448) : {uniform}) : '
                              f'(({value} & UINT64_C(64)) ? UINT64_C(128) : UINT64_C(0))))')
                 oe = self.old.enums.get(of.get('type'))
                 ne = self.new.enums.get(nf.get('type'))
