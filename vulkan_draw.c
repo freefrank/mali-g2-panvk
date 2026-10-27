@@ -48,6 +48,8 @@ int main(int argc, char **argv)
     if (argc < 4 || argc > 5) return 2;
     int textured = argc == 5 && !strncmp(argv[4], "texture", 7);
     int vertex_store = argc == 5 && !strcmp(argv[4], "vertex_store");
+    int fragcoord = argc == 5 && !strcmp(argv[4], "fragcoord");
+    int clockwise = getenv("MALI_G2_TEST_CLOCKWISE") != NULL;
     int native_image = argc == 5 && strstr(argv[4], "native");
     int ahb_image = argc == 5 && strstr(argv[4], "ahb");
     void *library = dlopen(argv[1], RTLD_NOW | RTLD_LOCAL);
@@ -367,7 +369,8 @@ int main(int argc, char **argv)
     VkPipelineViewportStateCreateInfo viewport_info = {.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
         .viewportCount = 1, .pViewports = &viewport, .scissorCount = 1, .pScissors = &scissor};
     VkPipelineRasterizationStateCreateInfo raster = {.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-        .polygonMode = VK_POLYGON_MODE_FILL, .cullMode = VK_CULL_MODE_NONE, .lineWidth = 1};
+        .polygonMode = VK_POLYGON_MODE_FILL, .cullMode = VK_CULL_MODE_NONE, .lineWidth = 1,
+        .frontFace = clockwise ? VK_FRONT_FACE_CLOCKWISE : VK_FRONT_FACE_COUNTER_CLOCKWISE};
     VkPipelineMultisampleStateCreateInfo samples = {.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
         .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT};
     VkPipelineColorBlendAttachmentState blend_attachment = {.colorWriteMask = 15};
@@ -462,6 +465,11 @@ int main(int argc, char **argv)
         correct = 0;
         for (unsigned i = 0; i < 256; i++) {
             uint8_t expected[4] = {255,0,255,255};
+            if (fragcoord) {
+                expected[0] = (i % 16) * 17;
+                expected[1] = (i / 16) * 17;
+                expected[2] = clockwise ? 255 : 0;
+            }
             if (textured) {
                 const uint8_t *source = texels + 4 * ((i % 16 >= 8) + 2 * (i / 16 >= 8));
                 for (unsigned c = 0; c < 4; c++)
