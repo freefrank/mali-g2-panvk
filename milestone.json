@@ -4,10 +4,15 @@
   "architecture": 15,
   "csf_legacy_kernel_api": "1.21",
   "native_shader_direct_kernel_submission": "pass,32 integer results",
-  "mesa_v15_codegen": "in progress, shader executes but output validation fails",
+  "mesa_v15_codegen": "NIR to v14 IR to v15 encoding and remapped registers: pass,32 integer results",
   "complete_vulkan_backend": false,
   "eden_validated": false,
   "driver_zip_built": false,
   "reference_archive": "https://deb.debian.org/debian/pool/main/m/mesa/mesa_26.2.5.orig.tar.xz",
-  "reference_sha256": "794b3d1729075dae7ebd47c7283b7ca0cdb5dec668f7f11cc0a5d82f6138a0a5"
+  "reference_sha256": "794b3d1729075dae7ebd47c7283b7ca0cdb5dec668f7f11cc0a5d82f6138a0a5",
+  "v15_register_map_validated": {
+    "preloaded_global_invocation_x": 0,
+    "work_register_offset": 2,
+    "compute_pointer_low_bits": 1
+  }
 }

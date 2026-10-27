@@ -194,7 +194,7 @@ class ISA:
         return result
 
 
-def transcode_word(old, new, word):
+def transcode_word(old, new, word, register_map=None):
     e, values = old.decode(word)
     target = new.instructions[e.get('name'), e.get('variant', '')]
     old_definitions = {f.get('name'): f for f in e.findall('field') + e.findall('virtual')}
@@ -211,7 +211,11 @@ def transcode_word(old, new, word):
             continue
         if f.get('type', '').startswith('SourceEncoding'):
             kind, index = n >> 6, n & 63
+            if kind < 2 and register_map is not None:
+                index = register_map[index]
             n = ((0, 128, 256, 448)[kind]) + index
+        elif 'register_index' in key and register_map is not None:
+            n = register_map[n]
         oe = old.enums.get(f.get('type'))
         ne = new.enums.get(nf.get('type'))
         if oe is not None and ne is not None:
