@@ -1239,6 +1239,7 @@ va_v15_preload_reg(mesa_shader_stage stage, unsigned reg)
       case 59: return 2;
       case 60: return 0;
       case 61: return 1;
+      case 62: return 3;
       default: UNREACHABLE("Unvalidated v15 vertex preload");
       }
    }
