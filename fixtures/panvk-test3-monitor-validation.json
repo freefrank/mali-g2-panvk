@@ -1,0 +1,14 @@
+{
+  "loopback_only": true,
+  "events": 701,
+  "phases": {
+    "device begin": 8,
+    "device ready": 8,
+    "compile begin": 17,
+    "compile end": 17,
+    "submit begin": 217,
+    "submit end": 217,
+    "gpu complete": 217
+  },
+  "errors": 0
+}

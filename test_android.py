@@ -15,11 +15,12 @@ def main():
     args = parser.parse_args()
     env = dict(os.environ)
     env.pop('LD_PRELOAD', None)
+    env.pop('MALI_G2_TEST_CLOCKWISE', None)
     env['LD_LIBRARY_PATH'] = '/vendor/lib64:/vendor/lib64/egl:/system/lib64'
     env['MESA_LOG'] = 'file'
     env['MALI_G2_TEST_FRAMES'] = '30'
     for shader in ['triangle.vert', 'triangle.frag', 'texture.vert',
-                   'texture.frag', 'vertex_store.vert']:
+                   'texture.frag', 'vertex_store.vert', 'fragcoord.frag']:
         subprocess.run(['glslangValidator', '-V', str(ROOT / 'fixtures' / shader),
                         '-o', str(ROOT / (shader + '.spv'))], check=True,
                        stdout=subprocess.DEVNULL)
@@ -30,14 +31,19 @@ def main():
         ('texture-ahb', 'texture.vert', 'texture.frag', 'texture_ahb'),
         ('texture-offscreen', 'texture.vert', 'texture.frag', 'texture'),
         ('vertex-store', 'vertex_store.vert', 'triangle.frag', 'vertex_store'),
+        ('fragcoord', 'triangle.vert', 'fragcoord.frag', 'fragcoord'),
+        ('fragcoord-clockwise', 'triangle.vert', 'fragcoord.frag', 'fragcoord'),
     ]:
         tests.append((name, 'vulkan_draw',
                       [str(ROOT / (vert + '.spv')), str(ROOT / (frag + '.spv')), mode],
                       'VULKAN_DRAW_PASS frames=30/30 correct_pixels=256/256'))
     results = []
     for name, binary, extra, expected in tests:
+        case_env = dict(env)
+        if name == 'fragcoord-clockwise':
+            case_env['MALI_G2_TEST_CLOCKWISE'] = '1'
         run = subprocess.run([str(ROOT / binary), str(args.driver.resolve())] + extra,
-                             env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                             env=case_env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                              text=True, timeout=45)
         path = ROOT / 'fixtures' / (args.tag + '-' + name + '.txt')
         path.write_text(run.stdout)

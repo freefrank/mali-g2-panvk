@@ -1,13 +1,13 @@
 {
   "objective": "Complete Eden-required Mali-G2 PanVK capabilities and deliver driver ZIP to Android Download",
-  "user_latest": "test1 exits immediately after starting game; user shared fresh log",
+  "user_latest": "test2 stuck loading; user requested direct Eden log directory access",
   "driver_repo": "/root/mali-panvk",
   "backend_repo": "/root/mali-g2-backend",
-  "current_status": "Fixed and reproduced test1 launch failure: Mapper 5 metadata import commit 354f23f. Packaged test2; six on-device test groups pass, including 30-frame native Android and AHB rendering. Awaiting user Eden test2 result; continuing shader ABI validation.",
-  "next": "Validate fragment-coordinate/front-face graphics preloads on G2; inspect user test2 Eden log when shared. Remaining genuine CSF features still require implementation.",
-  "candidate_packaging": "DELIVERED /storage/emulated/0/Download/panvk-mali-g2-test2-354f23f.zip (4361214 bytes), SHA256 024220ae8375517adc5da5d41a9f29b6d600cab2d6c986f9d7b41804b130a83a.",
+  "current_status": "Test1 immediate initialization failure fixed by Mapper 5 import (354f23f). User test2 now stuck loading. Direct Android app files directory is denied by OS permissions, including Android run-as. Independently fixed fragment XY/front-face ABI (04098e1): wrong test2 pixel outputs became 256/256 correct for 30 frames in both face orientations. Added local-only G2 diagnostics (216a5b8) and delivered test3. Await user launch retest; local monitor can now capture driver events without reading Eden private directory.",
+  "next": "Read /storage/emulated/0/Download/panvk-g2-test3-driver.log after user launches Eden with test3. Find last compile begin/end, submit begin/end, gpu complete. Then fix actual loading hang. Still need full CSF feature implementation and remaining graphics preload ABI validation.",
+  "candidate_packaging": "DELIVERED /storage/emulated/0/Download/panvk-mali-g2-test3-216a5b8.zip (4362146 bytes), SHA256 adffc7772ad8194ce6e9f9aafd1359927ba82b5623fd75bb9745dac36a6d9c81.",
   "build": "Android clang wrappers and NDK static C++ ready. PATH=/root/mali-panvk/build-host/bin:/root/mali-panvk-tools/bin:/usr/bin:/bin:/usr/sbin:/sbin ninja -C /root/mali-panvk/build-android-arm -j3 src/panfrost/vulkan/libvulkan_panfrost.so",
-  "tests": "build_helpers.py; test_backend.py gives 13 live compute tests. vulkan_draw handles triangle, texture (env MALI_G2_TEST_FRAMES=30), vertex_store modes. Compile fixtures via glslangValidator -V. Run with LD_LIBRARY_PATH=/vendor/lib64:/vendor/lib64/egl:/system/lib64 MESA_LOG=file; no PANVK_G2_EXPERIMENTAL needed now (defaults true).",
+  "tests": "test_android.py DRIVER --tag NAME: 8 test groups, each graphics group 30 frames. build_helpers.py --android now also builds vulkan helpers. Fragcoord reference stock validated both frontFace settings. All final stripped test3 groups pass.",
   "git": "User requires frequent local commits. AGENTS: Generated-by: LLM and biblioklept marker in messages, no upstream posting. Private user requested Panfrost edits override local prohibition. No code comments.",
   "goal": "Goal tool still reports paused from older pause; user explicitly resumed via \u7ee7\u7eed. Tool cannot resume, do not create another goal or falsely mark complete.",
   "remaining_capabilities": [
@@ -17,5 +17,14 @@
     "geometryShader",
     "tessellationShader",
     "multiViewport (maxViewports=1)"
-  ]
+  ],
+  "monitor": {
+    "exec_session_id": 94875,
+    "script": "/root/mali-g2-backend/driver_monitor.py",
+    "bind": "127.0.0.1:28643/UDP",
+    "output": "/storage/emulated/0/Download/panvk-g2-test3-driver.log",
+    "lifetime_seconds": 3600,
+    "restart": "python3 -u /root/mali-g2-backend/driver_monitor.py",
+    "note": "Currently running; helper validation events archived to fixtures and shared log reset to ready_for_eden_test3 marker. Monitor allows at most 8 MiB per invocation. No external networking."
+  }
 }

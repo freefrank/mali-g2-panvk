@@ -35,8 +35,11 @@
     "multiViewport"
   ],
   "vertex_storage_atomics": "PASS and enabled by 90d7de8",
-  "driver_zip_path": "/storage/emulated/0/Download/panvk-mali-g2-test2-354f23f.zip",
+  "driver_zip_path": "/storage/emulated/0/Download/panvk-mali-g2-test3-216a5b8.zip",
   "eden_test1": "VK_ERROR_INVALID_EXTERNAL_HANDLE at renderer initialization; native GPU-only AHB stride=0 layout unsupported by old fallback",
   "android_mapper5": "Fixed by 354f23f; three allocation usage patterns imported, native and AHB graphics pass 30 frames",
-  "eden_test2": "Awaiting user launch result"
+  "eden_test2": "User reports stuck loading; fresh Eden app logs inaccessible due Android permissions",
+  "fragment_preloads": "04098e1: v15 FS logical58->R3 primitive flags, logical59->R2 XY; 30-frame gradient+front-face tests pass in both frontFace settings",
+  "diagnostics": "216a5b8: local loopback-only initialization/compile/submit/completion events, received on phone into public Download",
+  "eden_test3": "Awaiting user launch with test3; monitor running"
 }
