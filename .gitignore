@@ -17,4 +17,5 @@ __pycache__/
 /trace-vulkan-*/
 /vulkan_draw
 /vulkan_android
+/vulkan_compile
 *.spv

@@ -45,7 +45,7 @@ def build_android():
     includes = ['-I/root/MaliBridge-reference/third_party/Vulkan-Headers-1.4.341/include',
                 '-I/root/mali-panvk/include', '-I/root/mali-panvk/include/android_stub',
                 '-I/root/mali-panvk-diagnostics']
-    for source in ['vulkan_android', 'vulkan_draw']:
+    for source in ['vulkan_android', 'vulkan_draw', 'vulkan_compile']:
         subprocess.run(base + includes + [str(ROOT / (source + '.c')), '-o',
                                          str(ROOT / source), '-ldl'],
                        env=env, check=True)
