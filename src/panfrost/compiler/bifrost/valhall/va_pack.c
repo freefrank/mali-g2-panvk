@@ -8,6 +8,11 @@
 #include "valhall.h"
 #include "valhall_enums.h"
 
+#include <inttypes.h>
+
+void panfrost_valhall_compile_error(const char *reason, const char *instruction)
+   __attribute__((weak));
+
 /* This file contains the final passes of the compiler. Running after
  * scheduling and RA, the IR is now finalized, so we need to emit it to actual
  * bits on the wire (as well as fixup branches)
@@ -20,16 +25,29 @@
 NORETURN static void PRINTFLIKE(2, 3)
    invalid_instruction(const bi_instr *I, const char *cause, ...)
 {
-   fputs("\nInvalid ", stderr);
-
+   char reason[256];
    va_list ap;
    va_start(ap, cause);
-   vfprintf(stderr, cause, ap);
+   vsnprintf(reason, sizeof(reason), cause, ap);
    va_end(ap);
 
-   fputs(":\n\t", stderr);
+   fprintf(stderr, "\nInvalid %s:\n\t", reason);
    bi_print_instr(I, stderr);
    fprintf(stderr, "\n");
+
+   if (panfrost_valhall_compile_error) {
+      char *instruction = NULL;
+      size_t length = 0;
+      FILE *stream = open_memstream(&instruction, &length);
+      if (stream) {
+         bi_print_instr(I, stream);
+         fclose(stream);
+      }
+      panfrost_valhall_compile_error(reason,
+                                     instruction ? instruction :
+                                     bi_get_opcode_props(I)->name);
+      free(instruction);
+   }
 
    UNREACHABLE("Invalid instruction");
 }
@@ -1327,7 +1345,8 @@ bi_pack_valhall(bi_context *ctx, struct util_dynarray *emission)
          if (ctx->arch == 15) {
             uint64_t encoded;
             if (!va_v15_encode_from_valhall(hex, &encoded))
-               invalid_instruction(I, "v15 encoding");
+               invalid_instruction(I, "v15 encoding stage=%u word=%016" PRIx64,
+                                   ctx->stage, hex);
             hex = encoded;
          }
          util_dynarray_append(emission, hex);

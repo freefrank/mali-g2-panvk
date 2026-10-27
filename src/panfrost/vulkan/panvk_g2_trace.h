@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 void panvk_g2_trace(const char *format, ...);
+void panfrost_valhall_compile_error(const char *reason, const char *instruction);
 
 static inline bool
 panvk_g2_trace_submission(uint32_t id)
