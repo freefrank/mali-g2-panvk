@@ -56,6 +56,8 @@
 
 #define FAU_WORD_COUNT 64
 
+static _Thread_local uint32_t trace_compile_id;
+
 struct panvk_lower_sysvals_context {
    struct panvk_shader_variant *shader;
    const struct vk_graphics_pipeline_state *state;
@@ -1331,6 +1333,11 @@ panvk_compile_nir(struct panvk_device *dev, nir_shader *nir,
    input.fau.promote_immediates = true;
 
    struct util_dynarray binary = UTIL_DYNARRAY_INIT;
+   if (PAN_ARCH == 15) {
+      panvk_g2_trace("backend begin id=%u stage=%u", trace_compile_id,
+                     nir->info.stage);
+      panvk_g2_trace_shader(trace_compile_id, 1, nir, &input, &shader->info);
+   }
    pan_shader_compile(nir, &input, &binary, &shader->info);
 
    /* Propagate potential additional FAU values into the panvk info struct. */
@@ -2591,6 +2598,9 @@ panvk_compile_shaders(struct vk_device *vk_dev, uint32_t shader_count,
          stages |= 1u << infos[i].stage;
       panvk_g2_trace("compile begin id=%u count=%u stages=%#x", trace_id,
                      shader_count, stages);
+      trace_compile_id = trace_id;
+      for (uint32_t i = 0; i < shader_count; i++)
+         panvk_g2_trace_shader(trace_id, 0, infos[i].nir, NULL, NULL);
    }
    panvk_per_arch(compiler_lock)();
 
@@ -2600,8 +2610,10 @@ panvk_compile_shaders(struct vk_device *vk_dev, uint32_t shader_count,
 
    panvk_per_arch(compiler_unlock)();
 
-   if (PAN_ARCH == 15)
+   if (PAN_ARCH == 15) {
       panvk_g2_trace("compile end id=%u result=%d", trace_id, result);
+      trace_compile_id = 0;
+   }
 
    return result;
 }
