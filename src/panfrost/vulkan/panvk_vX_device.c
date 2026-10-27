@@ -44,6 +44,7 @@
 #include "util/os_file.h"
 #include "util/u_printf.h"
 #include "pan_props.h"
+#include "panvk_g2_trace.h"
 #include "pan_samples.h"
 #include "poly/geometry.h"
 #include "pan_buffer.h"
@@ -590,6 +591,8 @@ panvk_per_arch(create_device)(struct panvk_physical_device *physical_device,
                               const VkAllocationCallbacks *pAllocator,
                               VkDevice *pDevice)
 {
+   if (PAN_ARCH == 15)
+      panvk_g2_trace("device begin queues=%u", pCreateInfo->queueCreateInfoCount);
    struct panvk_instance *instance =
       to_panvk_instance(physical_device->vk.instance);
    VkResult result;
@@ -850,6 +853,8 @@ panvk_per_arch(create_device)(struct panvk_physical_device *physical_device,
 #endif
 
    *pDevice = panvk_device_to_handle(device);
+   if (PAN_ARCH == 15)
+      panvk_g2_trace("device ready");
    return VK_SUCCESS;
 
 err_finish_queues:

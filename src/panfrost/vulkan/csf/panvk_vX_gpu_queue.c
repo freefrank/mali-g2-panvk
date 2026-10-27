@@ -23,6 +23,7 @@
 
 #include "util/bitscan.h"
 #include "util/log.h"
+#include "panvk_g2_trace.h"
 #include "vk_drm_syncobj.h"
 #include "vk_log.h"
 
@@ -1508,6 +1509,7 @@ panvk_queue_kbase_decode(struct panvk_gpu_queue *queue, const struct vk_queue_su
 /* What a kbase submission still has to do once the GPU is done with it. */
 struct panvk_kbase_csf_done {
    struct panvk_gpu_queue *queue;
+   uint32_t trace_id;
    uint32_t nr_signals;
    uint32_t signals[];
 };
@@ -1518,6 +1520,9 @@ panvk_kbase_csf_done(void *data, bool ok)
 {
    struct panvk_kbase_csf_done *d = data;
    struct panvk_device *dev = to_panvk_device(d->queue->vk.base.device);
+
+   if (PAN_ARCH == 15 && (panvk_g2_trace_submission(d->trace_id) || !ok))
+      panvk_g2_trace("gpu complete id=%u ok=%u", d->trace_id, ok);
 
    if (!ok)
       d->queue->kbase_lost = true;
@@ -1535,7 +1540,8 @@ panvk_kbase_csf_done(void *data, bool ok)
  * alongside the producer's remaining ones.
  */
 static VkResult
-panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *vk_submit)
+panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *vk_submit,
+                         uint32_t trace_id)
 {
    struct panvk_device *dev = to_panvk_device(queue->vk.base.device);
 
@@ -1621,6 +1627,7 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
    }
 
    d->queue = queue;
+   d->trace_id = trace_id;
    d->nr_signals = vk_submit->signal_count;
    for (uint32_t i = 0; i < vk_submit->signal_count; i++)
       d->signals[i] = vk_sync_as_drm_syncobj(vk_submit->signals[i].sync)->syncobj;
@@ -1691,8 +1698,19 @@ panvk_per_arch(gpu_queue_submit)(struct vk_queue *vk_queue, struct vk_queue_subm
    }
 
    struct panvk_gpu_queue *gpu_queue = container_of(vk_queue, struct panvk_gpu_queue, vk);
-   if (gpu_queue->kbase_group)
-      return panvk_queue_submit_kbase(gpu_queue, vk_submit);
+   if (gpu_queue->kbase_group) {
+      static uint32_t trace_count;
+      uint32_t trace_id = PAN_ARCH == 15 ? p_atomic_inc_return(&trace_count) : 0;
+      bool trace = PAN_ARCH == 15 && panvk_g2_trace_submission(trace_id);
+      if (trace)
+         panvk_g2_trace("submit begin id=%u cmds=%u waits=%u signals=%u", trace_id,
+                        vk_submit->command_buffer_count, vk_submit->wait_count,
+                        vk_submit->signal_count);
+      result = panvk_queue_submit_kbase(gpu_queue, vk_submit, trace_id);
+      if (trace || (PAN_ARCH == 15 && result != VK_SUCCESS))
+         panvk_g2_trace("submit end id=%u result=%d", trace_id, result);
+      return result;
+   }
 
    panvk_queue_submit_init(&submit, vk_queue);
    result = panvk_queue_submit_init_storage(&submit, vk_submit, &stack_storage);

@@ -23,6 +23,7 @@
 
 #include "spirv/nir_spirv.h"
 #include "util/memstream.h"
+#include "panvk_g2_trace.h"
 #include "util/mesa-blake3.h"
 #include "util/shader_stats.h"
 #include "util/u_debug.h"
@@ -2577,6 +2578,16 @@ panvk_compile_shaders(struct vk_device *vk_dev, uint32_t shader_count,
                       const VkAllocationCallbacks *pAllocator,
                       struct vk_shader **shaders_out)
 {
+   static uint32_t trace_count;
+   uint32_t trace_id = 0;
+   if (PAN_ARCH == 15) {
+      trace_id = p_atomic_inc_return(&trace_count);
+      uint32_t stages = 0;
+      for (uint32_t i = 0; i < shader_count; i++)
+         stages |= 1u << infos[i].stage;
+      panvk_g2_trace("compile begin id=%u count=%u stages=%#x", trace_id,
+                     shader_count, stages);
+   }
    panvk_per_arch(compiler_lock)();
 
    VkResult result = compile_shaders(vk_dev, shader_count, infos, state,
@@ -2584,6 +2595,9 @@ panvk_compile_shaders(struct vk_device *vk_dev, uint32_t shader_count,
                                      shaders_out);
 
    panvk_per_arch(compiler_unlock)();
+
+   if (PAN_ARCH == 15)
+      panvk_g2_trace("compile end id=%u result=%d", trace_id, result);
 
    return result;
 }
