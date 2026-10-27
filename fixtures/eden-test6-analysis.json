@@ -1,0 +1,34 @@
+{
+  "test6_first_attempt": {
+    "pid": 15396,
+    "kernel_dropped_datagrams": 124,
+    "last_observed_compile": 1723,
+    "interpretation": "Tail incomplete; not a reliable crash boundary"
+  },
+  "test6_retry": {
+    "pid": 7507,
+    "kernel_dropped_datagrams": 0,
+    "compile_begin_count": 586,
+    "compile_end_count": 585,
+    "last_observed_backend_stage": "fragment",
+    "incomplete_compile_id": 586,
+    "compiler_error_events": 0
+  },
+  "game_snapshot_validation": {
+    "backend_replays": 162,
+    "all_passed": true,
+    "source_compile_id_range": [
+      1152,
+      1232
+    ],
+    "interpretation": "The previously captured window contains successful shaders and does not cover the later cache-dependent failure"
+  },
+  "next_capture": {
+    "driver_commit": "72569ca",
+    "backend_inputs": "all",
+    "receive_sockets": 16,
+    "receive_buffer_bytes_total": 268435456,
+    "monitor_burst_tests_passed": 2
+  },
+  "provenance": "Generated-by: LLM; biblioklept"
+}

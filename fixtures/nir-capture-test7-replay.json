@@ -1,0 +1,247 @@
+[
+  {
+    "snapshot": "shader-12224-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-12224-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=6 bytes=128\n"
+  },
+  {
+    "snapshot": "shader-12224-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12227-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=9 bytes=384\n"
+  },
+  {
+    "snapshot": "shader-12227-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=128\n"
+  },
+  {
+    "snapshot": "shader-12227-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=18 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12227-3-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12230-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=9 bytes=384\n"
+  },
+  {
+    "snapshot": "shader-12230-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=128\n"
+  },
+  {
+    "snapshot": "shader-12230-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=18 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12230-3-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12233-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=9 bytes=384\n"
+  },
+  {
+    "snapshot": "shader-12233-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=128\n"
+  },
+  {
+    "snapshot": "shader-12233-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=18 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12233-3-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12236-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=9 bytes=640\n"
+  },
+  {
+    "snapshot": "shader-12236-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=6 bytes=128\n"
+  },
+  {
+    "snapshot": "shader-12236-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12239-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-12239-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-12239-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12242-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-12242-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-12242-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12245-1-0-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=0 fau_reserved=6\nREPLAY_PASS stage=0 regs=64 tls=0 fau=9 bytes=384\n"
+  },
+  {
+    "snapshot": "shader-12245-1-4-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=4 fau_reserved=6\nREPLAY_PASS stage=4 regs=64 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-12245-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12497-1-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=12\nREPLAY_PASS stage=5 regs=64 tls=528 fau=59 bytes=45952\n"
+  },
+  {
+    "snapshot": "shader-12497-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=8\nREPLAY_PASS stage=5 regs=64 tls=0 fau=11 bytes=768\n"
+  },
+  {
+    "snapshot": "shader-12497-3-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=4\nREPLAY_PASS stage=5 regs=64 tls=0 fau=8 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-12497-4-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=12\nREPLAY_PASS stage=5 regs=64 tls=0 fau=14 bytes=6400\n"
+  },
+  {
+    "snapshot": "shader-12497-5-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=4\nREPLAY_PASS stage=5 regs=64 tls=0 fau=15 bytes=2688\n"
+  },
+  {
+    "snapshot": "shader-12497-6-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=2\nREPLAY_PASS stage=5 regs=32 tls=0 fau=7 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-12497-7-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=34 bytes=1280\n"
+  },
+  {
+    "snapshot": "shader-12626-1-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=12\nREPLAY_PASS stage=5 regs=64 tls=528 fau=59 bytes=45952\n"
+  },
+  {
+    "snapshot": "shader-12626-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=8\nREPLAY_PASS stage=5 regs=64 tls=0 fau=11 bytes=896\n"
+  },
+  {
+    "snapshot": "shader-12626-3-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=4\nREPLAY_PASS stage=5 regs=64 tls=0 fau=5 bytes=256\n"
+  },
+  {
+    "snapshot": "shader-12626-4-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=12\nREPLAY_PASS stage=5 regs=64 tls=0 fau=16 bytes=6784\n"
+  },
+  {
+    "snapshot": "shader-12626-5-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=4\nREPLAY_PASS stage=5 regs=64 tls=0 fau=18 bytes=3072\n"
+  },
+  {
+    "snapshot": "shader-12626-6-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=2\nREPLAY_PASS stage=5 regs=32 tls=0 fau=9 bytes=384\n"
+  },
+  {
+    "snapshot": "shader-12626-7-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=36 bytes=1408\n"
+  },
+  {
+    "snapshot": "shader-12650-1-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=12\nREPLAY_PASS stage=5 regs=64 tls=528 fau=59 bytes=45952\n"
+  },
+  {
+    "snapshot": "shader-12650-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12686-1-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=12\nREPLAY_PASS stage=5 regs=64 tls=528 fau=59 bytes=45952\n"
+  },
+  {
+    "snapshot": "shader-12686-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12765-1-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=12\nREPLAY_PASS stage=5 regs=64 tls=528 fau=59 bytes=45952\n"
+  },
+  {
+    "snapshot": "shader-12765-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  },
+  {
+    "snapshot": "shader-12777-1-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=12\nREPLAY_PASS stage=5 regs=64 tls=528 fau=59 bytes=45952\n"
+  },
+  {
+    "snapshot": "shader-12777-2-5-1.bin",
+    "returncode": 0,
+    "output": "REPLAY_BEGIN stage=5 fau_reserved=18\nREPLAY_PASS stage=5 regs=64 tls=0 fau=20 bytes=512\n"
+  }
+]

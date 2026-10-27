@@ -1,0 +1,57 @@
+{
+  "path": "/storage/emulated/0/Download/panvk-mali-g2-test7-72569ca.zip",
+  "bytes": 4334248,
+  "sha256": "e127fbe9164cbae6d18f072eac82bccc9bed10a3f5ff3bf2eba53809f1e91620",
+  "meta": {
+    "schemaVersion": 1,
+    "name": "PanVK Mali-G2 diagnostic test7 (72569ca)",
+    "description": "Captures every backend shader independently of cache order for local reproduction of the unresolved Eden fragment compilation exit. Retains existing G2 rendering fixes.",
+    "author": "Local G2 port based on JimVulkan mali-panvk",
+    "packageVersion": "1007",
+    "vendor": "Mesa",
+    "driverVersion": "Vulkan 1.4.363 / Mesa 27.0.0-devel",
+    "minApi": 31,
+    "libraryName": "libvulkan_panfrost.so"
+  },
+  "build": {
+    "commit": "72569cac5cccd490df52367ddbfad58c6f1d20c3",
+    "base_test6": "4d26f64d199a8d78b369c3b9e8708084df92751b",
+    "purpose": "Capture the fragment shader active at the unresolved Eden native exit",
+    "changes": [
+      "Capture all backend NIR inputs instead of a fixed compile-ID range",
+      "Skip the earlier pipeline NIR snapshot by default to reduce traffic",
+      "Use sixteen receive sockets with a random reuseport filter to retain bursts while the collector is paused",
+      "Read kernel tail-drop counters directly without waiting for another datagram"
+    ],
+    "validation": {
+      "graphics_and_android_import_groups": 9,
+      "graphics_frames_per_case": 30,
+      "eden_compute_pipeline_creates": 14,
+      "astc_gpu_cases": 4,
+      "backend_recompiles": 49,
+      "monitor_tests": 2,
+      "delayed_reader_burst_datagrams": 21024
+    },
+    "library_sha256": "c4b3876c11065ecaba5a2500014c3aa5f1e1d076fbc67efcfca2ef4c47702325",
+    "diagnostics": {
+      "destination": "127.0.0.1:28643/UDP",
+      "monitor_output": "/storage/emulated/0/Download/panvk-g2-test7-driver.log",
+      "capture_directory": "/root/mali-g2-backend/captures/test7",
+      "capture": "all backend shader NIR, point 1",
+      "maximum_shader_dump_bytes": 2097152,
+      "receive_sockets": 16,
+      "total_receive_buffer_bytes": 268435456
+    },
+    "pending": [
+      "Identify the unresolved native exit observed inside fragment compilation",
+      "geometryStreams and transformFeedback",
+      "fillModeNonSolid",
+      "shaderClipDistance",
+      "shaderCullDistance",
+      "geometryShader",
+      "tessellationShader",
+      "multiViewport"
+    ],
+    "provenance": "Generated-by: LLM; biblioklept"
+  }
+}
