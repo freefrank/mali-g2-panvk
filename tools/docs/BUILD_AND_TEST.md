@@ -20,6 +20,7 @@
 - Android 交叉文件位于 `toolchain/android-cross.ini`，放在构建目录外，`meson setup --wipe` 不会删除它。
 - Termux clang 在 `-static-libstdc++` 时链接 `-lc++_shared`；`toolchain/android-libcxx/libc++_shared.{a,so}` 是指向 NDK `libc++_static.a` + `libc++abi.a` 的链接脚本，`cpp_link_args` 需要包含 `-L/root/mali-g2-project/toolchain/android-libcxx`。
 - `cpp_link_args` 还必须直接列出 NDK 的 `libc++_static.a` 和 `libc++abi.a`。否则 C++ 运行时符号（`_Znwm`、`__gxx_personality_v0` 等）会被 gralloc 桩 `libs-a12/libc++.so` 解析，驱动多出 `NEEDED libc++.so`，而这个库不在应用可加载的公共库里，Eden 创建设备时就会闪退（test8 出过这个问题）。构建完成后用 `llvm-readelf -d` 确认 NEEDED 列表里没有 `libc++.so`。
+- 修改 `src/panfrost/compiler` 中的结构体（如 `pan_shader_info`）后，必须先重编 `build-host` 的 `panfrost_compile` 并复制到 `build-host/bin`，再删除 `build-android-arm/src/panfrost/libpan/libpan_shaders_v*.[ch]` 重新生成，否则预编译着色器的元数据布局与驱动不一致。
 - 构建 Android 驱动前需重新生成 gralloc 桩：`android/gralloc/mkstubs.py`（见 `driver/build.sh`）。
 
 ## 构建辅助程序
