@@ -47,6 +47,8 @@ int main(int argc, char **argv)
     setbuf(stdout, NULL);
     if (argc < 4 || argc > 5) return 2;
     int textured = argc == 5 && !strncmp(argv[4], "texture", 7);
+    int tex5551 = textured && getenv("MALI_G2_TEST_TEX_FORMAT") &&
+                  !strcmp(getenv("MALI_G2_TEST_TEX_FORMAT"), "r5g5b5a1");
     int vertex_store = argc == 5 && !strcmp(argv[4], "vertex_store");
     int fragcoord = argc == 5 && !strcmp(argv[4], "fragcoord");
     int drawid = argc == 5 && !strcmp(argv[4], "drawid");
@@ -317,6 +319,7 @@ int main(int argc, char **argv)
       if (textured) {
         VkImageCreateInfo ti = image_info;
         ti.pNext = NULL;
+        if (tex5551) ti.format = VK_FORMAT_R5G5B5A1_UNORM_PACK16;
         ti.extent.width = ti.extent.height = 2;
         ti.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
         CHECK(vkCreateImage(device, &ti, NULL, &texture_image));
@@ -331,6 +334,10 @@ int main(int argc, char **argv)
         CHECK(vkBindImageMemory(device, texture_image, texture_memory, 0));
         VkImageViewCreateInfo tv = view_info;
         tv.image = texture_image;
+        tv.format = ti.format;
+        if (getenv("MALI_G2_TEST_SWIZZLE"))
+            tv.components = (VkComponentMapping){VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_R,
+                                                 VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G};
         CHECK(vkCreateImageView(device, &tv, NULL, &texture_view));
         VkSamplerCreateInfo si = {.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .magFilter = VK_FILTER_NEAREST, .minFilter = VK_FILTER_NEAREST,
@@ -526,7 +533,17 @@ int main(int argc, char **argv)
             uint8_t upload[16];
             for (unsigned i = 0; i < sizeof(upload); i++)
                 upload[i] = frame % 2 && i % 4 != 3 ? 255 - texels[i] : texels[i];
-            memcpy(pixels, upload, sizeof(upload));
+            if (tex5551) {
+                uint16_t packed[4];
+                for (unsigned t = 0; t < 4; t++) {
+                    const uint8_t *c = upload + 4 * t;
+                    packed[t] = (uint16_t)((c[0] >> 3) << 11 | (c[1] >> 3) << 6 |
+                                           (c[2] >> 3) << 1 | (c[3] >> 7));
+                }
+                memcpy(pixels, packed, sizeof(packed));
+            } else {
+                memcpy(pixels, upload, sizeof(upload));
+            }
         }
         if (frame) CHECK(vkResetFences(device, 1, &fence));
         CHECK(vkQueueSubmit(queue, 1, &submit, fence));
@@ -546,8 +563,11 @@ int main(int argc, char **argv)
             }
             if (textured) {
                 const uint8_t *source = texels + 4 * ((i % 16 >= 8) + 2 * (i / 16 >= 8));
+                uint8_t texel[4];
                 for (unsigned c = 0; c < 4; c++)
-                    expected[c] = frame % 2 && c != 3 ? 255 - source[c] : source[c];
+                    texel[c] = frame % 2 && c != 3 ? 255 - source[c] : source[c];
+                for (unsigned c = 0; c < 4; c++)
+                    expected[c] = getenv("MALI_G2_TEST_SWIZZLE") ? texel[c == 3 ? 1 : 0] : texel[c];
             }
             if (!memcmp(bytes + 4 * i, expected, 4)) correct++;
         }
