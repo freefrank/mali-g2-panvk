@@ -3,10 +3,16 @@
 #include "compiler/nir/nir.h"
 #include "compiler/nir/nir_serialize.h"
 #include "panfrost/compiler/pan_compiler.h"
+#include "util/macros.h"
 #include "util/u_debug.h"
 
 #include <arpa/inet.h>
+#include <dlfcn.h>
 #include <errno.h>
+#include <inttypes.h>
+#include <signal.h>
+#include <ucontext.h>
+#include <unwind.h>
 #include <fcntl.h>
 #include <pthread.h>
 #include <stdarg.h>
@@ -27,11 +33,100 @@ static atomic_size_t trace_file_bytes;
 static unsigned capture_first, capture_last;
 static bool capture_pipeline;
 
+static const int crash_signals[] = {SIGSEGV, SIGBUS, SIGILL, SIGFPE, SIGABRT};
+static struct sigaction crash_prev[ARRAY_SIZE(crash_signals)];
+
+static void
+trace_addr(const char *what, unsigned idx, uintptr_t addr)
+{
+   Dl_info info;
+   if (addr && dladdr((void *)addr, &info) && info.dli_fname) {
+      const char *name = strrchr(info.dli_fname, '/');
+      panvk_g2_trace("crash %s=%u addr=0x%" PRIxPTR " lib=%s off=0x%" PRIxPTR
+                     " sym=%s", what, idx, addr,
+                     name ? name + 1 : info.dli_fname,
+                     addr - (uintptr_t)info.dli_fbase,
+                     info.dli_sname ? info.dli_sname : "?");
+   } else {
+      panvk_g2_trace("crash %s=%u addr=0x%" PRIxPTR, what, idx, addr);
+   }
+}
+
+struct crash_unwind {
+   unsigned depth;
+};
+
+static _Unwind_Reason_Code
+crash_unwind_frame(struct _Unwind_Context *ctx, void *data)
+{
+   struct crash_unwind *state = data;
+   uintptr_t pc = _Unwind_GetIP(ctx);
+   if (!pc || state->depth >= 48)
+      return _URC_END_OF_STACK;
+   trace_addr("frame", state->depth++, pc);
+   return _URC_NO_REASON;
+}
+
+static atomic_uint crash_reports;
+
+static bool
+in_library(uintptr_t addr)
+{
+   Dl_info info;
+   return addr && dladdr((void *)addr, &info) && info.dli_fname;
+}
+
+static void
+crash_handler(int sig, siginfo_t *si, void *uc_ptr)
+{
+   const ucontext_t *uc = uc_ptr;
+   unsigned i = 0;
+   while (crash_signals[i] != sig)
+      i++;
+   const struct sigaction *prev = &crash_prev[i];
+
+   if ((sig == SIGABRT || in_library(uc->uc_mcontext.pc)) &&
+       atomic_fetch_add(&crash_reports, 1) < 4) {
+      panvk_g2_trace("crash signal=%d code=%d fault=0x%" PRIxPTR, sig,
+                     si->si_code, (uintptr_t)si->si_addr);
+      trace_addr("pc", 0, uc->uc_mcontext.pc);
+      trace_addr("lr", 0, uc->uc_mcontext.regs[30]);
+      struct crash_unwind state = {0};
+      _Unwind_Backtrace(crash_unwind_frame, &state);
+      panvk_g2_trace("crash end frames=%u", state.depth);
+   }
+
+   if (prev->sa_flags & SA_SIGINFO) {
+      prev->sa_sigaction(sig, si, uc_ptr);
+   } else if (prev->sa_handler == SIG_DFL) {
+      sigaction(sig, prev, NULL);
+      if (sig == SIGABRT)
+         raise(sig);
+   } else if (prev->sa_handler != SIG_IGN) {
+      prev->sa_handler(sig);
+   }
+}
+
+static void
+install_crash_handler(void)
+{
+   struct sigaction action = {
+      .sa_sigaction = crash_handler,
+      .sa_flags = SA_SIGINFO | SA_ONSTACK,
+   };
+   sigemptyset(&action.sa_mask);
+   for (unsigned i = 0; i < ARRAY_SIZE(crash_signals); i++)
+      sigaction(crash_signals[i], &action, &crash_prev[i]);
+}
+
 static void
 init_trace(void)
 {
    if (!debug_get_bool_option("PANVK_G2_TRACE", true))
       return;
+
+   if (debug_get_bool_option("PANVK_G2_CRASH_HANDLER", true))
+      install_crash_handler();
 
    trace_fd = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC | SOCK_NONBLOCK, 0);
    capture_first = debug_get_num_option("PANVK_G2_CAPTURE_FIRST", 1);
