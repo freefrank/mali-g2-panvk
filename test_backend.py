@@ -6,6 +6,8 @@ import subprocess
 
 
 ROOT = Path(__file__).resolve().parent
+BIN = ROOT / 'build' / 'bin'
+BUILD = ROOT / 'build' / 'backend'
 MODES = ['integer', 'float', 'branch', 'loop', 'global_x', 'global_y', 'global_z',
          'local_x', 'local_y', 'local_z', 'group_x', 'group_y', 'group_z']
 
@@ -16,18 +18,19 @@ def main():
     args = parser.parse_args()
     environment = {k: v for k, v in os.environ.items()
                    if k not in ['LD_LIBRARY_PATH', 'LD_PRELOAD']}
+    BUILD.mkdir(parents=True, exist_ok=True)
     results = []
     failed = False
     for mode in MODES:
-        binary = ROOT / f'mesa-{mode}.bin'
-        compiled = subprocess.run([str(ROOT / 'compile_nir'), str(binary), '15', mode],
+        binary = BUILD / f'mesa-{mode}.bin'
+        compiled = subprocess.run([str(BIN / 'compile_nir'), str(binary), '15', mode],
                                   capture_output=True, text=True, timeout=20)
         entry = {'mode': mode, 'compile_exit': compiled.returncode,
                  'compile_log': compiled.stdout + compiled.stderr}
         if not compiled.returncode:
             metadata = json.loads(Path(str(binary) + '.json').read_text())
             allocation = (metadata['work_registers'] + 7) // 8 - 1
-            command = [str(ROOT / 'kmd_probe'), '21', '0', '0', str(binary),
+            command = [str(BIN / 'kmd_probe'), '21', '0', '0', str(binary),
                        str(allocation), str(metadata['preload'])]
             if '_' in mode:
                 command.append(mode)

@@ -8,6 +8,8 @@ import subprocess
 
 
 ROOT = Path(__file__).resolve().parent
+BIN = ROOT / 'build' / 'bin'
+COMPUTE_SHADERS = ROOT / 'build' / 'shaders' / 'eden'
 SHADERS = ['astc_decoder', 'vulkan_quad_indexed', 'vulkan_uint8',
            'queries_prefix_scan_sum', 'queries_prefix_scan_sum_nosubgroups',
            'resolve_conditional_render', 'block_linear_unswizzle_3d_bcn']
@@ -24,17 +26,18 @@ def main():
         env.pop(key, None)
     env['LD_LIBRARY_PATH'] = '/vendor/lib64:/vendor/lib64/egl:/system/lib64'
     env['MESA_LOG'] = 'file'
+    COMPUTE_SHADERS.mkdir(parents=True, exist_ok=True)
     for name in SHADERS:
         source = Path('/root/eden-source-review/src/video_core/host_shaders') / (name + '.comp')
         subprocess.run(['glslangValidator', '-V', '-DUseUniformBlock=1',
                         '--target-env', 'spirv1.3', str(source),
-                        '-o', str(ROOT / (name + '.comp.spv'))], check=True,
+                        '-o', str(COMPUTE_SHADERS / (name + '.comp.spv'))], check=True,
                        stdout=subprocess.DEVNULL)
     results = []
 
     def run(label, driver, names, case_env):
-        call = [str(ROOT / 'vulkan_compile'), str(driver)]
-        call += [str(ROOT / (name + '.comp.spv')) for name in names]
+        call = [str(BIN / 'vulkan_compile'), str(driver)]
+        call += [str(COMPUTE_SHADERS / (name + '.comp.spv')) for name in names]
         process = subprocess.run(call, env=case_env, stdout=subprocess.PIPE,
                                  stderr=subprocess.STDOUT, text=True, timeout=90)
         (ROOT / 'fixtures' / (args.tag + '-' + label + '.txt')).write_text(process.stdout)
