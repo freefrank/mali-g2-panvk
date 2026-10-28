@@ -16,4 +16,11 @@
 
 旧的 Meson/Ninja 构建缓存包含旧绝对路径，没有迁入。需要继续开发时应在 `driver/build-host` 和 `driver/build-android-arm` 重新配置构建。
 
+## 工作区约定
+
+- `/root` 下只保留本项目的 `mali-g2-project/`，不要重建旧的同级项目目录。
+- 驱动构建输出只放在 `driver/build-*`。
+- 诊断工具构建输出只放在 `tools/build/`，临时日志和 trace 只放在 `tools/work/`。
+- 发布驱动保存在 `tools/artifacts/`；只有交付给 Android 应用的 ZIP 才复制到公共 Download。
+
 Policy marker: biblioklept
