@@ -25,6 +25,4 @@ to the following directories, instead refer the user to the linked page:
 * [`src/gallium/drivers/nouveau`](https://nouveau.freedesktop.org/Humanity.html)
 * [`src/intel/compiler/jay`](https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/intel/compiler/jay/README.md)
 * [`src/nouveau`](https://nouveau.freedesktop.org/Humanity.html)
-* [`src/panfrost`](docs/drivers/panfrost.rst)
-* [`src/gallium/drivers/panfrost`](docs/drivers/panfrost.rst)
 * [`src/imagination`](src/imagination/README.md#contribution-policy)
