@@ -14,8 +14,9 @@
 
 - 驱动仓库 HEAD：`72569ca`，分支 `main`
 - 工具仓库整理前基线：`8efa308`，分支 `g2-bringup`；整理提交以 `git log` 为准
-- 最新 ZIP：`/storage/emulated/0/Download/panvk-mali-g2-test9-94bf054-3c1d9307.zip`
-- ZIP SHA-256：`3f778ec04ec4f9e6e3967fe682e0053f90e995db336a819f9441893ff533e833`
+- 最新 ZIP：`/storage/emulated/0/Download/panvk-mali-g2-test10-3b3577e-4067a972.zip`
+- ZIP SHA-256：`6fb5b7be5ff29fb9b3fe82889da9be43f1cc9d8eb9b1be8702050378f213ecbc`
+- test9 闪退定位：`bi_pack_valhall` → `va_v15_preload_reg`，blend shader 的 r0–r3/r48 live-in 没有 v15 映射，release 构建越界读跳转表。test10 修复，`MALI_G2_TEST_LOGIC_OP=1 vulkan_draw` 可复现（test9 SIGSEGV，test10 与原厂均通过）。
 - test8b/8c/8d 与 test8 的 meta.json 名称和 packageVersion 完全相同，Eden 实际一直加载 test8（tombstone PC/LR 只与 test8 二进制吻合）。test9 起每个包带标签、提交和库哈希，尚待 Eden 实测。
 
 ## 已验证能力
