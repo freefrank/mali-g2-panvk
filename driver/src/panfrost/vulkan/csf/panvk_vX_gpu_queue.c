@@ -1524,8 +1524,11 @@ panvk_kbase_csf_done(void *data, bool ok)
    if (PAN_ARCH == 15 && (panvk_g2_trace_submission(d->trace_id) || !ok))
       panvk_g2_trace("gpu complete id=%u ok=%u", d->trace_id, ok);
 
-   if (!ok)
+   if (!ok) {
+      if (PAN_ARCH == 15 && !d->queue->kbase_lost)
+         pan_kmod_kbase_dump_freed(panvk_g2_trace, 4096);
       d->queue->kbase_lost = true;
+   }
    if (d->nr_signals)
       dev->vk.sync->signal(dev->vk.sync, d->signals, d->nr_signals);
    free(d);

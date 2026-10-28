@@ -628,10 +628,47 @@ kbase_kmod_bo_alloc(struct pan_kmod_dev *dev, struct pan_kmod_vm *exclusive_vm, 
    return &bo->base;
 }
 
+#define KBASE_FREED_RING 4096
+static struct {
+   uint64_t va, size, time_ns;
+   uint32_t flags;
+} kbase_freed[KBASE_FREED_RING];
+static unsigned kbase_freed_next;
+
+static uint64_t
+kbase_now_ns(void)
+{
+   struct timespec ts;
+   clock_gettime(CLOCK_MONOTONIC, &ts);
+   return (uint64_t)ts.tv_sec * 1000000000ull + ts.tv_nsec;
+}
+
+void
+pan_kmod_kbase_dump_freed(void (*report)(const char *fmt, ...), unsigned count)
+{
+   const uint64_t now = kbase_now_ns();
+   for (unsigned i = 0; i < MIN2(count, KBASE_FREED_RING); i++) {
+      unsigned idx = (kbase_freed_next + KBASE_FREED_RING - i) % KBASE_FREED_RING;
+      uint64_t a = p_atomic_read(&kbase_freed[idx].va);
+      if (!a)
+         break;
+      report("freed va=0x%" PRIx64 " size=0x%" PRIx64 " flags=0x%x age_ms=%" PRIu64, a,
+             kbase_freed[idx].size, kbase_freed[idx].flags,
+             (now - kbase_freed[idx].time_ns) / 1000000);
+   }
+}
+
 static void
 kbase_kmod_bo_free(struct pan_kmod_bo *bo)
 {
    struct kbase_kmod_bo *kbase_bo = container_of(bo, struct kbase_kmod_bo, base);
+   {
+      unsigned idx = p_atomic_inc_return(&kbase_freed_next) % KBASE_FREED_RING;
+      kbase_freed[idx].size = bo->size;
+      kbase_freed[idx].flags = bo->flags;
+      kbase_freed[idx].time_ns = kbase_now_ns();
+      p_atomic_set(&kbase_freed[idx].va, kbase_bo->gpu_va);
+   }
 
    if (kbase_bo->exec) {
       struct kbase_ioctl_mem_free req = {.gpu_addr = kbase_bo->gpu_va};
