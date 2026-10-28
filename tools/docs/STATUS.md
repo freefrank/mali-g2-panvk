@@ -14,9 +14,9 @@
 
 - 驱动仓库 HEAD：`72569ca`，分支 `main`
 - 工具仓库整理前基线：`8efa308`，分支 `g2-bringup`；整理提交以 `git log` 为准
-- 最新 ZIP：`/storage/emulated/0/Download/panvk-mali-g2-test7-72569ca.zip`
-- ZIP SHA-256：`e127fbe9164cbae6d18f072eac82bccc9bed10a3f5ff3bf2eba53809f1e91620`
-- 结论：test7 是诊断版本，Eden 仍在启动游戏时退出。
+- 最新 ZIP：`/storage/emulated/0/Download/panvk-mali-g2-test8-68bf8b6.zip`
+- ZIP SHA-256：`674868a119266e7c13fae1704b5f68abaa604bcfd32a0b6ba452fd1c4c54b9f4`
+- test8 修复 32 个顶点属性/绑定，尚待 Eden 实测。
 
 ## 已验证能力
 
@@ -41,13 +41,12 @@ test7 记录了 2488 次管线编译开始、2486 次结束，没有编译器错
 - test7 强制 32 属性 + 1 个绑定：渲染错误。
 - test7 强制 32 个绑定：`SIGSEGV`，退出码 139。
 
-PanVK release 构建中的 `MAX_VBS=16` 会使第 17–32 个绑定越界写命令缓冲区状态。这个问题与 Eden 的退出形态一致，但按当前要求已停止修复；源码未包含该修复。
+PanVK release 构建中的 `MAX_VBS=16` 会使第 17–32 个绑定越界写命令缓冲区状态。这个问题与 Eden 的退出形态一致。test8（`68bf8b6`）在 CSF 上把属性和绑定提升到 32：1 个绑定和 32 个绑定均 30/30 帧、256/256 像素通过，`test_android.py` 与 `test_eden_compute.py` 全部通过。
 
 对应固定证据位于 `fixtures/vertex-input32-result.json`，测试着色器位于 `fixtures/vertex_input32.vert` 和 `fixtures/vertex_input32.frag`。
 
 ## 尚未补齐
 
-- 32 个顶点属性和绑定的 PanVK 状态、描述符表及能力上报。
 - `fillModeNonSolid`
 - `shaderClipDistance` / `shaderCullDistance`
 - geometry shader / tessellation shader

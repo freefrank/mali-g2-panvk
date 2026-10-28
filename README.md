@@ -12,7 +12,7 @@
 | `references/malibridge/` | Vulkan Headers 与 MaliBridge 外部参考，不纳入 Git |
 | `toolchain/` | Meson、Android 依赖和本地编译工具，不纳入 Git |
 
-当前驱动仍停留在诊断版 `test7-72569ca`，Eden 启动游戏时仍会退出；项目按用户要求停止继续修复。技术状态见 [tools/docs/STATUS.md](tools/docs/STATUS.md)，构建方法见 [tools/docs/BUILD_AND_TEST.md](tools/docs/BUILD_AND_TEST.md)。
+当前驱动为 `test8-68bf8b6`，已修复 32 顶点属性/绑定越界，等待 Eden 实测。技术状态见 [tools/docs/STATUS.md](tools/docs/STATUS.md)，构建方法见 [tools/docs/BUILD_AND_TEST.md](tools/docs/BUILD_AND_TEST.md)。
 
 旧的 Meson/Ninja 构建缓存包含旧绝对路径，没有迁入。需要继续开发时应在 `driver/build-host` 和 `driver/build-android-arm` 重新配置构建。
 

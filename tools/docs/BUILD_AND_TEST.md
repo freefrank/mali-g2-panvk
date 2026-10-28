@@ -14,6 +14,13 @@
 
 所有可重建输出统一写入 `build/`，不再写到仓库根目录。
 
+重建要点：
+
+- host 配置需要 `PKG_CONFIG_PATH=/root/mali-g2-project/toolchain/deps/spirv-tools/lib/pkgconfig`，系统 SPIRV-Tools 2023.6 太旧。
+- Android 交叉文件位于 `toolchain/android-cross.ini`，放在构建目录外，`meson setup --wipe` 不会删除它。
+- Termux clang 在 `-static-libstdc++` 时链接 `-lc++_shared`；`toolchain/android-libcxx/libc++_shared.{a,so}` 是指向 NDK `libc++_static.a` + `libc++abi.a` 的链接脚本，`cpp_link_args` 需要包含 `-L/root/mali-g2-project/toolchain/android-libcxx`。
+- 构建 Android 驱动前需重新生成 gralloc 桩：`android/gralloc/mkstubs.py`（见 `driver/build.sh`）。
+
 ## 构建辅助程序
 
 ```sh
