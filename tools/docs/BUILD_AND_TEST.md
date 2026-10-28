@@ -114,3 +114,16 @@ Policy marker: biblioklept
 ## Root 与崩溃记录
 
 Termux 已有 root：`/system/bin/sh -c 'su -c "logcat -d -b crash"'` 可读取 Eden 的 tombstone 摘要。
+
+## 产物布局
+
+- `tools/artifacts/<版本>/` 只保存交付 ZIP（内含剥离后的驱动）。
+- `tools/artifacts/symbols/<版本>-unstripped.so.zst` 保存带符号驱动，用于还原 tombstone 地址：`zstd -d -c <文件> > /tmp/x.so`，再用 `llvm-symbolizer -e /tmp/x.so <偏移+0x4000>`（tombstone 的 pc 加上 `(offset …)` 再加可执行段的 vaddr−offset 差）。
+- 历次 Eden 驱动事件日志压缩在 `tools/work/driver-logs/`。
+- Download 只放当前在测的 ZIP。
+
+## G2 调试开关
+
+- `su -c "/system/bin/setprop debug.mesa.panvk.debug sync"`：每次提交等待 GPU 完成，便于对齐出错提交。
+- `trace` 模式在 Eden 下会让驱动在纹理描述符写入处崩溃，暂不可用。
+- v15 驱动在描述符写入时检查缓冲区/纹理地址是否落在当前分配的 BO 内，越界会在事件日志里记 `badrange` 和调用栈。
