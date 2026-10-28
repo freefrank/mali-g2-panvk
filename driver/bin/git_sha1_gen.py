@@ -11,11 +11,11 @@ import sys
 
 def get_git_sha1():
     """Try to get the git SHA1 with git rev-parse."""
-    git_dir = os.path.join(os.path.dirname(sys.argv[0]), '..', '.git')
+    src_dir = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), '..')
     try:
         git_sha1 = subprocess.check_output([
             'git',
-            '--git-dir=' + git_dir,
+            '-C', src_dir,
             'rev-parse',
             'HEAD',
         ], stderr=open(os.devnull, 'w')).decode("ascii")

@@ -2,8 +2,9 @@
 """Package a stripped driver as an adrenotools-style zip: meta.json, libvulkan_panfrost.so and
 the third-party notices (NOTICE.txt).
 
-usage: package.py <stripped libvulkan_panfrost.so> <output dir>
+usage: package.py <stripped libvulkan_panfrost.so> <output dir> [tag]
 """
+import hashlib
 import json
 import os
 import re
@@ -18,9 +19,6 @@ def git(*args):
     try:
         run = lambda *a: subprocess.run(['git', '-C', ROOT, *a], capture_output=True, text=True,
                                         check=True).stdout.strip()
-        # Only this repository's history, never an enclosing one.
-        if os.path.normcase(os.path.abspath(run('rev-parse', '--show-toplevel'))) != os.path.normcase(ROOT):
-            return ''
         return run(*args)
     except (OSError, subprocess.CalledProcessError):
         return ''
@@ -46,9 +44,12 @@ def unstripped_sections(path):
 
 
 def main():
-    if len(sys.argv) != 3:
+    if len(sys.argv) not in (3, 4):
         sys.exit(__doc__)
     lib, out_dir = sys.argv[1], sys.argv[2]
+    tag = sys.argv[3] if len(sys.argv) == 4 else ''
+    with open(lib, 'rb') as f:
+        lib_hash = hashlib.sha256(f.read()).hexdigest()[:8]
 
     leftovers = unstripped_sections(lib)
     if leftovers:
@@ -64,15 +65,15 @@ def main():
 
     commit = git('rev-parse', '--short', 'HEAD')
     count = git('rev-list', '--count', 'HEAD') or '1'
-    suffix = '-' + commit if commit else ''
+    suffix = ''.join('-' + p for p in (tag, commit, lib_hash) if p)
 
     meta = {
         'schemaVersion': 1,
-        'name': 'PanVK Mali Bifrost/Valhall (kbase) (Mesa %s%s)' % (mesa_version, suffix),
+        'name': 'PanVK Mali-G2%s (Mesa %s)' % (suffix, mesa_version),
         'description': 'PanVK for Mali Bifrost and Valhall GPUs on the stock Arm kbase kernel '
                        'driver, based on Mesa %s.' % mesa_version,
         'author': 'JimVulkan',
-        'packageVersion': count,
+        'packageVersion': '%s.%s' % (count, int(lib_hash, 16) % 100000),
         'vendor': 'Mesa',
         'driverVersion': vulkan,
         'minApi': 31,
@@ -80,7 +81,7 @@ def main():
     }
 
     os.makedirs(out_dir, exist_ok=True)
-    zip_path = os.path.join(out_dir, 'mali-panvk-%s%s.zip' % (mesa_version, suffix))
+    zip_path = os.path.join(out_dir, 'panvk-mali-g2%s.zip' % suffix)
     with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as z:
         z.writestr('meta.json', json.dumps(meta, indent=2) + '\n')
         z.write(lib, 'libvulkan_panfrost.so')
