@@ -587,7 +587,7 @@ panvk_GetPhysicalDeviceQueueFamilyProperties2(
                 : 0),
          /* On v10+ we can support up to 127 queues but this causes timeout on
             some CTS tests */
-         .queueCount = arch >= 10 ? 2 : 1,
+         .queueCount = arch >= 10 && !(arch == 15 && pan_kmod_dev_is_kbase(physical_device->kmod.dev)) ? 2 : 1,
          .timestampValidBits =
             arch >= 10 &&
                   physical_device->kmod.dev->props.gpu_can_query_timestamp
