@@ -10,6 +10,9 @@
  * SPDX-License-Identifier: MIT
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 
 #include "util/build_id.h"
@@ -64,8 +67,22 @@ uint64_t panvk_debug;
 static void
 panvk_debug_init_once(void)
 {
-   panvk_debug =
-      parse_debug_string(os_get_option("PANVK_DEBUG"), panvk_debug_options);
+   const char *debug = os_get_option("PANVK_DEBUG");
+   char file_debug[256] = "";
+   if (!debug) {
+      FILE *f = fopen("/storage/emulated/0/Download/panvk-debug.txt", "r");
+      if (f) {
+         if (fgets(file_debug, sizeof(file_debug), f))
+            file_debug[strcspn(file_debug, "\r\n")] = '\0';
+         fclose(f);
+         if (file_debug[0]) {
+            debug = file_debug;
+            setenv("PANDECODE_DUMP_FILE",
+                   "/storage/emulated/0/Download/panvk-decode", 0);
+         }
+      }
+   }
+   panvk_debug = parse_debug_string(debug, panvk_debug_options);
 }
 
 static void

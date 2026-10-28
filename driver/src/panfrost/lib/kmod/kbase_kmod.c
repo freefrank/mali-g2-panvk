@@ -2134,7 +2134,10 @@ struct base_fence {
    struct {
       int fd;
       int stream_fd;
+      bool fence_signal;
+      uint8_t pad[7];
    } basep;
+   uint8_t reserved[48];
 };
 
 static uint64_t
