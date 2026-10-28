@@ -419,6 +419,7 @@ struct panvk_shader_desc_info {
 
 struct panvk_shader_variant {
    struct pan_shader_info info;
+   uint32_t g2_trace_id;
 
    union {
       struct {

@@ -1678,6 +1678,22 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
                 so[0].error, so[1].error, so[2].error);
       if (PANVK_DEBUG(TRACE))
          panvk_queue_kbase_decode(queue, vk_submit);
+#if PAN_ARCH >= 15
+      if (queue->kbase_lost || pan_kmod_kbase_csf_group_faulted(queue->kbase_group)) {
+         for (uint32_t i = 0; i < vk_submit->command_buffer_count; i++) {
+            const struct panvk_cmd_buffer *cb = container_of(
+               vk_submit->command_buffers[i], struct panvk_cmd_buffer, vk);
+            const uint32_t total = cb->g2_draws.count;
+            const uint32_t first = total > PANVK_G2_DRAW_LOG ? total - PANVK_G2_DRAW_LOG : 0;
+            panvk_g2_trace("fault submit=%u cmdbuf=%u work=%u", trace_id, i, total);
+            for (uint32_t k = first; k < total; k++) {
+               const uint32_t *e = cb->g2_draws.entries[k % PANVK_G2_DRAW_LOG];
+               panvk_g2_trace("fault work=%u %s shader=%u fs=%u", k,
+                              e[0] == 1 ? "draw" : "dispatch", e[1], e[2]);
+            }
+         }
+      }
+#endif
       return panvk_per_arch(gpu_queue_check_status)(&queue->vk);
    }
 

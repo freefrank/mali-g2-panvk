@@ -1339,6 +1339,7 @@ panvk_compile_nir(struct panvk_device *dev, nir_shader *nir,
       panvk_g2_trace_shader(trace_compile_id, 1, nir, &input, &shader->info);
    }
    pan_shader_compile(nir, &input, &binary, &shader->info);
+   shader->g2_trace_id = trace_compile_id;
 
    /* Propagate potential additional FAU values into the panvk info struct. */
    /* FAU consts are pushed as 32bit values, but total_count is for 64bit

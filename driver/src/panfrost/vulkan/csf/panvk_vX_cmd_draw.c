@@ -3472,6 +3472,17 @@ panvk_cmd_draw(struct panvk_cmd_buffer *cmdbuf, struct panvk_draw_info draw)
    if (!panvk_priv_mem_check_alloc(vs->spd))
       return;
 
+#if PAN_ARCH >= 15
+   {
+      const struct panvk_shader_variant *g2fs =
+         cmdbuf->state.gfx.fs.shader ? panvk_shader_only_variant(cmdbuf->state.gfx.fs.shader) : NULL;
+      uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
+      cmdbuf->g2_draws.entries[n][0] = 1;
+      cmdbuf->g2_draws.entries[n][1] = vs->g2_trace_id;
+      cmdbuf->g2_draws.entries[n][2] = g2fs ? g2fs->g2_trace_id : 0;
+   }
+#endif
+
    /* Needs to be done before get_fs() is called because it depends on
     * fs.required being initialized. */
    cmdbuf->state.gfx.fs.required =

@@ -339,6 +339,14 @@ cmd_dispatch(struct panvk_cmd_buffer *cmdbuf, struct panvk_dispatch_info *info)
 {
    const struct panvk_shader_variant *cs =
       panvk_shader_only_variant(cmdbuf->state.compute.shader);
+#if PAN_ARCH >= 15
+   {
+      uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
+      cmdbuf->g2_draws.entries[n][0] = 2;
+      cmdbuf->g2_draws.entries[n][1] = cs ? cs->g2_trace_id : 0;
+      cmdbuf->g2_draws.entries[n][2] = 0;
+   }
+#endif
    VkResult result;
 
    /* If there's no compute shader, we can skip the dispatch. */

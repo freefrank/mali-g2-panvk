@@ -874,6 +874,7 @@ panvk_reset_cmdbuf(struct vk_command_buffer *vk_cmdbuf,
    struct panvk_device *dev = to_panvk_device(cmdbuf->vk.base.device);
 
    vk_command_buffer_reset(&cmdbuf->vk);
+   cmdbuf->g2_draws.count = 0;
 
    panvk_pool_reset(&cmdbuf->cs_pool);
    panvk_pool_reset(&cmdbuf->desc_pool);

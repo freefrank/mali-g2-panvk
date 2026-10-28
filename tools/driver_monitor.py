@@ -109,7 +109,7 @@ def main():
                     continue
                 key = (pid, compile_id, stage, point)
                 if key not in captures:
-                    if capture_bytes + size > 16777216:
+                    if capture_bytes + size > 1073741824:
                         continue
                     captures[key] = {'data': bytearray(size), 'parts': set(), 'size': size}
                     capture_bytes += size

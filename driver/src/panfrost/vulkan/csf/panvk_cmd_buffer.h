@@ -546,8 +546,13 @@ struct panvk_cond_render_state {
    enum mali_cs_condition exec_cond;
 };
 
+#define PANVK_G2_DRAW_LOG 64
 struct panvk_cmd_buffer {
    struct vk_command_buffer vk;
+   struct {
+      uint32_t count;
+      uint32_t entries[PANVK_G2_DRAW_LOG][3];
+   } g2_draws;
    VkCommandBufferUsageFlags flags;
    struct panvk_pool cs_pool;
    struct panvk_pool desc_pool;
