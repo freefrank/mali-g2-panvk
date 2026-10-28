@@ -60,14 +60,14 @@ __pandecode_fetch_gpu_mem(struct pandecode_context *ctx, uint64_t gpu_va,
    const struct pandecode_mapped_memory *mem =
       pandecode_find_mapped_gpu_mem_containing(ctx, gpu_va);
 
-   if (!mem) {
-      fprintf(stderr, "Access to unknown memory %" PRIx64 " in %s:%d\n", gpu_va,
-              filename, line);
+   if (!mem || size + (gpu_va - mem->gpu_va) > mem->length) {
+      static uint8_t zeroes[65536];
+      fprintf(ctx->dump_stream, "!!! Access to unknown memory %" PRIx64 " size %zu in %s:%d\n",
+              gpu_va, (size_t)size, filename, line);
       fflush(ctx->dump_stream);
-      assert(0);
+      memset(zeroes, 0, sizeof(zeroes));
+      return zeroes;
    }
-
-   assert(size + (gpu_va - mem->gpu_va) <= mem->length);
 
    return mem->addr + gpu_va - mem->gpu_va;
 }

@@ -241,7 +241,8 @@ pandecode_dump_file_open(struct pandecode_context *ctx)
    else if (!ctx->dump_stream) {
       char buffer[1024];
       snprintf(buffer, sizeof(buffer), "%s.%s.ctx-%d.%04d", dump_file_base,
-               util_get_process_name(), ctx->id, ctx->dump_frame_count);
+               util_get_process_name(), ctx->id,
+               (int)(ctx->dump_frame_count % debug_get_num_option("PANDECODE_DUMP_KEEP", 10000)));
       mesa_logd("pandecode: dump command stream to file %s", buffer);
       ctx->dump_stream = fopen(buffer, "w");
       if (!ctx->dump_stream) {
@@ -520,6 +521,10 @@ pandecode_shader_disassemble(struct pandecode_context *ctx, uint64_t shader_ptr,
    /* Compute maximum possible size */
    struct pandecode_mapped_memory *mem =
       pandecode_find_mapped_gpu_mem_containing(ctx, shader_ptr);
+   if (!mem) {
+      pandecode_log_cont(ctx, "\nShader at unmapped GPU VA %" PRIx64 "\n\n", shader_ptr);
+      return;
+   }
    size_t sz = mem->length - (shader_ptr - mem->gpu_va);
 
    /* Print some boilerplate to clearly denote the assembly (which doesn't

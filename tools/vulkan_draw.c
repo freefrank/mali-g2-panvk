@@ -335,9 +335,18 @@ int main(int argc, char **argv)
         VkImageViewCreateInfo tv = view_info;
         tv.image = texture_image;
         tv.format = ti.format;
-        if (getenv("MALI_G2_TEST_SWIZZLE"))
-            tv.components = (VkComponentMapping){VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_R,
-                                                 VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G};
+        if (getenv("MALI_G2_TEST_SWIZZLE")) {
+            const char *m = getenv("MALI_G2_TEST_SWIZZLE");
+            VkComponentSwizzle c[4] = {VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_R,
+                                       VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G};
+            if (strlen(m) == 4) {
+                for (unsigned i = 0; i < 4; i++)
+                    c[i] = m[i] == 'r' ? VK_COMPONENT_SWIZZLE_R : m[i] == 'g' ? VK_COMPONENT_SWIZZLE_G :
+                           m[i] == 'b' ? VK_COMPONENT_SWIZZLE_B : m[i] == 'a' ? VK_COMPONENT_SWIZZLE_A :
+                           m[i] == '1' ? VK_COMPONENT_SWIZZLE_ONE : VK_COMPONENT_SWIZZLE_ZERO;
+            }
+            tv.components = (VkComponentMapping){c[0], c[1], c[2], c[3]};
+        }
         CHECK(vkCreateImageView(device, &tv, NULL, &texture_view));
         VkSamplerCreateInfo si = {.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .magFilter = VK_FILTER_NEAREST, .minFilter = VK_FILTER_NEAREST,
@@ -437,6 +446,15 @@ int main(int argc, char **argv)
     VkPipelineColorBlendAttachmentState blend_attachment = {.colorWriteMask = 15};
     VkPipelineColorBlendStateCreateInfo blend = {.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
         .attachmentCount = 1, .pAttachments = &blend_attachment};
+    if (getenv("MALI_G2_TEST_ALPHA_BLEND")) {
+        blend_attachment.blendEnable = VK_TRUE;
+        blend_attachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        blend_attachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        blend_attachment.colorBlendOp = VK_BLEND_OP_ADD;
+        blend_attachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        blend_attachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        blend_attachment.alphaBlendOp = VK_BLEND_OP_ADD;
+    }
     if (getenv("MALI_G2_TEST_LOGIC_OP")) {
         blend.logicOpEnable = VK_TRUE;
         blend.logicOp = VK_LOGIC_OP_COPY;
@@ -479,6 +497,8 @@ int main(int argc, char **argv)
                              0, 0, NULL, 0, NULL, 1, &tb);
     }
     VkClearValue clear = {.color = {{0, 0, 0, 1}}};
+    if (getenv("MALI_G2_TEST_ALPHA_BLEND"))
+        clear.color = (VkClearColorValue){{1, 1, 0, 1}};
     VkRenderPassBeginInfo render_begin = {.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         .renderPass = render, .framebuffer = framebuffer, .renderArea = scissor,
         .clearValueCount = 1, .pClearValues = &clear};
@@ -573,6 +593,14 @@ int main(int argc, char **argv)
         }
         tested_frames++;
         if (correct != 256) break;
+    }
+    if (getenv("MALI_G2_TEST_DUMP_QUADS")) {
+        const unsigned q[4] = {4 * 16 + 4, 4 * 16 + 12, 12 * 16 + 4, 12 * 16 + 12};
+        printf("QUADS");
+        for (unsigned i = 0; i < 4; i++)
+            printf(" %02x%02x%02x%02x", bytes[4 * q[i]], bytes[4 * q[i] + 1],
+                   bytes[4 * q[i] + 2], bytes[4 * q[i] + 3]);
+        printf("\n");
     }
     printf("VULKAN_DRAW_%s frames=%u/%u correct_pixels=%u/256 center=%02x%02x%02x%02x\n",
            correct == 256 ? "PASS" : "FAIL", tested_frames, frames, correct,

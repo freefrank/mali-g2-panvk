@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "util/build_id.h"
 #include "panvk_drirc.h"
@@ -69,6 +70,10 @@ panvk_debug_init_once(void)
 {
    const char *debug = os_get_option("PANVK_DEBUG");
    char file_debug[256] = "";
+   if (debug && !getenv("PANDECODE_DUMP_FILE") && !access("/storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files", W_OK))
+      setenv("PANDECODE_DUMP_FILE",
+             "/storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/panvk-decode", 0),
+      setenv("PANDECODE_DUMP_KEEP", "64", 0);
    if (!debug) {
       FILE *f = fopen("/storage/emulated/0/Download/panvk-debug.txt", "r");
       if (f) {
