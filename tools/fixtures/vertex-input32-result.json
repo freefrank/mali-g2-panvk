@@ -29,5 +29,21 @@
       "signal": "SIGSEGV",
       "status": "crash"
     }
+  },
+  "vi32_fix": {
+    "limits": {
+      "attributes": 32,
+      "bindings": 32
+    },
+    "one_binding": {
+      "frames": 30,
+      "correct_pixels": 256,
+      "status": "pass"
+    },
+    "thirty_two_bindings": {
+      "frames": 30,
+      "correct_pixels": 256,
+      "status": "pass"
+    }
   }
 }

@@ -28,7 +28,11 @@
 extern const struct vk_device_shader_ops panvk_per_arch(device_shader_ops);
 
 #define MAX_RTS 8
+#if PAN_ARCH >= 10
+#define MAX_VS_ATTRIBS 32
+#else
 #define MAX_VS_ATTRIBS 16
+#endif
 
 #if PAN_ARCH < 9
 

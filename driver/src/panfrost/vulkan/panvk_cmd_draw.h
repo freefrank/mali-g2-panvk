@@ -27,7 +27,11 @@
 #include "pan_fb.h"
 #include "pan_props.h"
 
+#if PAN_ARCH >= 10
+#define MAX_VBS 32
+#else
 #define MAX_VBS 16
+#endif
 
 #if PAN_ARCH < 10
 #define MAX_FRAMEBUFFER_DIMENSION (1 << 14)

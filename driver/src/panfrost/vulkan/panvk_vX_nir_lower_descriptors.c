@@ -1221,7 +1221,7 @@ create_copy_table(nir_shader *nir, struct lower_desc_ctx *ctx)
    switch (nir->info.stage) {
    case MESA_SHADER_VERTEX:
       /* Dummy sampler comes after the vertex attributes. */
-      dummy_sampler_idx = 16;
+      dummy_sampler_idx = MAX_VS_ATTRIBS;
       break;
    case MESA_SHADER_FRAGMENT:
       /* Dummy sampler comes after the varyings. */

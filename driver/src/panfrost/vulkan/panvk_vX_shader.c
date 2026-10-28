@@ -1973,7 +1973,7 @@ panvk_compile_shader(struct panvk_device *dev,
           */
          nir_foreach_shader_in_variable(var, nir) {
             assert(var->data.location >= VERT_ATTRIB_GENERIC0 &&
-                   var->data.location <= VERT_ATTRIB_GENERIC15);
+                   var->data.location < VERT_ATTRIB_GENERIC0 + MAX_VS_ATTRIBS);
             var->data.driver_location =
                var->data.location - VERT_ATTRIB_GENERIC0;
          }
