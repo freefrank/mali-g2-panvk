@@ -344,7 +344,8 @@ cmd_dispatch(struct panvk_cmd_buffer *cmdbuf, struct panvk_dispatch_info *info)
       uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
       cmdbuf->g2_draws.entries[n][0] = 2;
       cmdbuf->g2_draws.entries[n][1] = cs ? cs->g2_trace_id : 0;
-      cmdbuf->g2_draws.entries[n][2] = 0;
+      cmdbuf->g2_draws.entries[n][2] = cmdbuf->state.push_constants.data[0];
+      cmdbuf->g2_draws.entries[n][3] = cmdbuf->state.push_constants.data[1];
    }
 #endif
    VkResult result;

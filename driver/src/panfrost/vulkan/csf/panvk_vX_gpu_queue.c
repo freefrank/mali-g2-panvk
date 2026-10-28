@@ -1687,9 +1687,26 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
             const uint32_t first = total > PANVK_G2_DRAW_LOG ? total - PANVK_G2_DRAW_LOG : 0;
             panvk_g2_trace("fault submit=%u cmdbuf=%u work=%u", trace_id, i, total);
             for (uint32_t k = first; k < total; k++) {
-               const uint32_t *e = cb->g2_draws.entries[k % PANVK_G2_DRAW_LOG];
-               panvk_g2_trace("fault work=%u %s shader=%u fs=%u", k,
-                              e[0] == 1 ? "draw" : "dispatch", e[1], e[2]);
+               const uint64_t *e = cb->g2_draws.entries[k % PANVK_G2_DRAW_LOG];
+               if (e[0] == 3) {
+                  uint64_t sv, ss, dv, ds;
+                  bool sl = pan_kmod_kbase_va_live(e[1], e[3], &sv, &ss);
+                  bool dl = pan_kmod_kbase_va_live(e[2], e[3], &dv, &ds);
+                  panvk_g2_trace("fault work=%u copy src=0x%" PRIx64 " dst=0x%" PRIx64
+                                 " size=0x%" PRIx64 " src_live=%u dst_live=%u", k, e[1], e[2],
+                                 e[3], sl, dl);
+               } else if (e[0] == 2) {
+                  uint64_t v, sz;
+                  panvk_g2_trace("fault work=%u dispatch shader=%u pc0=0x%" PRIx64
+                                 " pc1=0x%" PRIx64 " pc0_live=%u pc1_live=%u", k,
+                                 (unsigned)e[1], e[2], e[3],
+                                 pan_kmod_kbase_va_live(e[2], 1, &v, &sz),
+                                 pan_kmod_kbase_va_live(e[3], 1, &v, &sz));
+               } else {
+                  panvk_g2_trace("fault work=%u %s shader=%u fs=%u", k,
+                                 e[0] == 1 ? "draw" : "dispatch", (unsigned)e[1],
+                                 (unsigned)e[2]);
+               }
             }
          }
       }

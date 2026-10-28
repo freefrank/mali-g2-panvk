@@ -402,6 +402,11 @@ panvk_per_arch(CmdCopyMemoryKHR)(VkCommandBuffer commandBuffer,
                            pCopyMemoryInfo->regionCount);
       panvk_g2_check_range(reg->dstRange.address, reg->srcRange.size, "copy_dst", r,
                            pCopyMemoryInfo->regionCount);
+      uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
+      cmdbuf->g2_draws.entries[n][0] = 3;
+      cmdbuf->g2_draws.entries[n][1] = reg->srcRange.address;
+      cmdbuf->g2_draws.entries[n][2] = reg->dstRange.address;
+      cmdbuf->g2_draws.entries[n][3] = reg->srcRange.size;
    }
 #endif
    meta_compute_start(cmdbuf, &save);

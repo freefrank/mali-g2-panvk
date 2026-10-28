@@ -551,7 +551,7 @@ struct panvk_cmd_buffer {
    struct vk_command_buffer vk;
    struct {
       uint32_t count;
-      uint32_t entries[PANVK_G2_DRAW_LOG][3];
+      uint64_t entries[PANVK_G2_DRAW_LOG][4];
    } g2_draws;
    VkCommandBufferUsageFlags flags;
    struct panvk_pool cs_pool;

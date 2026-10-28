@@ -3480,6 +3480,7 @@ panvk_cmd_draw(struct panvk_cmd_buffer *cmdbuf, struct panvk_draw_info draw)
       cmdbuf->g2_draws.entries[n][0] = 1;
       cmdbuf->g2_draws.entries[n][1] = vs->g2_trace_id;
       cmdbuf->g2_draws.entries[n][2] = g2fs ? g2fs->g2_trace_id : 0;
+      cmdbuf->g2_draws.entries[n][3] = 0;
    }
 #endif
 
