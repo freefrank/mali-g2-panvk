@@ -36,4 +36,6 @@
 
 整理只移动文件，不删除历史数据。`fixtures/` 中未跟踪的实验结果可能仍有研究价值；确认被稳定报告取代前，不批量清理。
 
+本次整理把 41 个历史未跟踪 fixture 原样归档到 `work/research/fixtures/`。整理后的 `fixtures/` 含 214 个文件，全部已纳入 Git；根目录与 fixture 目录的 Git 状态均保持干净。
+
 Policy marker: biblioklept

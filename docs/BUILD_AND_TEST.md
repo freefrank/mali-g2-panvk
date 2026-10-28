@@ -88,7 +88,7 @@ env -u LD_PRELOAD \
 env -u LD_PRELOAD \
   LD_LIBRARY_PATH=/vendor/lib64:/vendor/lib64/egl:/system/lib64 \
   MALI_G2_REPLAY_THREADS=2 \
-  build/bin/replay_nir_android --batch fixtures/eden-test7-replay-list.txt
+  build/bin/replay_nir_android --batch work/research/fixtures/eden-test7-replay-list.txt
 ```
 
 Eden 公共日志受 Android scoped storage 限制。需要从 Eden 分享到 Termux 后才能读取；仅复制到公共 Download 并不保证当前 Termux UID 有权限打开。
