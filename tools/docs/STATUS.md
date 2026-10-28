@@ -14,9 +14,9 @@
 
 - 驱动仓库 HEAD：`72569ca`，分支 `main`
 - 工具仓库整理前基线：`8efa308`，分支 `g2-bringup`；整理提交以 `git log` 为准
-- 最新 ZIP：`/storage/emulated/0/Download/panvk-mali-g2-test8-68bf8b6.zip`
-- ZIP SHA-256：`674868a119266e7c13fae1704b5f68abaa604bcfd32a0b6ba452fd1c4c54b9f4`
-- test8 修复 32 个顶点属性/绑定，尚待 Eden 实测。
+- 最新 ZIP：`/storage/emulated/0/Download/panvk-mali-g2-test8b-68bf8b6.zip`
+- ZIP SHA-256：`0c663a77608d1564481c620377ea164a51444477e626b11bffaa47aaa881ffdc`
+- test8 的 ZIP 误链接了 `libc++.so`，Eden 在创建 Vulkan 设备时闪退；test8b 源码相同，只修正了链接，尚待 Eden 实测。
 
 ## 已验证能力
 
