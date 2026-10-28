@@ -50,6 +50,11 @@ int main(int argc, char **argv)
     int vertex_store = argc == 5 && !strcmp(argv[4], "vertex_store");
     int fragcoord = argc == 5 && !strcmp(argv[4], "fragcoord");
     int drawid = argc == 5 && !strcmp(argv[4], "drawid");
+    int vertex_input = argc == 5 && !strcmp(argv[4], "vertex_input");
+    unsigned vertex_bindings = getenv("MALI_G2_TEST_VERTEX_BINDINGS") ?
+        strtoul(getenv("MALI_G2_TEST_VERTEX_BINDINGS"), NULL, 10) : 32;
+    if (vertex_input && vertex_bindings != 1 && vertex_bindings != 32)
+        return 2;
     int clockwise = getenv("MALI_G2_TEST_CLOCKWISE") != NULL;
     int native_image = argc == 5 && strstr(argv[4], "native");
     int ahb_image = argc == 5 && strstr(argv[4], "ahb");
@@ -108,6 +113,7 @@ int main(int argc, char **argv)
     LOAD(vkCmdBindDescriptorSets);
     LOAD(vkCmdCopyBufferToImage);
     LOAD(vkCmdDraw);
+    LOAD(vkCmdBindVertexBuffers);
     LOAD(vkCmdDrawIndirect);
     LOAD(vkCmdEndRenderPass);
     LOAD(vkCmdPipelineBarrier);
@@ -146,6 +152,15 @@ int main(int argc, char **argv)
         .pNext = &subgroup};
     vkGetPhysicalDeviceProperties2(physical, &props2);
     printf("DEVICE %s subgroup=%u\n", props.deviceName, subgroup.subgroupSize);
+    if (vertex_input) {
+        printf("VERTEX_LIMITS attributes=%u bindings=%u requested=32/%u\n",
+               props.limits.maxVertexInputAttributes, props.limits.maxVertexInputBindings,
+               vertex_bindings);
+        if ((props.limits.maxVertexInputAttributes < 32 ||
+             props.limits.maxVertexInputBindings < vertex_bindings) &&
+            !getenv("MALI_G2_TEST_IGNORE_VERTEX_LIMITS"))
+            return 2;
+    }
     VkPhysicalDeviceMemoryProperties memory;
     vkGetPhysicalDeviceMemoryProperties(physical, &memory);
     uint32_t family_count = 0;
@@ -252,7 +267,8 @@ int main(int argc, char **argv)
     VkBufferCreateInfo buffer_info = {.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
         .size = 4096,
         .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT |
-                 VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT};
+                 VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT |
+                 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT};
     VkBuffer buffer;
     CHECK(vkCreateBuffer(device, &buffer_info, NULL, &buffer));
     VkMemoryRequirements buffer_req;
@@ -267,6 +283,17 @@ int main(int argc, char **argv)
     void *pixels;
     CHECK(vkMapMemory(device, buffer_memory, 0, VK_WHOLE_SIZE, 0, &pixels));
     memset(pixels, 0, 4096);
+    if (vertex_input) {
+        float *vertices = (void *)((uint8_t *)pixels + 2048);
+        const float positions[3][2] = {{-1,-1},{3,-1},{-1,3}};
+        for (unsigned v = 0; v < 3; v++) {
+            for (unsigned a = 0; a < 32; a++) {
+                float *p = vertices + v * 128 + a * 4;
+                p[0] = positions[v][0]; p[1] = positions[v][1];
+                p[2] = a + 1; p[3] = (a + 1) * (a + 1);
+            }
+        }
+    }
     if (drawid) {
         const VkDrawIndirectCommand draws[2] = {{3, 1, 0, 0}, {3, 1, 0, 0}};
         memcpy((uint8_t *)pixels + 2048, draws, sizeof(draws));
@@ -374,6 +401,20 @@ int main(int argc, char **argv)
         {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
          .module = shaders[1], .pName = "main"}};
     VkPipelineVertexInputStateCreateInfo vertex = {.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO};
+    VkVertexInputBindingDescription bindings[32];
+    VkVertexInputAttributeDescription attributes[32];
+    if (vertex_input) {
+        for (unsigned i = 0; i < 32; i++) {
+            bindings[i] = (VkVertexInputBindingDescription){i, 512, VK_VERTEX_INPUT_RATE_VERTEX};
+            attributes[i] = (VkVertexInputAttributeDescription){i,
+                vertex_bindings == 1 ? 0 : i, VK_FORMAT_R32G32B32A32_SFLOAT,
+                vertex_bindings == 1 ? i * 16 : 0};
+        }
+        vertex.vertexBindingDescriptionCount = vertex_bindings;
+        vertex.pVertexBindingDescriptions = bindings;
+        vertex.vertexAttributeDescriptionCount = 32;
+        vertex.pVertexAttributeDescriptions = attributes;
+    }
     VkPipelineInputAssemblyStateCreateInfo assembly = {.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST};
     VkViewport viewport = {0, 0, 16, 16, 0, 1};
@@ -431,6 +472,14 @@ int main(int argc, char **argv)
         .clearValueCount = 1, .pClearValues = &clear};
     vkCmdBeginRenderPass(command, &render_begin, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+    if (vertex_input) {
+        VkBuffer buffers[32];
+        VkDeviceSize offsets[32];
+        for (unsigned i = 0; i < vertex_bindings; i++) {
+            buffers[i] = buffer; offsets[i] = 2048 + i * 16;
+        }
+        vkCmdBindVertexBuffers(command, 0, vertex_bindings, buffers, offsets);
+    }
     if (textured || vertex_store)
         vkCmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, layout,
                                  0, 1, &descriptor_set, 0, NULL);

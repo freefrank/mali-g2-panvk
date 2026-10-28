@@ -56,13 +56,42 @@ def build_android():
                    env=env, check=True)
 
 
+def build_android_replay(build):
+    env = dict(os.environ, LC_ALL='C')
+    commands = json.loads((build / 'compile_commands.json').read_text())
+    command = next(c for c in commands if c['file'].endswith('/panvk_g2_trace.c'))
+    args = shlex.split(command['command'])
+    for flag in ['-MF', '-MQ']:
+        if flag in args:
+            index = args.index(flag)
+            del args[index:index + 2]
+    if '-MD' in args:
+        args.remove('-MD')
+    args[args.index('-o') + 1] = str(ROOT / 'replay_nir_android.o')
+    args[-1] = str(ROOT / 'replay_nir.c')
+    subprocess.run(args, cwd=command['directory'], env=env, check=True)
+    lines = subprocess.check_output(['ninja', '-C', str(build), '-t', 'commands',
+                                     'src/panfrost/vulkan/libvulkan_panfrost.so'],
+                                    text=True)
+    original = shlex.split(lines.splitlines()[-1])
+    archives = [x for x in original if x.endswith('.a')]
+    link = [original[0], '-nostdlib++', '-pie', '-rdynamic', '-o',
+            str(ROOT / 'replay_nir_android'), str(ROOT / 'replay_nir_android.o'),
+            '-Wl,--start-group'] + archives + ['-Wl,--end-group', '-ldl', '-llog', '-lm', '-pthread']
+    subprocess.run(link, cwd=build, env=env, check=True)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--mesa-build', type=Path, default=Path('/root/mali-panvk/build-host'))
     parser.add_argument('--android', action='store_true')
+    parser.add_argument('--android-replay', action='store_true')
     args = parser.parse_args()
-    build_nir(args.mesa_build)
-    build_nir(args.mesa_build, 'replay_nir')
+    if args.android_replay:
+        build_android_replay(Path('/root/mali-panvk/build-android-arm'))
+    else:
+        build_nir(args.mesa_build)
+        build_nir(args.mesa_build, 'replay_nir')
     if args.android:
         build_android()
     print('Helpers built')
