@@ -282,3 +282,59 @@ finish_trace(void)
    if (trace_file_fd >= 0)
       close(trace_file_fd);
 }
+
+#include "panfrost/lib/kmod/kbase_kmod.h"
+
+static atomic_uint check_reports;
+
+struct check_bt {
+   unsigned depth;
+   size_t len;
+   char text[512];
+};
+
+static _Unwind_Reason_Code
+check_bt_frame(struct _Unwind_Context *ctx, void *data)
+{
+   struct check_bt *bt = data;
+   uintptr_t pc = _Unwind_GetIP(ctx);
+   if (!pc || bt->depth++ >= 14 || bt->len + 48 >= sizeof(bt->text))
+      return _URC_END_OF_STACK;
+   Dl_info info;
+   if (dladdr((void *)pc, &info) && info.dli_fname) {
+      const char *name = strrchr(info.dli_fname, '/');
+      bt->len += snprintf(bt->text + bt->len, sizeof(bt->text) - bt->len, " %s+0x%" PRIxPTR,
+                          name ? name + 1 : info.dli_fname, pc - (uintptr_t)info.dli_fbase);
+   }
+   return _URC_NO_REASON;
+}
+
+void
+panvk_g2_check_range(uint64_t addr, uint64_t size, const char *kind, uint32_t binding,
+                     uint32_t elem)
+{
+   uint64_t bo_va, bo_size;
+   if (!addr || pan_kmod_kbase_va_live(addr, size ? size : 1, &bo_va, &bo_size))
+      return;
+   if (atomic_fetch_add(&check_reports, 1) >= 256)
+      return;
+   struct check_bt bt = {0};
+   _Unwind_Backtrace(check_bt_frame, &bt);
+   panvk_g2_trace("badrange kind=%s addr=0x%" PRIx64 " size=0x%" PRIx64 " binding=%u elem=%u "
+                  "bo=0x%" PRIx64 "+0x%" PRIx64 " bt=%s",
+                  kind, addr, size, binding, elem, bo_va, bo_size, bt.text);
+}
+
+static void
+check_texture_plane(uint64_t addr, uint64_t size, const char *kind)
+{
+   panvk_g2_check_range(addr, size, kind, ~0u, ~0u);
+}
+
+extern void (*pan_g2_check_texture_plane)(uint64_t addr, uint64_t size, const char *kind);
+
+void
+panvk_g2_check_install(void)
+{
+   pan_g2_check_texture_plane = check_texture_plane;
+}

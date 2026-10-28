@@ -16,6 +16,7 @@
 #include "vk_descriptor_update_template.h"
 #include "vk_descriptors.h"
 #include "vk_format.h"
+#include "panvk_g2_trace.h"
 #include "vk_log.h"
 #include "vk_util.h"
 
@@ -266,6 +267,10 @@ write_buffer_desc(struct panvk_descriptor_set *set,
       cfg.address = panvk_buffer_gpu_ptr(buffer, info->offset);
       cfg.size = align(range, is_ssbo ? 4 : 16);
    }
+#if PAN_ARCH >= 15
+   panvk_g2_check_range(panvk_buffer_gpu_ptr(buffer, info->offset), range,
+                        is_ssbo ? "ssbo" : "ubo", binding, elem);
+#endif
    write_desc(set, binding, elem, &desc, NO_SUBDESC);
 #endif
 }

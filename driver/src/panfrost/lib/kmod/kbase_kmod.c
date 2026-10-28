@@ -40,6 +40,7 @@
 #include "drm-uapi/panthor_drm.h"
 #include "util/macros.h"
 #include "util/os_mman.h"
+#include "util/simple_mtx.h"
 #include "util/u_atomic.h"
 #include "util/u_debug.h"
 #include "util/u_sync_provider.h"
@@ -548,6 +549,57 @@ kbase_kmod_dev_query_user_va_range(const struct pan_kmod_dev *dev)
  * pan_kmod still wants a u32 handle to key its BO table on, so one is synthesised per device.
  */
 
+#define KBASE_LIVE_MAX 65536
+static struct {
+   uint64_t va, size;
+} kbase_live[KBASE_LIVE_MAX];
+static unsigned kbase_live_count;
+static simple_mtx_t kbase_live_lock = SIMPLE_MTX_INITIALIZER;
+
+static void
+kbase_live_add(uint64_t va, uint64_t size)
+{
+   simple_mtx_lock(&kbase_live_lock);
+   if (kbase_live_count < KBASE_LIVE_MAX) {
+      kbase_live[kbase_live_count].va = va;
+      kbase_live[kbase_live_count].size = size;
+      kbase_live_count++;
+   }
+   simple_mtx_unlock(&kbase_live_lock);
+}
+
+static void
+kbase_live_remove(uint64_t va)
+{
+   simple_mtx_lock(&kbase_live_lock);
+   for (unsigned i = 0; i < kbase_live_count; i++) {
+      if (kbase_live[i].va == va) {
+         kbase_live[i] = kbase_live[--kbase_live_count];
+         break;
+      }
+   }
+   simple_mtx_unlock(&kbase_live_lock);
+}
+
+bool
+pan_kmod_kbase_va_live(uint64_t va, uint64_t size, uint64_t *bo_va, uint64_t *bo_size)
+{
+   bool found = false;
+   simple_mtx_lock(&kbase_live_lock);
+   for (unsigned i = 0; i < kbase_live_count; i++) {
+      if (va >= kbase_live[i].va && va < kbase_live[i].va + kbase_live[i].size) {
+         *bo_va = kbase_live[i].va;
+         *bo_size = kbase_live[i].size;
+         found = va + size <= kbase_live[i].va + kbase_live[i].size;
+         simple_mtx_unlock(&kbase_live_lock);
+         return found;
+      }
+   }
+   simple_mtx_unlock(&kbase_live_lock);
+   *bo_va = *bo_size = 0;
+   return false;
+}
+
 static struct pan_kmod_bo *
 kbase_kmod_bo_alloc(struct pan_kmod_dev *dev, struct pan_kmod_vm *exclusive_vm, uint64_t size,
                     uint32_t flags)
@@ -625,6 +677,7 @@ kbase_kmod_bo_alloc(struct pan_kmod_dev *dev, struct pan_kmod_vm *exclusive_vm, 
 
    pan_kmod_bo_init(&bo->base, dev, exclusive_vm, pages * 4096, flags,
                     p_atomic_inc_return(&kbase_dev->next_handle));
+   kbase_live_add(bo->gpu_va, pages * 4096);
    return &bo->base;
 }
 
@@ -669,6 +722,7 @@ kbase_kmod_bo_free(struct pan_kmod_bo *bo)
       kbase_freed[idx].time_ns = kbase_now_ns();
       p_atomic_set(&kbase_freed[idx].va, kbase_bo->gpu_va);
    }
+   kbase_live_remove(kbase_bo->gpu_va);
 
    if (kbase_bo->exec) {
       struct kbase_ioctl_mem_free req = {.gpu_addr = kbase_bo->gpu_va};
@@ -776,6 +830,7 @@ kbase_kmod_bo_import(struct pan_kmod_dev *dev, int fd)
       return NULL;
    }
    *slot = &bo->base;
+   kbase_live_add(bo->gpu_va, pages * 4096);
    return &bo->base;
 }
 

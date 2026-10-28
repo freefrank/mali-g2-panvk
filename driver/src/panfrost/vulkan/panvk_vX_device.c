@@ -856,7 +856,7 @@ panvk_per_arch(create_device)(struct panvk_physical_device *physical_device,
 
    *pDevice = panvk_device_to_handle(device);
    if (PAN_ARCH == 15)
-      panvk_g2_trace("device ready");
+      panvk_g2_check_install(), panvk_g2_trace("device ready");
    return VK_SUCCESS;
 
 err_finish_queues:
