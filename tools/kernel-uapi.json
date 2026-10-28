@@ -1,0 +1,7 @@
+{
+  "request": "CSF version 1.65535",
+  "result": 0,
+  "errno": 0,
+  "returned_major": 1,
+  "returned_minor": 39
+}

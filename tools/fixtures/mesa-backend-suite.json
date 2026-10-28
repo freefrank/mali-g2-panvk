@@ -1,0 +1,184 @@
+[
+  {
+    "mode": "integer",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=128 preload=0x1 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 128,
+      "preload": 1,
+      "work_registers": 64,
+      "mode": "integer"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x7aafc06000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x7aafc49000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x7aafc48000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x7aafc47000 errno=0\nshader=0x800000001000 bytes=128 descriptors=0x7aafc47000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=871\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "float",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=128 preload=0x1 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 128,
+      "preload": 1,
+      "work_registers": 64,
+      "mode": "float"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x7e1fade000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x7e1fadd000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x7e1fadc000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x7e1fadb000 errno=0\nshader=0x800000001000 bytes=128 descriptors=0x7e1fadb000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=872\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "branch",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=256 preload=0x1 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 256,
+      "preload": 1,
+      "work_registers": 64,
+      "mode": "branch"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x77935b7000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x7794607000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x7794606000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x7794605000 errno=0\nshader=0x800000001000 bytes=256 descriptors=0x7794605000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=873\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "loop",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=256 preload=0x1 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 256,
+      "preload": 1,
+      "work_registers": 64,
+      "mode": "loop"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x74ea6ed000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x74eb805000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x74eb804000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x74eb803000 errno=0\nshader=0x800000001000 bytes=256 descriptors=0x74eb803000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=874\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "global_x",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=256 preload=0x1 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 256,
+      "preload": 1,
+      "work_registers": 64,
+      "mode": "global_x"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x765a4de000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x765a4dd000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x765a4dc000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x765a4db000 errno=0\nshader=0x800000001000 bytes=256 descriptors=0x765a4db000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=875\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nCSF_PRELOAD_PASS global_x\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "global_y",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=256 preload=0x3 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 256,
+      "preload": 3,
+      "work_registers": 64,
+      "mode": "global_y"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x7283db7000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x7284e0c000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x7284e0b000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x7284e0a000 errno=0\nshader=0x800000001000 bytes=256 descriptors=0x7284e0a000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=876\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nCSF_PRELOAD_PASS global_y\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "global_z",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=256 preload=0x5 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 256,
+      "preload": 5,
+      "work_registers": 64,
+      "mode": "global_z"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x70ad206000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x70ad249000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x70ad248000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x70ad247000 errno=0\nshader=0x800000001000 bytes=256 descriptors=0x70ad247000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=877\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nCSF_PRELOAD_PASS global_z\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "local_x",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=256 preload=0x11 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 256,
+      "preload": 17,
+      "work_registers": 64,
+      "mode": "local_x"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x719d5d7000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x719e600000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x719d5d6000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x719d5d5000 errno=0\nshader=0x800000001000 bytes=256 descriptors=0x719d5d5000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=878\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nCSF_PRELOAD_PASS local_x\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "local_y",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=256 preload=0x11 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 256,
+      "preload": 17,
+      "work_registers": 64,
+      "mode": "local_y"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x766eead000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x7670001000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x7670000000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x766eeac000 errno=0\nshader=0x800000001000 bytes=256 descriptors=0x766eeac000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=879\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nCSF_PRELOAD_PASS local_y\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "local_z",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=256 preload=0x9 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 256,
+      "preload": 9,
+      "work_registers": 64,
+      "mode": "local_z"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x77985d7000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x7799638000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x7799637000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x7799636000 errno=0\nshader=0x800000001000 bytes=256 descriptors=0x7799636000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=880\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nCSF_PRELOAD_PASS local_z\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "group_x",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=256 preload=0x21 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 256,
+      "preload": 33,
+      "work_registers": 64,
+      "mode": "group_x"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x73e1977000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x73e2a04000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x73e2a03000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x73e2a02000 errno=0\nshader=0x800000001000 bytes=256 descriptors=0x73e2a02000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=881\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nCSF_PRELOAD_PASS group_x\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "group_y",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=256 preload=0x41 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 256,
+      "preload": 65,
+      "work_registers": 64,
+      "mode": "group_y"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x72381b7000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x7239208000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x7239207000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x7239206000 errno=0\nshader=0x800000001000 bytes=256 descriptors=0x7239206000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=882\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nCSF_PRELOAD_PASS group_y\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  },
+  {
+    "mode": "group_z",
+    "compile_exit": 0,
+    "compile_log": "arch=15 binary_bytes=256 preload=0x81 work_regs=64 fau=2\n",
+    "gpu_exit": 0,
+    "metadata": {
+      "arch": 15,
+      "bytes": 256,
+      "preload": 129,
+      "work_registers": 64,
+      "mode": "group_z"
+    },
+    "gpu_log": "VERSION request=0xc0048034 result=0 errno=0\nSET_FLAGS request=0x40048001 result=0 errno=0\nversion=1.21\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x20200f result=0x73b4937000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x8200f result=0x73b5a04000 errno=0\nMEM_EXEC_INIT request=0x40088026 result=0 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x800000001000 flags=0x17 result=0x73b5a03000 errno=0\nMEM_ALLOC request=0xc0208005 result=0 errno=0\nmmap cookie=0x41000 flags=0x280f result=0x73b5a02000 errno=0\nshader=0x800000001000 bytes=256 descriptors=0x73b5a02000\nGROUP_CREATE request=0xc070803a result=0 errno=0\ngroup=0 uid=883\nQUEUE_REGISTER request=0x40108024 result=0 errno=0\nQUEUE_BIND request=0xc0108027 result=0 errno=0\nQUEUE_KICK request=0x40088025 result=0 errno=0\nnotification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nCSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1\nCSF_COMPUTE_PASS first=7 last=968\nCSF_PRELOAD_PASS group_z\nGROUP_TERMINATE request=0x4008802b result=0 errno=0\nQUEUE_TERMINATE request=0x40088029 result=0 errno=0\nMEM_FREE request=0x40088007 result=0 errno=0\n"
+  }
+]

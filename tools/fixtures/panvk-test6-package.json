@@ -1,0 +1,60 @@
+{
+  "path": "/storage/emulated/0/Download/panvk-mali-g2-test6-4d26f64.zip",
+  "bytes": 4334587,
+  "sha256": "1350f80028fa61501c6fbf73300588c12757178e47dc13b9d8b51a5c55827ab9",
+  "meta": {
+    "schemaVersion": 1,
+    "name": "PanVK Mali-G2 diagnostic test6 (4d26f64)",
+    "description": "Diagnostic build for Eden exits: captures pipeline and backend shader NIR locally for native replay. Retains test5 rendering fixes. Game crash remains unresolved.",
+    "author": "Local G2 port based on JimVulkan mali-panvk",
+    "packageVersion": "1006",
+    "vendor": "Mesa",
+    "driverVersion": "Vulkan 1.4.363 / Mesa 27.0.0-devel",
+    "minApi": 31,
+    "libraryName": "libvulkan_panfrost.so"
+  },
+  "build": {
+    "commit": "4d26f64d199a8d78b369c3b9e8708084df92751b",
+    "base_test5": "eb32b40cff",
+    "purpose": "Capture shaders around the unresolved Eden exit for local reproduction",
+    "changes": [
+      "Capture NIR before pipeline lowering and before backend compilation for compile IDs 1152 through 1232",
+      "Preserve compiler inputs and varying layout while clearing process pointers in captured records",
+      "Reassemble shader fragments in the local UDP monitor and report kernel receive drops",
+      "Replay captured shaders using the matching Mesa compiler in the Manjaro environment"
+    ],
+    "validation": {
+      "graphics_and_android_import_groups": 9,
+      "graphics_frames_per_case": 30,
+      "eden_compute_pipeline_creates": 14,
+      "astc_gpu_cases": 4,
+      "shader_snapshot_reads": 38,
+      "backend_recompiles": 19,
+      "astc_normal_reference": "3 deterministic inputs, 16 compressed blocks and 256 RGBA pixels each; byte-exact match to stock Vulkan executing the original Eden ASTC shader"
+    },
+    "library_sha256": "13a959e66ce5dc8e5fd7caf2e98c1357dfabf567cc59895819ef5c6654574403",
+    "diagnostics": {
+      "destination": "127.0.0.1:28643/UDP",
+      "monitor_output": "/storage/emulated/0/Download/panvk-g2-test6-driver.log",
+      "capture_directory": "/root/mali-g2-backend/captures/test6",
+      "compile_id_range": [
+        1152,
+        1232
+      ],
+      "maximum_shader_dump_bytes": 2097152,
+      "receive_buffer_bytes": 16777216,
+      "fragment_payload_bytes": 4096
+    },
+    "pending": [
+      "Identify the native exit during or after game shader compilation",
+      "geometryStreams and transformFeedback",
+      "fillModeNonSolid",
+      "shaderClipDistance",
+      "shaderCullDistance",
+      "geometryShader",
+      "tessellationShader",
+      "multiViewport"
+    ],
+    "provenance": "Generated-by: LLM; biblioklept"
+  }
+}

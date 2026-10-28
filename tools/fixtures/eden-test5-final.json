@@ -1,0 +1,54 @@
+{
+  "driver": "/root/mali-g2-backend/artifacts/test5-eb32b40/libvulkan_panfrost.so",
+  "returncode": 0,
+  "results": [
+    {
+      "case": "compile-robust-0",
+      "returncode": 0,
+      "compiled": 7
+    },
+    {
+      "case": "compile-robust-1",
+      "returncode": 0,
+      "compiled": 7
+    },
+    {
+      "case": "astc-void-extent",
+      "returncode": 0,
+      "compiled": 1
+    },
+    {
+      "case": "stock-normal-401",
+      "returncode": 0,
+      "compiled": 1
+    },
+    {
+      "case": "panvk-normal-401",
+      "returncode": 0,
+      "compiled": 1,
+      "pixel_bytes_sha256": "9361facf961ffd91d9b90b2d294f456a5d46b1adea7f74995daf85ec36245f1b"
+    },
+    {
+      "case": "stock-normal-402",
+      "returncode": 0,
+      "compiled": 1
+    },
+    {
+      "case": "panvk-normal-402",
+      "returncode": 0,
+      "compiled": 1,
+      "pixel_bytes_sha256": "de737f193701388ba03eb1b2afeb8be58c399b3ea164d3e00a3bfe0ea030ebd8"
+    },
+    {
+      "case": "stock-normal-403",
+      "returncode": 0,
+      "compiled": 1
+    },
+    {
+      "case": "panvk-normal-403",
+      "returncode": 0,
+      "compiled": 1,
+      "pixel_bytes_sha256": "bbc2b606667e73655e6cb75c7108447e6d4eedafea035099f2593100e754464c"
+    }
+  ]
+}

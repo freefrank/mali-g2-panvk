@@ -1,0 +1,58 @@
+{
+  "path": "/storage/emulated/0/Download/panvk-mali-g2-test5-eb32b40.zip",
+  "bytes": 4333874,
+  "sha256": "b95e50493b3523eb635e028f7b1bfc48826b8e066f0790d04d16f4144abc821b",
+  "meta": {
+    "schemaVersion": 1,
+    "name": "PanVK Mali-G2 experimental test5 (eb32b40)",
+    "description": "Fixes G2 vertex DrawID preload mapping, verified with two indirect draws. Adds exact compiler error diagnostics and best-effort append logging to a pre-created Download file. Eden game launch remains under test.",
+    "author": "Local G2 port based on JimVulkan mali-panvk",
+    "packageVersion": "1005",
+    "vendor": "Mesa",
+    "driverVersion": "Vulkan 1.4.363 / Mesa 27.0.0-devel",
+    "minApi": 31,
+    "libraryName": "libvulkan_panfrost.so"
+  },
+  "build": {
+    "commit": "eb32b40cff8839710c6daaba270b4ea2171ba098",
+    "base_test4": "95230acfbe010c5c30513f9c597a1981b9b011f6",
+    "fix_commits": [
+      "1ede92b",
+      "eb32b40"
+    ],
+    "changes": [
+      "Map vertex DrawID preload to G2 R3, matching native shader descriptor and instruction capture",
+      "Record failing compiler instruction and legacy encoded word in local diagnostics",
+      "Record thread IDs and append to an existing writable Download diagnostic file",
+      "Increase loopback monitor receive buffer to the available 16 MiB"
+    ],
+    "validation": {
+      "encoder_test_groups": 4,
+      "graphics_and_android_import_groups": 9,
+      "graphics_frames_per_case": 30,
+      "drawid_reference": "stock passes 256/256 pixels; test4 fails 128/256; test5 passes 256/256 for 30 frames",
+      "eden_compute_pipeline_creates": 14,
+      "astc_gpu_cases": 4,
+      "astc_normal_reference": "3 deterministic inputs, 16 compressed blocks and 256 RGBA pixels each; byte-exact match to stock Vulkan running original Eden ASTC shader"
+    },
+    "library_sha256": "fea9c55a05187cbce6cd287d7be7bc339bebe3dfc77ac24cebd60e918cf14ea6",
+    "diagnostics": {
+      "destination": "127.0.0.1:28643/UDP",
+      "monitor_output": "/storage/emulated/0/Download/panvk-g2-test5-driver.log",
+      "append_file": "/storage/emulated/0/Download/panvk-g2-driver-events.log",
+      "append_requirement": "Pre-created file must be writable by the app; UDP collection remains available",
+      "append_limit_bytes": 8388608,
+      "monitor_receive_buffer_bytes": 16777216
+    },
+    "pending": [
+      "Eden test5 game launch and shader loading validation",
+      "fillModeNonSolid",
+      "shaderClipDistance",
+      "shaderCullDistance",
+      "geometryShader",
+      "tessellationShader",
+      "multiViewport"
+    ],
+    "provenance": "Generated-by: LLM; biblioklept"
+  }
+}

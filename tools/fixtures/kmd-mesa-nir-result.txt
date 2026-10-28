@@ -1,0 +1,24 @@
+VERSION request=0xc0048034 result=0 errno=0
+SET_FLAGS request=0x40048001 result=0 errno=0
+version=1.21
+MEM_ALLOC request=0xc0208005 result=0 errno=0
+mmap cookie=0x41000 flags=0x20200f result=0x742ae7e000 errno=0
+MEM_ALLOC request=0xc0208005 result=0 errno=0
+mmap cookie=0x41000 flags=0x8200f result=0x742c004000 errno=0
+MEM_EXEC_INIT request=0x40088026 result=0 errno=0
+MEM_ALLOC request=0xc0208005 result=0 errno=0
+mmap cookie=0x800000001000 flags=0x17 result=0x742c003000 errno=0
+MEM_ALLOC request=0xc0208005 result=0 errno=0
+mmap cookie=0x41000 flags=0x280f result=0x742c002000 errno=0
+shader=0x800000001000 bytes=128 descriptors=0x742c002000
+GROUP_CREATE request=0xc070803a result=0 errno=0
+group=0 uid=828
+QUEUE_REGISTER request=0x40108024 result=0 errno=0
+QUEUE_BIND request=0xc0108027 result=0 errno=0
+QUEUE_KICK request=0x40088025 result=0 errno=0
+notification bytes=64 data=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+CSF_MARKER_PASS marker=0x13579bdf insert=192 extract=192 active=1
+CSF_COMPUTE_PASS first=7 last=968
+GROUP_TERMINATE request=0x4008802b result=0 errno=0
+QUEUE_TERMINATE request=0x40088029 result=0 errno=0
+MEM_FREE request=0x40088007 result=0 errno=0

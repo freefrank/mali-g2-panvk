@@ -1,0 +1,48 @@
+{
+  "base_commit": "d896b0a9c10b92f0f9d53ef3373006b79ed709e8",
+  "gpu_id": "0x0f080600f0000103",
+  "architecture": 15,
+  "csf_legacy_kernel_api": "1.21",
+  "native_shader_direct_kernel_submission": "pass,32 integer results",
+  "mesa_v15_codegen": "Integrated C backend: all 13 hardware tests pass (integers, float, branch, loop, nine compute preload cases)",
+  "complete_vulkan_backend": "basic graphics and textures working; full emulator compatibility unverified",
+  "eden_validated": false,
+  "driver_zip_built": true,
+  "reference_archive": "https://deb.debian.org/debian/pool/main/m/mesa/mesa_26.2.5.orig.tar.xz",
+  "reference_sha256": "794b3d1729075dae7ebd47c7283b7ca0cdb5dec668f7f11cc0a5d82f6138a0a5",
+  "v15_register_map_validated": {
+    "preloaded_global_invocation_x": 0,
+    "work_register_offset": 2,
+    "compute_pointer_low_bits": 1
+  },
+  "v15_register_allocation": {
+    "bits": "shader descriptor word0[23:20], compute SPD pointer[3:0]",
+    "validated_modes": {
+      "1": 16,
+      "7": 64,
+      "15": 128
+    },
+    "mode_formula": "ceil(register_count/8)-1"
+  },
+  "panvk_offscreen_draw": "256/256 pixels pass",
+  "panvk_textured_draw": "256/256 pixels pass",
+  "panvk_repeated_texture_draw": "30 frames alternating host texture uploads: all pass",
+  "v15_graphics_default": "experimental enabled for local candidate",
+  "remaining_compatibility_features": [
+    "CSF geometry/tessellation emulation",
+    "clip/cull distances",
+    "non-solid fill modes",
+    "multiViewport"
+  ],
+  "vertex_storage_atomics": "PASS and enabled by 90d7de8",
+  "driver_zip_path": "/storage/emulated/0/Download/panvk-mali-g2-test4-95230ac.zip",
+  "eden_test1": "VK_ERROR_INVALID_EXTERNAL_HANDLE at renderer initialization; native GPU-only AHB stride=0 layout unsupported by old fallback",
+  "android_mapper5": "Fixed by 354f23f; three allocation usage patterns imported, native and AHB graphics pass 30 frames",
+  "eden_test2": "User reports stuck loading; fresh Eden app logs inaccessible due Android permissions",
+  "fragment_preloads": "04098e1: v15 FS logical58->R3 primitive flags, logical59->R2 XY; 30-frame gradient+front-face tests pass in both frontFace settings",
+  "diagnostics": "216a5b8: local loopback-only initialization/compile/submit/completion events, received on phone into public Download",
+  "eden_test3": "First compute shader ASTC compile crashes at invalid v15 encoding; reproduced independently, fixed1242dda.",
+  "g2_uniform_addressing": "Fixed d2177b3. Native G2 uniform source indices0..84 on page0; legacy indices64..127 now translated to flat operand indices, special FAU pages preserved and incompatible mixed reads separated.",
+  "astc_gpu_validation": "4 cases:256-pixel void-extent colors plus3 deterministic 16-block normal ASTC inputs; all byte-exact to native Vulkan executing original Eden kernel.",
+  "eden_test4": "Driver delivered in Android Download; awaiting user retest"
+}

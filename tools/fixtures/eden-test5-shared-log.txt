@@ -1,0 +1,35 @@
+[   0.000502] Input <Info> input_common/drivers/udp_client.cpp:144:UDPClient: Udp Initialization started
+[   0.000560] Input <Info> input_common/drivers/udp_client.cpp:338:StartCommunication: Starting communication with UDP input server on 127.0.0.1:26760
+[   0.095629] Service.ACC <Info> main/jni/native.cpp:2182:Java_org_yuzu_yuzu_1emu_NativeLibrary_reloadProfiles: Profile manager reloaded, user count: 1
+[   0.097299] Frontend <Info> main/jni/native_freedreno.cpp:154:Java_org_yuzu_yuzu_1emu_utils_NativeFreedrenoConfig_initializeFreedrenoConfig: [Freedreno] Configuration system initialized
+[   0.100981] Frontend <Info> main/jni/native.cpp:1359:Java_org_yuzu_yuzu_1emu_NativeLibrary_logDeviceInfo: eden Version: master-de7e6e01d4-master
+[   0.101005] Frontend <Info> main/jni/native.cpp:1360:Java_org_yuzu_yuzu_1emu_NativeLibrary_logDeviceInfo: Host OS: Android API level 37
+[   0.101038] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: Device Manufacturer - Xiaomi
+[   0.101049] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: Device Model - M367FC
+[   0.101055] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: SoC Manufacturer - XRing
+[   0.101060] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: SoC Model - O3
+[   0.101684] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: CPU Info - Unknown
+[   0.119175] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: Vulkan Driver: - 56.0.0
+[   0.120174] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: Vulkan API Version: - 1.4.345
+[   0.120771] Frontend <Info> main/jni/native_log.cpp:22:Java_org_yuzu_yuzu_1emu_utils_Log_info: Total System Memory - 16.0GB
+[   0.239787] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[   0.239793] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[   0.243287] Loader <Info> core/file_sys/patch_manager.cpp:712:PatchRomFS:     RomFS: Update (v0.6.0) applied successfully
+[   1.436493] Frontend <Info> frontend_common/update_checker.cpp:24:GetUpdate: Received update Eden Nightly - Oct 18 2026
+[   5.074075] Frontend <Info> main/jni/emu_window/emu_window.cpp:259:EmuWindow_Android: initializing
+[   5.098807] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_bias_control
+[   5.098850] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_depth_range_unrestricted
+[   5.098856] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_external_memory_host
+[   5.098860] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_EXT_robustness2
+[   5.098864] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_geometry_shader_passthrough
+[   5.098869] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_array2
+[   5.098873] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1081:GetSuitability: Device doesn't support extension VK_NV_viewport_swizzle
+[   5.098902] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1082:GetSuitability: Missing required extension VK_EXT_vertex_attribute_divisor
+[   5.098998] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasControl
+[   5.099003] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature leastRepresentableValueForceUnormRepresentation
+[   5.099006] Render.Vulkan <Info> video_core/vulkan_common/vulkan_device.cpp:1170:GetSuitability: Device doesn't support feature depthBiasExact
+[   5.099010] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature fillModeNonSolid
+[   5.099031] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderClipDistance
+[   5.099036] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature shaderCullDistance
+[   5.099041] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1171:GetSuitability: Missing required feature vertexPipelineStoresAndAtomics
+[   5.099065] Render.Vulkan <Error> video_core/vulkan_common/vulkan_device.cpp:1259:GetSuitability: maxClipDistances has to be 8 or greater but it is 0

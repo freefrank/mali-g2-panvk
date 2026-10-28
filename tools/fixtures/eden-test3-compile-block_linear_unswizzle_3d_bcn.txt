@@ -1,0 +1,8 @@
+MESA: warning: panvk v15 graphics bringup is experimental
+WARNING: panvk is not a conformant Vulkan implementation, testing use only.
+MESA: warning: Gralloc doesn't support lock_ycbcr (video buffers won't be supported)
+MESA: info: Using fallback gralloc implementation
+MESA: info: Using IMapper v5 API
+DEVICE Mali-G2-Ultra-NX MC16
+COMPILE_BEGIN /root/mali-g2-backend/block_linear_unswizzle_3d_bcn.comp.spv bytes=8204 robust=0
+COMPILE_PASS /root/mali-g2-backend/block_linear_unswizzle_3d_bcn.comp.spv

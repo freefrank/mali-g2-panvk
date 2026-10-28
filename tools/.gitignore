@@ -1,0 +1,11 @@
+__pycache__/
+/build/
+/work/
+/references/
+/captures/
+/artifacts/
+*.o
+*.so
+*.bin
+*.log
+*.spv

@@ -1,0 +1,37 @@
+[
+  {
+    "shader": "astc_decoder",
+    "returncode": -11,
+    "seconds": 0.6553968000007444
+  },
+  {
+    "shader": "vulkan_quad_indexed",
+    "returncode": 0,
+    "seconds": 0.15059590400051093
+  },
+  {
+    "shader": "vulkan_uint8",
+    "returncode": 0,
+    "seconds": 0.17440726400673157
+  },
+  {
+    "shader": "queries_prefix_scan_sum",
+    "returncode": 0,
+    "seconds": 0.20323222399747465
+  },
+  {
+    "shader": "queries_prefix_scan_sum_nosubgroups",
+    "returncode": 0,
+    "seconds": 0.2070569279967458
+  },
+  {
+    "shader": "resolve_conditional_render",
+    "returncode": 0,
+    "seconds": 0.17463231999863638
+  },
+  {
+    "shader": "block_linear_unswizzle_3d_bcn",
+    "returncode": 0,
+    "seconds": 0.16998812800011365
+  }
+]

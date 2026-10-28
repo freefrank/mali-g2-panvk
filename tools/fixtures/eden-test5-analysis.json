@@ -1,0 +1,41 @@
+{
+  "driver_build": "eb32b40cff",
+  "eden_process": 753,
+  "compile_begin_count": 1178,
+  "compile_end_count": 1176,
+  "unfinished_compile_ids": [
+    1177,
+    1178
+  ],
+  "ready_vertex_shaders": 1166,
+  "ready_fragment_shaders": 1166,
+  "ready_compute_shaders": 10,
+  "compiler_error_events": 0,
+  "gpu_submit_events": 0,
+  "eden_log": {
+    "current_shared_bytes": 4920,
+    "previous_shared_bytes": 63416,
+    "previous_last_message": "Geometry streams is not implemented",
+    "total_cached_pipelines": 1082
+  },
+  "interpretation": [
+    "The previous-run Eden log contains the game session; the current log only covers device checks after restart",
+    "The geometry-stream exception is caught in PipelineCache::CreateGraphicsPipeline and returns nullptr",
+    "RasterizerVulkan::Draw checks the null pipeline and skips the draw; this message alone does not identify the native process exit",
+    "Two driver compilations have no completion event; capture their NIR to reproduce locally"
+  ],
+  "next_capture": {
+    "driver_commit": "4d26f64",
+    "compile_ids": [
+      1152,
+      1232
+    ],
+    "points": [
+      "pipeline input",
+      "backend input"
+    ],
+    "frame_transport": "loopback UDP, 4096-byte payload fragments",
+    "maximum_shader_dump_bytes": 2097152
+  },
+  "provenance": "Generated-by: LLM; biblioklept"
+}
