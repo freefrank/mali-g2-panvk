@@ -2,19 +2,22 @@
 
 ## 环境
 
-- Meson：`/root/mali-panvk-tools/bin/meson`
+- 项目根目录：`/root/mali-g2-project`
+- Meson：`/root/mali-g2-project/toolchain/bin/meson`
 - Android Clang：`/data/data/com.termux/files/usr/bin/clang`
 - Android 原生辅助程序必须使用 `-no-canonical-prefixes`
-- Mesa host build：`/root/mali-panvk/build-host`
-- Mesa Android build：`/root/mali-panvk/build-android-arm`
-- Vulkan headers：`/root/MaliBridge-reference/third_party/Vulkan-Headers-1.4.341/include`
+- Mesa host build：`/root/mali-g2-project/driver/build-host`
+- Mesa Android build：`/root/mali-g2-project/driver/build-android-arm`
+- Vulkan headers：`/root/mali-g2-project/references/malibridge/third_party/Vulkan-Headers-1.4.341/include`
+
+旧构建缓存没有迁移，因为其中记录了失效的绝对路径。首次继续开发前需要重新配置 `driver/build-host` 和 `driver/build-android-arm`。
 
 所有可重建输出统一写入 `build/`，不再写到仓库根目录。
 
 ## 构建辅助程序
 
 ```sh
-cd /root/mali-g2-backend
+cd /root/mali-g2-project/tools
 env LC_ALL=C python3 build_helpers.py --android
 env LC_ALL=C python3 build_helpers.py --android-replay
 ```
@@ -35,21 +38,21 @@ env LC_ALL=C python3 build_helpers.py --android-replay
 
 ```sh
 env LC_ALL=C \
-  PATH=/root/mali-panvk/build-host/bin:/root/mali-panvk-tools/bin:/usr/bin:/bin:/usr/sbin:/sbin \
-  ninja -C /root/mali-panvk/build-android-arm -j3 \
+  PATH=/root/mali-g2-project/driver/build-host/bin:/root/mali-g2-project/toolchain/bin:/usr/bin:/bin:/usr/sbin:/sbin \
+  ninja -C /root/mali-g2-project/driver/build-android-arm -j3 \
   src/panfrost/vulkan/libvulkan_panfrost.so
 ```
 
 驱动输出：
 
 ```text
-/root/mali-panvk/build-android-arm/src/panfrost/vulkan/libvulkan_panfrost.so
+/root/mali-g2-project/driver/build-android-arm/src/panfrost/vulkan/libvulkan_panfrost.so
 ```
 
 ## 基础 GPU 测试
 
 ```sh
-cd /root/mali-g2-backend
+cd /root/mali-g2-project/tools
 python3 test_android.py /path/to/libvulkan_panfrost.so --tag local-test
 python3 test_backend.py --output fixtures/local-backend.json
 python3 test_eden_compute.py /path/to/libvulkan_panfrost.so --tag local-eden

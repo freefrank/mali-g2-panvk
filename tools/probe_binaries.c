@@ -79,7 +79,7 @@ int main(int argc,char **argv){
  if(e||bytes>16777216)return 20;
  unsigned char *binary=malloc(bytes);e=clGetProgramInfo(prog,0x1166,sizeof(binary),&binary,NULL);
  if(e)return 21;
- FILE *file=fopen(argc>1?argv[1]:"/root/mali-g2-backend/build/backend/constant.bin","wb");
+ FILE *file=fopen(argc>1?argv[1]:"build/backend/constant.bin","wb");
  if(!file)return 22;
  fwrite(binary,1,bytes,file);fclose(file);free(binary);
  if(argc<4||strcmp(argv[3],"run")){

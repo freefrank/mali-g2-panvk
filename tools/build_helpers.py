@@ -7,6 +7,9 @@ import subprocess
 
 
 ROOT = Path(__file__).resolve().parent
+PROJECT = ROOT.parent
+DRIVER = PROJECT / 'driver'
+REFERENCES = PROJECT / 'references'
 BUILD = ROOT / 'build'
 BIN = BUILD / 'bin'
 OBJ = BUILD / 'obj'
@@ -56,9 +59,9 @@ def build_android():
     for source in ['kmd_probe', 'probe_binaries']:
         subprocess.run(base + [str(ROOT / (source + '.c')), '-o', str(BIN / source), '-ldl'],
                        env=env, check=True)
-    includes = ['-I/root/MaliBridge-reference/third_party/Vulkan-Headers-1.4.341/include',
-                '-I/root/mali-panvk/include', '-I/root/mali-panvk/include/android_stub',
-                '-I/root/mali-panvk-diagnostics']
+    includes = [f'-I{REFERENCES / "malibridge/third_party/Vulkan-Headers-1.4.341/include"}',
+                f'-I{DRIVER / "include"}', f'-I{DRIVER / "include/android_stub"}',
+                f'-I{ROOT / "legacy/diagnostics"}']
     for source in ['vulkan_android', 'vulkan_draw', 'vulkan_compile']:
         subprocess.run(base + includes + [str(ROOT / (source + '.c')), '-o',
                                          str(BIN / source), '-ldl'],
@@ -95,13 +98,13 @@ def build_android_replay(build):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--mesa-build', type=Path, default=Path('/root/mali-panvk/build-host'))
+    parser.add_argument('--mesa-build', type=Path, default=DRIVER / 'build-host')
     parser.add_argument('--android', action='store_true')
     parser.add_argument('--android-replay', action='store_true')
     args = parser.parse_args()
     prepare_output()
     if args.android_replay:
-        build_android_replay(Path('/root/mali-panvk/build-android-arm'))
+        build_android_replay(DRIVER / 'build-android-arm')
     else:
         build_nir(args.mesa_build)
         build_nir(args.mesa_build, 'replay_nir')

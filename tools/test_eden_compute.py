@@ -8,6 +8,7 @@ import subprocess
 
 
 ROOT = Path(__file__).resolve().parent
+PROJECT = ROOT.parent
 BIN = ROOT / 'build' / 'bin'
 COMPUTE_SHADERS = ROOT / 'build' / 'shaders' / 'eden'
 SHADERS = ['astc_decoder', 'vulkan_quad_indexed', 'vulkan_uint8',
@@ -28,7 +29,7 @@ def main():
     env['MESA_LOG'] = 'file'
     COMPUTE_SHADERS.mkdir(parents=True, exist_ok=True)
     for name in SHADERS:
-        source = Path('/root/eden-source-review/src/video_core/host_shaders') / (name + '.comp')
+        source = PROJECT / 'references' / 'eden' / 'src' / 'video_core' / 'host_shaders' / (name + '.comp')
         subprocess.run(['glslangValidator', '-V', '-DUseUniformBlock=1',
                         '--target-env', 'spirv1.3', str(source),
                         '-o', str(COMPUTE_SHADERS / (name + '.comp.spv'))], check=True,

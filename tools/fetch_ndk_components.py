@@ -8,7 +8,7 @@ import hashlib
 
 
 URL = 'https://dl.google.com/android/repository/android-ndk-r29-linux.zip'
-DESTINATION = Path('/root/mali-panvk-tools/ndk-r29-components')
+DESTINATION = Path(__file__).resolve().parent.parent / 'toolchain' / 'ndk-r29-components'
 
 
 class RemoteZip(io.RawIOBase):
