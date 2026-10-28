@@ -1274,8 +1274,21 @@ va_v15_preload_reg(mesa_shader_stage stage, unsigned reg)
 }
 
 uint64_t
+va_v15_preload_regs(mesa_shader_stage stage)
+{
+   if (stage == MESA_SHADER_COMPUTE || stage == MESA_SHADER_KERNEL)
+      return BITFIELD64_RANGE(55, 8);
+   if (stage == MESA_SHADER_VERTEX)
+      return BITFIELD64_RANGE(59, 4);
+   if (stage == MESA_SHADER_FRAGMENT)
+      return BITFIELD64_RANGE(58, 4);
+   return 0;
+}
+
+uint64_t
 va_v15_preload_mask(mesa_shader_stage stage, uint64_t preload)
 {
+   preload &= va_v15_preload_regs(stage);
    uint64_t mask = 0;
    u_foreach_bit64(reg, preload)
       mask |= BITFIELD64_BIT(va_v15_preload_reg(stage, reg));
@@ -1288,11 +1301,12 @@ bi_pack_valhall(bi_context *ctx, struct util_dynarray *emission)
    unsigned orig_size = emission->size;
    unsigned preload_instrs = 0;
 
-   if (ctx->arch == 15) {
+   if (ctx->arch == 15 && !ctx->inputs->is_blend) {
       const bi_block *first = list_first_entry(&ctx->blocks, bi_block, link);
       uint64_t preload = first->reg_live_in;
       if (ctx->stage == MESA_SHADER_FRAGMENT)
          preload |= BITFIELD64_BIT(60) | BITFIELD64_BIT(61);
+      preload &= va_v15_preload_regs(ctx->stage);
       u_foreach_bit64(reg, preload) {
          uint64_t encoded;
          unsigned input = va_v15_preload_reg(ctx->stage, reg);

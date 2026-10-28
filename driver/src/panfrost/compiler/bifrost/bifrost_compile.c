@@ -4598,6 +4598,8 @@ bi_compile_variant(nir_shader *nir,
       preload |= BITFIELD64_BIT(60) | BITFIELD64_BIT(61);
 
    if (ctx->arch == 15) {
+      if (ctx->inputs->is_blend)
+         preload = 0;
       if (preload)
          ctx->info.work_reg_count = MAX2(ctx->info.work_reg_count, 64);
       preload = va_v15_preload_mask(ctx->stage, preload);

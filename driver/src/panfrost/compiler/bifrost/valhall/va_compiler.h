@@ -30,6 +30,7 @@ bool va_v15_encode_from_valhall(uint64_t word, uint64_t *out);
 unsigned va_v15_compute_preload_reg(unsigned reg);
 uint64_t va_v15_compute_preload_mask(uint64_t preload);
 unsigned va_v15_preload_reg(mesa_shader_stage stage, unsigned reg);
+uint64_t va_v15_preload_regs(mesa_shader_stage stage);
 uint64_t va_v15_preload_mask(mesa_shader_stage stage, uint64_t preload);
 
 static inline unsigned

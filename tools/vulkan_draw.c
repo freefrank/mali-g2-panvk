@@ -183,7 +183,8 @@ int main(int argc, char **argv)
         device_info.enabledExtensionCount = 2;
         device_info.ppEnabledExtensionNames = android_extensions;
     }
-    VkPhysicalDeviceFeatures enabled = {.vertexPipelineStoresAndAtomics = vertex_store,
+    VkPhysicalDeviceFeatures enabled = {.logicOp = getenv("MALI_G2_TEST_LOGIC_OP") != NULL,
+        .vertexPipelineStoresAndAtomics = vertex_store,
         .multiDrawIndirect = drawid};
     VkPhysicalDeviceShaderDrawParametersFeatures draw_features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
@@ -429,6 +430,10 @@ int main(int argc, char **argv)
     VkPipelineColorBlendAttachmentState blend_attachment = {.colorWriteMask = 15};
     VkPipelineColorBlendStateCreateInfo blend = {.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
         .attachmentCount = 1, .pAttachments = &blend_attachment};
+    if (getenv("MALI_G2_TEST_LOGIC_OP")) {
+        blend.logicOpEnable = VK_TRUE;
+        blend.logicOp = VK_LOGIC_OP_COPY;
+    }
     VkGraphicsPipelineCreateInfo pipeline_info = {.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
         .stageCount = 2, .pStages = stages, .pVertexInputState = &vertex,
         .pInputAssemblyState = &assembly, .pViewportState = &viewport_info,
