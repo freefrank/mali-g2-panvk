@@ -21,6 +21,7 @@
 #include "panvk_cmd_buffer.h"
 #include "panvk_cmd_desc_state.h"
 #include "panvk_cmd_draw.h"
+#include "panvk_g2_trace.h"
 #include "panvk_cmd_frame_shaders.h"
 #include "panvk_cmd_meta.h"
 #include "panvk_cmd_precomp.h"
@@ -382,6 +383,10 @@ prepare_vs_driver_set(struct panvk_cmd_buffer *cmdbuf, uint32_t repeat_count)
                cfg.address = vb->address;
                cfg.size = vb->size;
             }
+#if PAN_ARCH >= 15
+            if (r == 0)
+               panvk_g2_check_range(vb->address, vb->size, "vertex_buffer", i, 0);
+#endif
          } else {
             /* Write a NullDescriptor and rely on OOB behavior */
             pan_cast_and_pack(&descs[vb_offset + i], NULL_DESCRIPTOR, cfg)
@@ -3594,7 +3599,7 @@ panvk_per_arch(CmdDrawIndirect)(VkCommandBuffer commandBuffer, VkBuffer _buffer,
       return;
 
    struct panvk_draw_info draw = {
-      .indirect.buffer_dev_addr = panvk_buffer_gpu_ptr(buffer, offset),
+      .indirect.buffer_dev_addr = panvk_g2_checked_ptr(panvk_buffer_gpu_ptr(buffer, offset), 16, "indirect"),
       .indirect.draw_count = drawCount,
       .indirect.stride = stride,
       .prim = panvk_get_client_prim(cmdbuf),
@@ -3616,7 +3621,7 @@ panvk_per_arch(CmdDrawIndexedIndirect)(VkCommandBuffer commandBuffer,
 
    struct panvk_draw_info draw = {
       .index = panvk_draw_info_index(cmdbuf, 0),
-      .indirect.buffer_dev_addr = panvk_buffer_gpu_ptr(buffer, offset),
+      .indirect.buffer_dev_addr = panvk_g2_checked_ptr(panvk_buffer_gpu_ptr(buffer, offset), 16, "indirect"),
       .indirect.draw_count = drawCount,
       .indirect.stride = stride,
       .prim = panvk_get_client_prim(cmdbuf),
@@ -3642,7 +3647,7 @@ panvk_per_arch(CmdDrawIndirectCount)(VkCommandBuffer commandBuffer,
       return;
 
    struct panvk_draw_info draw = {
-      .indirect.buffer_dev_addr = panvk_buffer_gpu_ptr(buffer, offset),
+      .indirect.buffer_dev_addr = panvk_g2_checked_ptr(panvk_buffer_gpu_ptr(buffer, offset), 16, "indirect"),
       .indirect.count_buffer_dev_addr =
          panvk_buffer_gpu_ptr(count_buffer, countBufferOffset),
       .indirect.draw_count = maxDrawCount,
@@ -3671,7 +3676,7 @@ panvk_per_arch(CmdDrawIndexedIndirectCount)(VkCommandBuffer commandBuffer,
 
    struct panvk_draw_info draw = {
       .index = panvk_draw_info_index(cmdbuf, 0),
-      .indirect.buffer_dev_addr = panvk_buffer_gpu_ptr(buffer, offset),
+      .indirect.buffer_dev_addr = panvk_g2_checked_ptr(panvk_buffer_gpu_ptr(buffer, offset), 16, "indirect"),
       .indirect.count_buffer_dev_addr =
          panvk_buffer_gpu_ptr(count_buffer, countBufferOffset),
       .indirect.draw_count = maxDrawCount,
