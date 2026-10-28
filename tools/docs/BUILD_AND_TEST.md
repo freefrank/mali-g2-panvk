@@ -106,3 +106,11 @@ env -u LD_PRELOAD \
 Eden 公共日志受 Android scoped storage 限制。需要从 Eden 分享到 Termux 后才能读取；仅复制到公共 Download 并不保证当前 Termux UID 有权限打开。
 
 Policy marker: biblioklept
+
+## 打包
+
+`python3 driver/android/package.py <stripped.so> <输出目录> <标签>`。标签、提交和库哈希会写进 meta.json 的 name/packageVersion 和 ZIP 文件名；名称相同的包 Eden 不会替换已安装的驱动。
+
+## Root 与崩溃记录
+
+Termux 已有 root：`/system/bin/sh -c 'su -c "logcat -d -b crash"'` 可读取 Eden 的 tombstone 摘要。

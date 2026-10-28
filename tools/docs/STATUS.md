@@ -14,9 +14,9 @@
 
 - 驱动仓库 HEAD：`72569ca`，分支 `main`
 - 工具仓库整理前基线：`8efa308`，分支 `g2-bringup`；整理提交以 `git log` 为准
-- 最新 ZIP：`/storage/emulated/0/Download/panvk-mali-g2-test8c-68bf8b6.zip`
-- ZIP SHA-256：`7bcedbfceafa280f16fd1ddc97c23d776ff7959b50440e58d5a33f695de1bcb6`
-- test8 的 ZIP 误链接了 `libc++.so`，Eden 在创建 Vulkan 设备时闪退；test8b 修正了链接但仍闪退；test8c 用重新编译的 host panfrost_compile 重新生成预编译着色器（pan_shader_info 布局变化后 test8/8b 内嵌的是旧布局），尚待 Eden 实测。
+- 最新 ZIP：`/storage/emulated/0/Download/panvk-mali-g2-test9-94bf054-3c1d9307.zip`
+- ZIP SHA-256：`3f778ec04ec4f9e6e3967fe682e0053f90e995db336a819f9441893ff533e833`
+- test8b/8c/8d 与 test8 的 meta.json 名称和 packageVersion 完全相同，Eden 实际一直加载 test8（tombstone PC/LR 只与 test8 二进制吻合）。test9 起每个包带标签、提交和库哈希，尚待 Eden 实测。
 
 ## 已验证能力
 
