@@ -468,6 +468,10 @@ panvk_physical_device_init(struct panvk_physical_device *device,
       device->csf.tiler.chunk_size = 2 * 1024 * 1024;
       device->csf.tiler.initial_chunks = 5;
       device->csf.tiler.max_chunks = 64;
+      /* G2 kbase: the kernel's tiler-heap shrinker reclaims chunks above the initial count,
+       * and every Eden GPU fault so far came seconds after a reclaim. Start with all of them. */
+      if (arch == 15 && pan_kmod_dev_is_kbase(device->kmod.dev))
+         device->csf.tiler.initial_chunks = device->csf.tiler.max_chunks;
    }
 
    if (arch != 10)
