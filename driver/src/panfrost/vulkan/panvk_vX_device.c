@@ -593,8 +593,13 @@ panvk_per_arch(create_device)(struct panvk_physical_device *physical_device,
                               VkDevice *pDevice)
 {
    if (PAN_ARCH == 15)
-      panvk_g2_trace("device begin build=%s queues=%u", MESA_GIT_SHA1,
-                     pCreateInfo->queueCreateInfoCount);
+      panvk_g2_trace("device begin build=%s queues=%u threads_core=%u threads_wg=%u regs=%u "
+                     "tasks=%u tls=%u", MESA_GIT_SHA1, pCreateInfo->queueCreateInfoCount,
+                     physical_device->kmod.dev->props.max_threads_per_core,
+                     physical_device->kmod.dev->props.max_threads_per_wg,
+                     physical_device->kmod.dev->props.num_registers_per_core,
+                     physical_device->kmod.dev->props.max_tasks_per_core,
+                     physical_device->kmod.dev->props.max_tls_instance_per_core);
    struct panvk_instance *instance =
       to_panvk_instance(physical_device->vk.instance);
    VkResult result;

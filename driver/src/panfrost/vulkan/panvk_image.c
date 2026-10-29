@@ -209,6 +209,11 @@ panvk_image_can_use_mod(struct panvk_image *image,
       if (vk_format_get_plane_count(image->vk.format) > 1)
          return false;
 
+      /* On the Mali-G2, a copy through the R8G8B8 view of an AFBC Z24 plane decodes its headers
+       * into body offsets far outside the image and faults the GPU, so keep ZS uncompressed. */
+      if (arch >= 15 && vk_format_is_depth_or_stencil(image->vk.format))
+         return false;
+
       /* We can't have separate depth/stencil layout transitions with
        * interleaved ZS, so make sure we disallow AFBC on ZS unless
        * it's using a planar layout.

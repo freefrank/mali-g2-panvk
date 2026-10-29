@@ -297,6 +297,12 @@ kbase_kmod_query_props(int fd, struct pan_kmod_dev_props *props)
 
    props->max_threads_per_core = P(MAX_THREADS, 768);
    props->max_threads_per_wg = P(MAX_WORKGROUP_SIZE, props->max_threads_per_core);
+   /* The Mali-G2 kernel reports a 256-thread workgroup limit, but the GPU runs 1024-thread
+    * workgroups with shared memory and barriers correctly (as the vendor driver exposes), and
+    * 81920 registers per core leave 80 per thread at 1024, above the 64 a shader can use. */
+   if (pan_arch(props->gpu_id) >= 15 && props->max_threads_per_core >= 2048 &&
+       props->max_threads_per_wg < 1024)
+      props->max_threads_per_wg = 1024;
    props->max_tasks_per_core = MAX2(P(MAX_TASK_QUEUE, 0), 1);
    props->num_registers_per_core = P(MAX_REGISTERS, 0x6000);
 
