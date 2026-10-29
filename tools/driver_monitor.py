@@ -86,7 +86,7 @@ def main():
                                      socket.SOL_SOCKET, socket.SO_RCVBUF) for s in receivers)}) + '\n')
         print('Monitoring G2 driver:', args.output, flush=True)
         for index, data, control, flags, source in receive(receivers, deadline, overflow_option):
-            if written >= 8388608:
+            if written >= 268435456:
                 break
             for level, kind, value in control:
                 if level == socket.SOL_SOCKET and kind == overflow_option:
