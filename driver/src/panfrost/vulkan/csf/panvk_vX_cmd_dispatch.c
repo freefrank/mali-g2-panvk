@@ -410,7 +410,8 @@ cmd_dispatch(struct panvk_cmd_buffer *cmdbuf, struct panvk_dispatch_info *info)
 #if PAN_ARCH >= 15
    if (to_panvk_device(cmdbuf->vk.base.device)->g2_crumbs) {
       static uint32_t dumped;
-      if (p_atomic_inc_return(&dumped) <= 256) {
+      if (cs->info.tls_size == 0 && cs->bin_size > 2048 &&
+          p_atomic_inc_return(&dumped) <= 4096) {
          u_foreach_bit(si, cs_desc_info->used_set_mask) {
             const struct panvk_descriptor_set *set = desc_state->sets[si];
             if (!set) {
