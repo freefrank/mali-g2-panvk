@@ -12,6 +12,8 @@ void panvk_g2_trace(const char *format, ...);
 void panvk_g2_check_range(uint64_t addr, uint64_t size, const char *kind, uint32_t binding,
                           uint32_t elem);
 void panvk_g2_check_install(void);
+void panvk_g2_fault_res_table(uint32_t work, const char *tag, uint64_t res_table);
+void panvk_g2_fault_words(uint32_t work, const char *tag, uint64_t addr, uint32_t words);
 
 static inline uint64_t
 panvk_g2_checked_ptr(uint64_t addr, uint64_t size, const char *kind)

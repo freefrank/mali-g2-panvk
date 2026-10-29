@@ -3507,7 +3507,10 @@ panvk_cmd_draw(struct panvk_cmd_buffer *cmdbuf, struct panvk_draw_info draw)
       cmdbuf->g2_draws.entries[n][0] = 1;
       cmdbuf->g2_draws.entries[n][1] = vs->g2_trace_id;
       cmdbuf->g2_draws.entries[n][2] = g2fs ? g2fs->g2_trace_id : 0;
-      cmdbuf->g2_draws.entries[n][3] = 0;
+      cmdbuf->g2_draws.entries[n][3] =
+         draw.vertex.count | (uint64_t)draw.instance.count << 32;
+      for (uint32_t i = 4; i < 8; i++)
+         cmdbuf->g2_draws.entries[n][i] = 0;
    }
 #endif
 
@@ -3542,6 +3545,16 @@ panvk_cmd_draw(struct panvk_cmd_buffer *cmdbuf, struct panvk_draw_info draw)
    if (result != VK_SUCCESS)
       return;
 
+#if PAN_ARCH >= 15
+   {
+      uint64_t *e = cmdbuf->g2_draws.entries[(cmdbuf->g2_draws.count - 1) % PANVK_G2_DRAW_LOG];
+      e[4] = cmdbuf->state.gfx.vs.desc.res_table;
+      e[5] = cmdbuf->state.gfx.fs.desc.res_table;
+      e[6] = cmdbuf->state.gfx.vs.push_uniforms;
+      e[7] = draw.index.buffer_dev_addr ? draw.index.buffer_dev_addr : draw.indirect.buffer_dev_addr;
+   }
+   panvk_g2_crumb_start(cmdbuf, PANVK_SUBQUEUE_VERTEX_TILER);
+#endif
    update_prims_generated_query(cmdbuf, &draw);
 
    if (draw.indirect.buffer_dev_addr)
@@ -4612,6 +4625,9 @@ issue_fragment_jobs(struct panvk_cmd_buffer *cmdbuf)
       cs_wait_slot(b, SB_ID(IMM_FLUSH));
    }
 
+#if PAN_ARCH >= 15
+   panvk_g2_crumb_start(cmdbuf, PANVK_SUBQUEUE_FRAGMENT);
+#endif
    struct cs_index fbd_pointer = cs_sr_reg64(b, FRAGMENT, FBD_POINTER);
 
    if (cmdbuf->state.gfx.render.layer_count <= 1) {
@@ -4650,6 +4666,10 @@ issue_fragment_jobs(struct panvk_cmd_buffer *cmdbuf)
 #if PAN_ARCH == 10
    /* CRC becomes valid only after full-frame fragment completion without IR. */
    mark_crc_valid_after_fragment(b, cmdbuf);
+#endif
+
+#if PAN_ARCH >= 15
+   panvk_g2_crumb(cmdbuf, PANVK_SUBQUEUE_FRAGMENT);
 #endif
 
    struct cs_index sync_addr = cs_scratch_reg64(b, 0);

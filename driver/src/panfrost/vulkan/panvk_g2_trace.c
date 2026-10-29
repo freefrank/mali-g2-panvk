@@ -338,3 +338,105 @@ panvk_g2_check_install(void)
 {
    pan_g2_check_texture_plane = check_texture_plane;
 }
+
+#include <sys/uio.h>
+
+/* Kbase SAME_VA BOs live at the same CPU and GPU address, so GPU memory can be read back after
+ * a fault; process_vm_readv turns an unreadable page into an error instead of a SIGSEGV. */
+static bool
+fault_read(uint64_t addr, void *dst, size_t size)
+{
+   uint64_t bo_va, bo_size;
+   if (!addr || !pan_kmod_kbase_va_live(addr, size, &bo_va, &bo_size))
+      return false;
+   struct iovec local = {.iov_base = dst, .iov_len = size};
+   struct iovec remote = {.iov_base = (void *)(uintptr_t)addr, .iov_len = size};
+   return process_vm_readv(getpid(), &local, 1, &remote, 1, 0) == (ssize_t)size;
+}
+
+void
+panvk_g2_fault_words(uint32_t work, const char *tag, uint64_t addr, uint32_t words)
+{
+   uint32_t w[32];
+   words = MIN2(words, ARRAY_SIZE(w));
+   if (!fault_read(addr, w, words * 4)) {
+      panvk_g2_trace("fault words work=%u %s addr=0x%" PRIx64 " unreadable", work, tag, addr);
+      return;
+   }
+   char text[400];
+   size_t len = 0;
+   for (uint32_t i = 0; i < words; i++)
+      len += snprintf(text + len, sizeof(text) - len, " %08x", w[i]);
+   panvk_g2_trace("fault words work=%u %s addr=0x%" PRIx64 "%s", work, tag, addr, text);
+}
+
+static void
+fault_check(uint32_t work, const char *tag, uint32_t r, uint32_t d, const char *what,
+            uint64_t addr, uint64_t size, const uint32_t *w)
+{
+   uint64_t bo_va, bo_size;
+   bool live = pan_kmod_kbase_va_live(addr, size ? size : 1, &bo_va, &bo_size);
+   if (live && addr)
+      return;
+   panvk_g2_trace("fault baddesc work=%u %s r=%u d=%u %s addr=0x%" PRIx64 " size=0x%" PRIx64
+                  " bo=0x%" PRIx64 "+0x%" PRIx64 " w=%08x %08x %08x %08x %08x %08x %08x %08x",
+                  work, tag, r, d, what, addr, size, bo_va, bo_size, w[0], w[1], w[2], w[3],
+                  w[4], w[5], w[6], w[7]);
+}
+
+void
+panvk_g2_fault_res_table(uint32_t work, const char *tag, uint64_t res_table)
+{
+   uint64_t table = res_table & ~63ull;
+   uint32_t count = res_table & 63;
+   if (!table)
+      return;
+   for (uint32_t r = 0; r < count; r++) {
+      uint32_t res[4];
+      if (!fault_read(table + r * 16, res, sizeof(res))) {
+         panvk_g2_trace("fault res work=%u %s r=%u table=0x%" PRIx64 " unreadable", work, tag, r,
+                        table);
+         return;
+      }
+      uint64_t addr = res[0] | (uint64_t)(res[1] & 0xffffff) << 32;
+      uint64_t size = res[2] | (uint64_t)res[3] << 32;
+      uint32_t ndesc = size / 32, buffers = 0, textures = 0, other = 0;
+      if (!addr)
+         continue;
+      for (uint32_t d = 0; d < MIN2(ndesc, 256); d++) {
+         uint32_t w[8];
+         if (!fault_read(addr + d * 32, w, sizeof(w))) {
+            panvk_g2_trace("fault res work=%u %s r=%u d=%u addr=0x%" PRIx64 " unreadable", work,
+                           tag, r, d, addr);
+            break;
+         }
+         switch (w[0] & 0xf) {
+         case 9:
+            buffers++;
+            if (w[1])
+               fault_check(work, tag, r, d, "buffer", w[2] | (uint64_t)w[3] << 32, w[1], w);
+            break;
+         case 2: {
+            textures++;
+            uint64_t surf = w[4] | (uint64_t)w[5] << 32;
+            uint32_t p[8];
+            if (!fault_read(surf, p, sizeof(p))) {
+               fault_check(work, tag, r, d, "surfaces", surf, 32, w);
+               break;
+            }
+            if ((p[0] & 0xf) == 10 && ((p[0] >> 4) & 0xf))
+               fault_check(work, tag, r, d, "plane",
+                           p[2] | (uint64_t)(p[3] & 0xffff) << 32,
+                           p[1] | (((p[0] >> 4) & 0xf) == 1 ? (uint64_t)(p[3] >> 16) << 32 : 0),
+                           p);
+            break;
+         }
+         default:
+            other++;
+            break;
+         }
+      }
+      panvk_g2_trace("fault res work=%u %s r=%u addr=0x%" PRIx64 " descs=%u buffers=%u "
+                     "textures=%u other=%u", work, tag, r, addr, ndesc, buffers, textures, other);
+   }
+}

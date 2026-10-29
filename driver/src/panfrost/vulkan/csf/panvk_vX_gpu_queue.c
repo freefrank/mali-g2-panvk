@@ -1682,9 +1682,11 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
       if (queue->kbase_lost || pan_kmod_kbase_csf_group_faulted(queue->kbase_group)) {
          if (dev->g2_crumbs) {
             const uint64_t *c = dev->g2_crumbs->addr.host;
-            panvk_g2_trace("fault crumbs vt=%#" PRIx64 " frag=%#" PRIx64 " cs=%#" PRIx64,
+            panvk_g2_trace("fault crumbs done vt=%#" PRIx64 " frag=%#" PRIx64 " cs=%#" PRIx64
+                           " started vt=%#" PRIx64 " frag=%#" PRIx64 " cs=%#" PRIx64,
                            c[PANVK_SUBQUEUE_VERTEX_TILER * 8], c[PANVK_SUBQUEUE_FRAGMENT * 8],
-                           c[PANVK_SUBQUEUE_COMPUTE * 8]);
+                           c[PANVK_SUBQUEUE_COMPUTE * 8], c[PANVK_SUBQUEUE_VERTEX_TILER * 8 + 4],
+                           c[PANVK_SUBQUEUE_FRAGMENT * 8 + 4], c[PANVK_SUBQUEUE_COMPUTE * 8 + 4]);
          }
          for (uint32_t i = 0; i < vk_submit->command_buffer_count; i++) {
             const struct panvk_cmd_buffer *cb = container_of(
@@ -1709,10 +1711,15 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
                                  (unsigned)e[1], e[2], e[3],
                                  pan_kmod_kbase_va_live(e[2], 1, &v, &sz),
                                  pan_kmod_kbase_va_live(e[3], 1, &v, &sz));
+                  panvk_g2_fault_words(k, "cs_fau", e[5], 16);
+                  panvk_g2_fault_res_table(k, "cs", e[4]);
                } else {
-                  panvk_g2_trace("fault work=%u %s shader=%u fs=%u", k,
-                                 e[0] == 1 ? "draw" : "dispatch", (unsigned)e[1],
-                                 (unsigned)e[2]);
+                  panvk_g2_trace("fault work=%u %s shader=%u fs=%u verts=%u inst=%u ib=0x%" PRIx64,
+                                 k, e[0] == 1 ? "draw" : "dispatch", (unsigned)e[1],
+                                 (unsigned)e[2], (uint32_t)e[3], (uint32_t)(e[3] >> 32), e[7]);
+                  panvk_g2_fault_words(k, "vs_fau", e[6], 16);
+                  panvk_g2_fault_res_table(k, "vs", e[4]);
+                  panvk_g2_fault_res_table(k, "fs", e[5]);
                }
             }
          }

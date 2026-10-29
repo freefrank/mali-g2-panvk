@@ -302,6 +302,9 @@ panvk_per_arch(cmd_dispatch_shader)(
       }
    }
 
+#if PAN_ARCH >= 15
+   panvk_g2_crumb_start(cmdbuf, PANVK_SUBQUEUE_COMPUTE);
+#endif
    cs_next_iter_sb(cmdbuf, PANVK_SUBQUEUE_COMPUTE,
                    cs_scratch_reg_tuple(b, 0, 2));
 
@@ -351,6 +354,7 @@ cmd_dispatch(struct panvk_cmd_buffer *cmdbuf, struct panvk_dispatch_info *info)
       cmdbuf->g2_draws.entries[n][1] = cs ? cs->g2_trace_id : 0;
       cmdbuf->g2_draws.entries[n][2] = cmdbuf->state.push_constants.data[0];
       cmdbuf->g2_draws.entries[n][3] = cmdbuf->state.push_constants.data[1];
+      cmdbuf->g2_draws.entries[n][4] = cmdbuf->g2_draws.entries[n][5] = 0;
    }
 #endif
    VkResult result;
@@ -408,6 +412,11 @@ cmd_dispatch(struct panvk_cmd_buffer *cmdbuf, struct panvk_dispatch_info *info)
    }
 
 #if PAN_ARCH >= 15
+   {
+      uint64_t *e = cmdbuf->g2_draws.entries[(cmdbuf->g2_draws.count - 1) % PANVK_G2_DRAW_LOG];
+      e[4] = cs_desc_state->res_table;
+      e[5] = push_uniforms.gpu;
+   }
    if (to_panvk_device(cmdbuf->vk.base.device)->g2_crumbs) {
       static uint32_t dumped;
       if (cs->info.tls_size == 0 && cs->bin_size > 2048 &&
