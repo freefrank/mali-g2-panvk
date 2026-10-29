@@ -13,6 +13,7 @@
 
 #include <sys/stat.h>
 
+#include "util/u_debug.h"
 #include "util/disk_cache.h"
 #include "util/os_misc.h"
 #include "util/u_atomic.h"
@@ -468,10 +469,15 @@ panvk_physical_device_init(struct panvk_physical_device *device,
       device->csf.tiler.chunk_size = 2 * 1024 * 1024;
       device->csf.tiler.initial_chunks = 5;
       device->csf.tiler.max_chunks = 64;
-      /* G2 kbase: the kernel's tiler-heap shrinker reclaims chunks above the initial count,
-       * and every Eden GPU fault so far came seconds after a reclaim. Start with all of them. */
-      if (arch == 15 && pan_kmod_dev_is_kbase(device->kmod.dev))
-         device->csf.tiler.initial_chunks = device->csf.tiler.max_chunks;
+      /* G2 kbase: the kernel grows the heap on tiler OOM and terminates the group once
+       * max_chunks is reached ("couldn't handle the OoM event"). 64 chunks (128 MiB) run out
+       * on a heavy draw that the vendor driver renders; chunks are only backed on demand. */
+      if (arch == 15 && pan_kmod_dev_is_kbase(device->kmod.dev)) {
+         device->csf.tiler.max_chunks =
+            debug_get_num_option("PANVK_G2_TILER_MAX_CHUNKS", 1024);
+         device->csf.tiler.initial_chunks =
+            debug_get_num_option("PANVK_G2_TILER_INITIAL_CHUNKS", 5);
+      }
    }
 
    if (arch != 10)
