@@ -4534,6 +4534,26 @@ cs_emit_static_fragment_state(struct cs_builder *b,
 }
 #endif /* PAN_ARCH >= 14 */
 
+
+#if PAN_ARCH >= 15
+static uint64_t
+g2_att_info(const struct pan_image_view *pv, uint32_t load, uint64_t *base)
+{
+   const struct pan_image_plane_ref *ref = &pv->planes[0];
+   if (!ref->image || !ref->image->planes[ref->plane_idx])
+      return 0;
+   const struct pan_image_plane *pl = ref->image->planes[ref->plane_idx];
+   uint64_t bv, bs;
+   bool live = pan_kmod_kbase_va_live(pl->base, pl->layout.data_size_B, &bv, &bs);
+   *base = pl->base;
+   return pv->first_level | (uint64_t)(pv->first_layer_or_z_slice & 0xfff) << 8 |
+          (uint64_t)(pv->format & 0x3ff) << 20 | (uint64_t)(load & 0xf) << 32 |
+          (uint64_t)live << 36 | (uint64_t)drm_is_afbc(ref->image->props.modifier) << 37 |
+          (uint64_t)(ref->image->props.nr_slices & 0x3) << 38 |
+          ((pl->layout.data_size_B >> 16) & 0xffffff) << 40;
+}
+#endif
+
 static VkResult
 issue_fragment_jobs(struct panvk_cmd_buffer *cmdbuf)
 {
@@ -4626,6 +4646,34 @@ issue_fragment_jobs(struct panvk_cmd_buffer *cmdbuf)
    }
 
 #if PAN_ARCH >= 15
+   {
+      struct panvk_rendering_state *render = &cmdbuf->state.gfx.render;
+      uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
+      uint64_t *e = cmdbuf->g2_draws.entries[n];
+      memset(e, 0, 8 * sizeof(*e));
+      e[0] = 4;
+      e[1] = render->fbds.gpu;
+      e[2] = render->fb.layout.width_px | (uint64_t)render->fb.layout.height_px << 16 |
+             (uint64_t)render->layer_count << 32 | (uint64_t)render->fb.layout.rt_count << 48;
+      for (uint32_t rt = 0; rt < 2; rt++) {
+         const struct panvk_image_view *iv = render->color_attachments.preload_iviews[rt]
+            ? render->color_attachments.preload_iviews[rt] : render->color_attachments.iviews[rt];
+         if (iv)
+            e[4 + rt] = g2_att_info(&iv->pview, render->fb.load.rts[rt].in_bounds_load,
+                                    &e[rt == 0 ? 3 : 7]);
+      }
+      const struct panvk_image_view *zv = render->z_attachment.preload_iview
+         ? render->z_attachment.preload_iview : render->z_attachment.iview;
+      if (!zv)
+         zv = render->s_attachment.iview;
+      uint64_t zbase = 0;
+      if (zv)
+         e[6] = g2_att_info(&zv->pview, render->fb.load.z.in_bounds_load |
+                                           render->fb.load.s.in_bounds_load << 2, &zbase);
+      /* The ZS base shares the slot of the second render target when both are present. */
+      if (!e[7])
+         e[7] = zbase;
+   }
    panvk_g2_crumb_start(cmdbuf, PANVK_SUBQUEUE_FRAGMENT);
 #endif
    struct cs_index fbd_pointer = cs_sr_reg64(b, FRAGMENT, FBD_POINTER);

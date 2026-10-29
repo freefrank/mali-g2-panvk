@@ -515,7 +515,9 @@ int main(int argc, char **argv)
     if (textured || vertex_store)
         vkCmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, layout,
                                  0, 1, &descriptor_set, 0, NULL);
-    if (drawid)
+    if (getenv("MALI_G2_TEST_NO_DRAW"))
+        ;
+    else if (drawid)
         vkCmdDrawIndirect(command, buffer, 2048, 2, sizeof(VkDrawIndirectCommand));
     else
         vkCmdDraw(command, getenv("MALI_G2_TEST_VERTS") ? strtoul(getenv("MALI_G2_TEST_VERTS"), NULL, 0) : 3,

@@ -342,7 +342,7 @@ panvk_g2_check_install(void)
 #include <sys/uio.h>
 
 /* Kbase SAME_VA BOs live at the same CPU and GPU address, so GPU memory can be read back after
- * a fault; process_vm_readv turns an unreadable page into an error instead of a SIGSEGV. */
+ * a fault. */
 static bool
 fault_read(uint64_t addr, void *dst, size_t size)
 {
@@ -351,7 +351,11 @@ fault_read(uint64_t addr, void *dst, size_t size)
       return false;
    struct iovec local = {.iov_base = dst, .iov_len = size};
    struct iovec remote = {.iov_base = (void *)(uintptr_t)addr, .iov_len = size};
-   return process_vm_readv(getpid(), &local, 1, &remote, 1, 0) == (ssize_t)size;
+   if (process_vm_readv(getpid(), &local, 1, &remote, 1, 0) == (ssize_t)size)
+      return true;
+   /* The app sandbox may refuse process_vm_readv; every live BO keeps its RW anchor. */
+   memcpy(dst, (const void *)(uintptr_t)addr, size);
+   return true;
 }
 
 void

@@ -1704,6 +1704,15 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
                   panvk_g2_trace("fault work=%u copy src=0x%" PRIx64 " dst=0x%" PRIx64
                                  " size=0x%" PRIx64 " src_live=%u dst_live=%u", k, e[1], e[2],
                                  e[3], sl, dl);
+               } else if (e[0] == 4) {
+                  panvk_g2_trace("fault work=%u frag fbds=0x%" PRIx64 " %ux%u layers=%u rts=%u "
+                                 "rt0=0x%" PRIx64 " info0=0x%" PRIx64 " info1=0x%" PRIx64
+                                 " zsinfo=0x%" PRIx64 " base1=0x%" PRIx64, k, e[1],
+                                 (uint32_t)(e[2] & 0xffff), (uint32_t)((e[2] >> 16) & 0xffff),
+                                 (uint32_t)((e[2] >> 32) & 0xffff), (uint32_t)(e[2] >> 48), e[3],
+                                 e[4], e[5], e[6], e[7]);
+                  for (uint32_t w = 0; w < 4; w++)
+                     panvk_g2_fault_words(k, "fbd", e[1] + w * 128, 32);
                } else if (e[0] == 2) {
                   uint64_t v, sz;
                   panvk_g2_trace("fault work=%u dispatch shader=%u pc0=0x%" PRIx64
