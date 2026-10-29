@@ -1,5 +1,7 @@
 # 当前状态
 
+> 本文件 test10 之后未逐项更新；最新进展、test25–test28 结论和下一步见 [HANDOFF.md](HANDOFF.md)。
+
 ## 目标设备
 
 - 设备：Xiaomi M367FC，codename `yingtian`
