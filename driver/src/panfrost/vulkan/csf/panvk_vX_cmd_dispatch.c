@@ -15,6 +15,8 @@
 #include "panvk_buffer.h"
 #include "panvk_cmd_alloc.h"
 #include "panvk_cmd_buffer.h"
+#include "panvk_g2_trace.h"
+#include "panfrost/lib/kmod/kbase_kmod.h"
 #include "panvk_cmd_desc_state.h"
 #include "panvk_cmd_meta.h"
 #include "panvk_cmd_push_constant.h"
@@ -405,6 +407,28 @@ cmd_dispatch(struct panvk_cmd_buffer *cmdbuf, struct panvk_dispatch_info *info)
          return;
    }
 
+#if PAN_ARCH >= 15
+   if (to_panvk_device(cmdbuf->vk.base.device)->g2_crumbs) {
+      static uint32_t dumped;
+      if (p_atomic_inc_return(&dumped) <= 256) {
+         u_foreach_bit(si, cs_desc_info->used_set_mask) {
+            const struct panvk_descriptor_set *set = desc_state->sets[si];
+            if (!set) {
+               panvk_g2_trace("desc shader=%u set=%u unbound", cs->g2_trace_id, si);
+               continue;
+            }
+            const uint32_t *w = set->descs.host;
+            for (uint32_t d = 0; w && d < MIN2(set->desc_count, 16); d++) {
+               const uint32_t *e = w + d * (PANVK_DESCRIPTOR_SIZE / 4);
+               uint64_t addr = e[2] | ((uint64_t)e[3] << 32), bv, bs;
+               panvk_g2_trace("desc shader=%u set=%u d=%u w=%08x %08x %08x %08x addr=0x%" PRIx64
+                              " live=%u", cs->g2_trace_id, si, d, e[0], e[1], e[2], e[3], addr,
+                              pan_kmod_kbase_va_live(addr, 1, &bv, &bs));
+            }
+         }
+      }
+   }
+#endif
    struct cs_builder *b = panvk_get_cs_builder(cmdbuf, PANVK_SUBQUEUE_COMPUTE);
 
    /* Copy the global TLS pointer and size to the per-job TSD. */

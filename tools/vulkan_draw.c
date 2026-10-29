@@ -518,7 +518,8 @@ int main(int argc, char **argv)
     if (drawid)
         vkCmdDrawIndirect(command, buffer, 2048, 2, sizeof(VkDrawIndirectCommand));
     else
-        vkCmdDraw(command, 3, 1, 0, 0);
+        vkCmdDraw(command, getenv("MALI_G2_TEST_VERTS") ? strtoul(getenv("MALI_G2_TEST_VERTS"), NULL, 0) : 3,
+                  getenv("MALI_G2_TEST_INSTANCES") ? strtoul(getenv("MALI_G2_TEST_INSTANCES"), NULL, 0) : 1, 0, 0);
     vkCmdEndRenderPass(command);
     VkImageMemoryBarrier barrier = {.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
         .srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, .dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT,
