@@ -329,6 +329,9 @@ panvk_per_arch(cmd_dispatch_shader)(
       }
    }
 
+#if PAN_ARCH >= 15
+   panvk_g2_crumb(cmdbuf, PANVK_SUBQUEUE_COMPUTE);
+#endif
    panvk_per_arch(cmd_signal_barrier)(cmdbuf, info->barrier);
 
    clear_dirty_after_dispatch(cmdbuf);

@@ -20,6 +20,7 @@
 #include "panvk_cmd_draw.h"
 #include "panvk_cmd_push_constant.h"
 #include "panvk_queue.h"
+#include "panvk_device.h"
 
 #include "vk_command_buffer.h"
 #include "vk_synchronization.h"
@@ -546,11 +547,12 @@ struct panvk_cond_render_state {
    enum mali_cs_condition exec_cond;
 };
 
-#define PANVK_G2_DRAW_LOG 64
+#define PANVK_G2_DRAW_LOG 1024
 struct panvk_cmd_buffer {
    struct vk_command_buffer vk;
    struct {
       uint32_t count;
+      uint32_t serial;
       uint64_t entries[PANVK_G2_DRAW_LOG][4];
    } g2_draws;
    VkCommandBufferUsageFlags flags;
@@ -1038,5 +1040,26 @@ void panvk_per_arch(collect_crc_invalidation_deps)(const VkDependencyInfo *info,
                                                    uint64_t *crc_addrs);
 void panvk_per_arch(cmd_invalidate_crc)(struct cs_builder *b,
                                         uint64_t crc_header_addr);
+
+#if PAN_ARCH >= 15
+/* Sync-mode G2 breadcrumb: once the work just emitted on this subqueue is done, record its
+ * index in the command buffer, so a fault can be pinned to one draw or dispatch. */
+static inline void
+panvk_g2_crumb(struct panvk_cmd_buffer *cmdbuf, uint32_t subqueue)
+{
+   struct panvk_device *dev = to_panvk_device(cmdbuf->vk.base.device);
+   if (!dev->g2_crumbs)
+      return;
+   struct cs_builder *b = panvk_get_cs_builder(cmdbuf, subqueue);
+   struct cs_index addr = cs_scratch_reg64(b, 0);
+   struct cs_index val = cs_scratch_reg64(b, 2);
+   cs_wait_slots(b, BITFIELD_MASK(CS_MAX_SB_COUNT));
+   cs_move64_to(b, addr, dev->g2_crumbs->addr.dev + subqueue * 64);
+   cs_move64_to(b, val, ((uint64_t)cmdbuf->g2_draws.serial << 32) |
+                           (cmdbuf->g2_draws.count - 1));
+   cs_store64(b, val, addr, 0);
+   cs_flush_stores(b);
+}
+#endif
 
 #endif /* PANVK_CMD_BUFFER_H */

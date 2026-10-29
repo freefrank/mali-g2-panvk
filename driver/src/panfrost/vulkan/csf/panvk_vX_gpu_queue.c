@@ -1680,12 +1680,19 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
          panvk_queue_kbase_decode(queue, vk_submit);
 #if PAN_ARCH >= 15
       if (queue->kbase_lost || pan_kmod_kbase_csf_group_faulted(queue->kbase_group)) {
+         if (dev->g2_crumbs) {
+            const uint64_t *c = dev->g2_crumbs->addr.host;
+            panvk_g2_trace("fault crumbs vt=%#" PRIx64 " frag=%#" PRIx64 " cs=%#" PRIx64,
+                           c[PANVK_SUBQUEUE_VERTEX_TILER * 8], c[PANVK_SUBQUEUE_FRAGMENT * 8],
+                           c[PANVK_SUBQUEUE_COMPUTE * 8]);
+         }
          for (uint32_t i = 0; i < vk_submit->command_buffer_count; i++) {
             const struct panvk_cmd_buffer *cb = container_of(
                vk_submit->command_buffers[i], struct panvk_cmd_buffer, vk);
             const uint32_t total = cb->g2_draws.count;
             const uint32_t first = total > PANVK_G2_DRAW_LOG ? total - PANVK_G2_DRAW_LOG : 0;
-            panvk_g2_trace("fault submit=%u cmdbuf=%u work=%u", trace_id, i, total);
+            panvk_g2_trace("fault submit=%u cmdbuf=%u serial=%u work=%u", trace_id, i,
+                           cb->g2_draws.serial, total);
             for (uint32_t k = first; k < total; k++) {
                const uint64_t *e = cb->g2_draws.entries[k % PANVK_G2_DRAW_LOG];
                if (e[0] == 3) {

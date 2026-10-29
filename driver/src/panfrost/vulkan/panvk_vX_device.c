@@ -764,6 +764,17 @@ panvk_per_arch(create_device)(struct panvk_physical_device *physical_device,
    if (result != VK_SUCCESS)
       goto err_free_priv_bos;
 
+#if PAN_ARCH >= 15
+   if (PANVK_DEBUG(SYNC)) {
+      result = panvk_priv_bo_create(
+         device, 4096, panvk_device_adjust_bo_flags(device, PAN_KMOD_BO_FLAG_GPU_UNCACHED),
+         VK_SYSTEM_ALLOCATION_SCOPE_DEVICE, &device->g2_crumbs);
+      if (result != VK_SUCCESS)
+         goto err_free_priv_bos;
+      memset(device->g2_crumbs->addr.host, 0xff, 4096);
+   }
+#endif
+
    pan_upload_sample_positions(device->sample_positions->addr.host);
    panvk_priv_bo_flush(device->sample_positions, 0,
                        pan_sample_positions_buffer_size());
@@ -880,6 +891,7 @@ err_free_priv_bos:
    panvk_priv_bo_unref(device->printf.bo);
    panvk_priv_bo_unref(device->tiler_oom.handlers_bo);
    panvk_priv_bo_unref(device->sample_positions);
+   panvk_priv_bo_unref(device->g2_crumbs);
    panvk_pool_free_mem(&device->poly_heap.state);
    panvk_priv_bo_unref(device->poly_heap.buffer);
 #if PAN_ARCH >= 10
@@ -949,6 +961,7 @@ panvk_per_arch(destroy_device)(struct panvk_device *device,
    panvk_priv_bo_unref(device->tess_heap);
    panvk_priv_bo_unref(device->tiler_heap);
    panvk_priv_bo_unref(device->sample_positions);
+   panvk_priv_bo_unref(device->g2_crumbs);
    panvk_device_cleanup_mempools(device);
    vk_free(&device->vk.alloc, device->dump_region_size);
    pan_kmod_vm_destroy(device->kmod.vm);

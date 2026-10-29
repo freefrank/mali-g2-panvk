@@ -3521,6 +3521,9 @@ panvk_cmd_draw(struct panvk_cmd_buffer *cmdbuf, struct panvk_draw_info draw)
       launch_indirect_draw(cmdbuf, &draw);
    else
       launch_draw(cmdbuf, &draw);
+#if PAN_ARCH >= 15
+   panvk_g2_crumb(cmdbuf, PANVK_SUBQUEUE_VERTEX_TILER);
+#endif
 }
 
 VkResult

@@ -875,6 +875,10 @@ panvk_reset_cmdbuf(struct vk_command_buffer *vk_cmdbuf,
 
    vk_command_buffer_reset(&cmdbuf->vk);
    cmdbuf->g2_draws.count = 0;
+   {
+      static uint32_t g2_serial;
+      cmdbuf->g2_draws.serial = p_atomic_inc_return(&g2_serial);
+   }
 
    panvk_pool_reset(&cmdbuf->cs_pool);
    panvk_pool_reset(&cmdbuf->desc_pool);

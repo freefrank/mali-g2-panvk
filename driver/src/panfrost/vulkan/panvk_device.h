@@ -70,6 +70,7 @@ struct panvk_device {
 
    struct panvk_priv_bo *tiler_heap;
    struct panvk_priv_bo *sample_positions;
+   struct panvk_priv_bo *g2_crumbs;
    /* v6/v7 tessellation: the domain points and index buffers the tessellator writes, reused by
     * every batch (see panlib_tess_prefix_sum). */
    struct panvk_priv_bo *tess_heap;
