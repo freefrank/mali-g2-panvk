@@ -22,6 +22,7 @@
 #include "panvk_cmd_desc_state.h"
 #include "panvk_cmd_draw.h"
 #include "panvk_g2_trace.h"
+#include "panfrost/lib/kmod/kbase_kmod.h"
 #include "panvk_cmd_frame_shaders.h"
 #include "panvk_cmd_meta.h"
 #include "panvk_cmd_precomp.h"
@@ -397,6 +398,32 @@ prepare_vs_driver_set(struct panvk_cmd_buffer *cmdbuf, uint32_t repeat_count)
       descs += desc_count;
    }
 
+#if PAN_ARCH >= 15
+   {
+      const struct panvk_shader_variant *g2vs =
+         panvk_shader_hw_variant(cmdbuf->state.gfx.vs.shader);
+      static uint32_t g2dumped;
+      if (to_panvk_device(cmdbuf->vk.base.device)->g2_crumbs && g2vs &&
+          g2vs->info.attribute_count && p_atomic_inc_return(&g2dumped) <= 2048) {
+         const uint32_t *w = driver_set.cpu;
+         u_foreach_bit(a, vi->attributes_valid) {
+            const uint32_t *e = w + a * (PANVK_DESCRIPTOR_SIZE / 4);
+            panvk_g2_trace("vsattr shader=%u a=%u bind=%u fmt=%u off=%u w=%08x %08x %08x %08x %08x %08x",
+                           g2vs->g2_trace_id, a, vi->attributes[a].binding,
+                           vi->attributes[a].format, vi->attributes[a].offset, e[0], e[1], e[2],
+                           e[3], e[4], e[5]);
+         }
+         for (uint32_t i = 0; i < vb_count; i++) {
+            const uint32_t *e = w + (vb_offset + i) * (PANVK_DESCRIPTOR_SIZE / 4);
+            uint64_t addr = e[2] | ((uint64_t)e[3] << 32), bv, bs;
+            panvk_g2_trace("vsbuf shader=%u b=%u w=%08x %08x %08x %08x %08x %08x addr=0x%" PRIx64
+                           " live=%u stride=%u rate=%u", g2vs->g2_trace_id, i, e[0], e[1], e[2],
+                           e[3], e[4], e[5], addr, pan_kmod_kbase_va_live(addr, 1, &bv, &bs),
+                           dyns->vi_binding_strides[i], vi->bindings[i].input_rate);
+         }
+      }
+   }
+#endif
    vs_desc_state->driver_set.dev_addr = driver_set.gpu;
    vs_desc_state->driver_set.size = desc_count * PANVK_DESCRIPTOR_SIZE;
    gfx_state_set_dirty(cmdbuf, DESC_STATE);
