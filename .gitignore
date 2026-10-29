@@ -1,3 +1,5 @@
 /toolchain/
 /references/malibridge/
 /tools/legacy/
+/references/eden-upstream/
+/driver/subprojects/.wraplock
