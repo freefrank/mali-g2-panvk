@@ -6,7 +6,7 @@
   "eden_reference": "/root/mali-g2-project/references/eden",
   "driver_head": "24e32e8b86164c9375aebab92a037b487f8ed872",
   "latest_package": "/storage/emulated/0/Download/panvk-mali-g2-test45-perf-24e32e8-7d407064.zip",
-  "current_status": "test45 arbitration candidate built from committed source and delivered; 31 runtime cases passed, kernel reads 4/3 with Priority 2 unchanged. User game comparison pending. test44 still stutters; prior native tracing identified long waits for SurfaceFlinger GPU fences. Blur-off user feedback: still stutters. All temporary settings restored.",
+  "current_status": "test45 much better initially, stutter returns after seconds; both game and Android UI. Foreground resume crashed at VulkanPresent CopyToSwapchain rethrow after Android surface initialization failure. Preserved test45; backed up and disabled async_presentation only, after confirming no game and main activity. Reopened Eden main; two-line change and custom-config identity verified. User validation pending.",
   "build_note": "Existing driver/build-host and driver/build-android-arm support incremental builds. Read tools/docs/BUILD_AND_TEST.md. test45 symbols and artifact hashes are in tools/artifacts/test45/build.json.",
   "git_policy": "Commit and push each milestone to origin/main; user explicitly requested frequent commit/push. Generated-by: LLM and biblioklept markers required. Do not post upstream or rewrite pushed history.",
   "remaining_capabilities": [
@@ -23,8 +23,9 @@
     "resolution": "1x",
     "async_gpu": false,
     "diagnostics": false,
-    "presentation": "Mailbox"
+    "presentation": "Mailbox",
+    "async_presentation": false
   },
-  "next_step": "User imports test45, restarts Eden, compares movement and notification shade in the same scene. Do not run synthetic GPU tests while game/system UI stutter is active.",
+  "next_step": "User opens game, tests movement; save before resume testing. Verify setting in real render session and absence of VulkanPresent before further driver changes. No test46 package or driver changes this phase. Continue performance diagnosis after resume stability.",
   "remaining_capabilities_note": "Historical test8-era list below has not been revalidated in this phase; consult STATUS.md for current capabilities."
 }

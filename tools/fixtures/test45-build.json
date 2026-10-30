@@ -1,7 +1,7 @@
 {
   "policy_marker": "biblioklept",
   "tag": "test45-perf",
-  "status": "Candidate delivered; 31 runtime cases passed, one kernel readback and three file integrity checks passed; same-scene game performance pending.",
+  "status": "User confirms large initial improvement; stutter returns after seconds. Resume crash investigated; async presentation now off for validation.",
   "source_commit": "24e32e8b86164c9375aebab92a037b487f8ed872",
   "source_uncommitted": false,
   "driver_tree": "3d08e631dac846d944bfc6ac914a764ee94939ca",
@@ -32,7 +32,7 @@
     "elf_allocated_sections_identical": 27,
     "zip_crc_and_contained_library_sha": true,
     "runtime": "31 cases passed",
-    "game": "pending",
+    "game": "Initial improvement confirmed; persistent stutter and resume crash remain under investigation.",
     "kernel_readback": "4/3; Priority 2 unchanged",
     "diagnostics": "Default-off and explicit-off: zero diagnostic sockets, signal handlers, UDP datagrams and trace bytes."
   },
@@ -73,6 +73,6 @@
   },
   "runtime_cases_total": 31,
   "checks_total": 35,
-  "game_validation": "Pending import/restart and same-scene movement plus notification-shade comparison; no game FPS or root-cause fix claim.",
+  "game_validation": "User: \u597d\u4e86\u5f88\u591a\uff01\uff01\u4f46\u662f\u8fc7\u51e0\u79d2\u53c8\u5f00\u59cb\u5361\u4e86. Both game and Android UI affected. Resume SIGABRT has Android surface initialization/rethrow path; preserve test45 and validate async_presentation=false. See test45-resume-investigation.json.",
   "runpath": "Unchanged from test44; no libc++.so dependency."
 }

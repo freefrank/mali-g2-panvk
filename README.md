@@ -13,7 +13,7 @@
 | `references/malibridge/` | Vulkan Headers 与 MaliBridge 外部参考，不纳入 Git |
 | `toolchain/` | Meson、Android 依赖和本地编译工具，不纳入 Git |
 
-最新试版 test45 对齐 G2 计算/片元仲裁参数，已通过 31 项运行回归，内核读回确认 4/3，游戏流畅度待用户实测。test44 仍卡顿；此前内核记录显示系统合成 GPU fence 出现约 100ms 长等待，关闭模糊也未改善。分辨率保持 1×，异步 GPU 与两侧诊断关闭。测试包已放在 Download，源码与验证记录见 [HANDOFF.md](tools/docs/HANDOFF.md)，构建命令见 [BUILD_AND_TEST.md](tools/docs/BUILD_AND_TEST.md)。
+用户确认 test45 初期明显顺滑，但几秒后游戏与通知栏仍卡；切回前台还触发了呈现线程的 Android 表面重建异常。已保留 test45，备份后只关闭 Eden 异步呈现，等待复测。31 项驱动回归与内核 4/3 读回仍有效。分辨率 1×，异步 GPU 与两侧诊断关闭。当前包仍在 Download，最新日志结论和配置对照见 [HANDOFF.md](tools/docs/HANDOFF.md)。
 
 现有 `driver/build-host` 和 `driver/build-android-arm` 已可用于增量构建，命令见构建文档。
 

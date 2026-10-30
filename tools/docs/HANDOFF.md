@@ -1,4 +1,4 @@
-# 交接文档（2026-10-30，test45 仲裁参数候选已交付；游戏流畅度待实测）
+# 交接文档（2026-10-30，test45 初期显著改善后仍卡；切回崩溃已定位呈现表面路径，关闭异步呈现待复测）
 
 接手前先读完本文件，再读 `STATUS.md`（历史结论）和 `BUILD_AND_TEST.md`（构建细节）。
 Policy marker: biblioklept
@@ -20,7 +20,17 @@ Policy marker: biblioklept
 
 源码提交、driver 子树、原包库/ZIP/补丁哈希的机器可读映射在 `tools/fixtures/test44-source-checkpoints.json`。原包构建发生在这些提交之前，包名中的 bfcc5d7 与历史 manifest 不改写；其 driver 源码已逐字节对应到表中提交。旧记录中的“无提交或推送”描述当时状态，已由本节补充。构建产物、符号、原始设备日志和私有配置未加入 Git。
 
-## 当前交付：test45，G2 计算/片元仲裁候选
+## 当前状态：test45 改善已确认，异步呈现关闭待复测
+
+- 用户最新反馈：「好了很多！！但是过几秒又开始卡了」，游戏与通知栏都会卡。询问回桌面再切回能否短暂恢复后，用户报告切回闪退。保留 test45 的 4/3 仲裁参数，不再把游戏效果标为完全未知，也不能标为已经持续顺滑。
+- 本轮原生映射 SHA 确认为 test45 `7d407064...`。20.118 秒 kernel fence 观察记录 31,180 样本、零丢失；资源另采 21 点，GPU 基本 1.248GHz（一次 1.392GHz），利用率 91–99%，即时 GPU 温度 45–46.875°C，前后 Thermal Status=0。没有捕获经确认的“顺滑转卡顿”边界，不能用该窗口全面排除频率策略。其后 120Hz/278.53MHz 的短记录实际是 Termux 前台，排除出游戏性能比较；两次等待采集均未启动有效 CPU/counter 窗口，第二次在恢复渲染前超时。没有合成 GPU 回归。
+- 已先读取本轮 Eden `.old.txt` 日志与最新 tombstone_04，而非只凭 UI 猜测。11:47:43Z 的 SIGABRT 在线程 VulkanPresent，栈为 `__cxa_rethrow -> PresentManager::CopyToSwapchain+536 -> PresentThread+732`。同一轮 Eden 最后错误是 `vulkan_surface.cpp:58: Failed to initialize Android surface`。APK 与 tombstone 的 libyuzu Build ID 一致 `7f8a58a085a4c1ab144e470d4941f1857b2f7a81`；11:11:32Z 的旧 tombstone_03 也有相同重抛栈，早于用户导入 test45。
+- 源码 CreateSurface 会把 Android 表面创建失败转换为 VK_ERROR_INITIALIZATION_FAILED；CopyToSwapchain 只重试 VK_ERROR_SURFACE_LOST_KHR，其余重抛。这个异常路径与当前栈吻合。Abort message 同时保留 host_memory.cpp:770 的 virtual_offset 边界断言，不能单凭这句就宣布 CPU 内存越界或驱动 GPU 崩溃根因已确定。原始日志/完整 tombstone 只保留本地，不提交。
+- 发现“异步 GPU=false”与独立的 `async_presentation=true` 并存，后者创建 VulkanPresent 线程。当前安全对照只关闭 async_presentation；不改驱动代码、不发布 test46、不修改 test45 仲裁，也没有跳过任何 GPU/fence 等待。同步呈现分支仍调用 scheduler.WaitWorker() 和 CopyToSwapchain；是否避开前后台竞争及改善剩余卡顿待验证。
+- 崩溃后原生核对 Eden 已在 MainActivity、没有 NativeEmulation/CPUCore/GPU/VulkanPresent 等游戏线程，才停止缓存主进程防止旧内存覆盖配置。先备份 `config.ini.panvk-asyncpresent-20261030T115329Z.bak`，仅两行 async_presentation 的值与 default 标记 true→false；游戏单独配置逐字节未变。已重新打开游戏列表并再次读取，修改持久。1×、Mailbox、异步 GPU=false、两侧诊断关闭均保留。
+- 证据及私有原始文件哈希见 `fixtures/test45-resume-investigation.json`；完整资料与配置 diff 在忽略目录 `work/eden-perf46/`。下一步让用户正常进入游戏观察移动是否几秒后又卡；先存档，再测试切后台返回。要确认运行日志采用同步呈现并且没有 VulkanPresent 线程，才能判断这次对照的结果；不要声称崩溃已修复。
+
+## test45 交付：G2 计算/片元仲裁候选
 
 - 用户反馈关闭窗口模糊后仍「卡」，并要求继续。此前模糊开关已经自动恢复；不把补采空闲窗口当作性能 A/B 证据。test44 及前述系统卡慢结论仍成立。
 - test45 源码先提交并推送到 `24e32e8b86164c9375aebab92a037b487f8ed872`，再构建；包内 MESA_GIT_SHA1 与之对应。相对 test44 只改 kbase_kmod.c：给已有 112 字节兼容请求中的计算仲裁字段命名，并为架构 15 设置 threshold=min(max_compute,4)、ratio=3。其他架构保留全零。全局队列优先级、核心掩码/数量、缓存清理、fence 等待和所有渲染修复均未改动，诊断默认仍关闭。

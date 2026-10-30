@@ -1,0 +1,162 @@
+{
+  "policy_marker": "biblioklept",
+  "driver": "test45",
+  "driver_sha256": "7d407064272ac63efa11d8958273da6d8e8cffc327b7bdf6cf8ff5efc827450e",
+  "user_feedback": "\u597d\u4e86\u5f88\u591a\uff01\uff01\u4f46\u662f\u8fc7\u51e0\u79d2\u53c8\u5f00\u59cb\u5361\u4e86\uff1b\u6e38\u620f\u548c\u901a\u77e5\u680f\u90fd\u4f1a\u3002\u56de\u684c\u9762\u518d\u5207\u56de\u95ea\u9000\u3002",
+  "status": "test45 initial improvement confirmed; persistent stutter and resume crash unresolved.",
+  "capture": {
+    "seconds": 20.1176,
+    "recorded_samples": 31180,
+    "lost_samples": 0,
+    "resource_samples": 21,
+    "gpu_current_freq_hz": {
+      "samples": 21,
+      "min": 1248000000,
+      "max": 1392000000
+    },
+    "gpu_util_percent": {
+      "samples": 21,
+      "min": 91,
+      "max": 99
+    },
+    "gpu_temperature_millicelsius": {
+      "samples": 21,
+      "min": 45000,
+      "max": 46875
+    },
+    "thermal_status_before": 0,
+    "thermal_status_after": 0,
+    "display_fence_waits": [
+      {
+        "role": "game",
+        "intervals": 442,
+        "total_ms": 2486.519296,
+        "p50_ms": 4.698271999999999,
+        "p95_ms": 13.676256,
+        "max_ms": 22.851232
+      },
+      {
+        "role": "surfaceflinger",
+        "intervals": 78,
+        "total_ms": 603.138848,
+        "p50_ms": 0.446176,
+        "p95_ms": 35.968768,
+        "max_ms": 63.657312
+      }
+    ]
+  },
+  "limitations": [
+    "Resource window shows no frequency collapse; does not capture a confirmed smooth-to-stutter transition.",
+    "Do not compare aggregate wait duration to the prior notification gesture window: workload and UI activity differ.",
+    "The following 120Hz/278.53MHz low-utilization pacing window had Termux foreground, so it is excluded from game performance comparison.",
+    "First armed sampler did not run because game GPU thread was absent. Second armed sampler timed out before a valid foreground rendering trigger; no counters or synthetic GPU work ran."
+  ],
+  "crash": {
+    "local_timestamp": "2026-10-30 19:47:43 +0800",
+    "utc": "2026-10-30T11:47:43Z",
+    "signal": "SIGABRT",
+    "thread": "VulkanPresent",
+    "app_build_id": "7f8a58a085a4c1ab144e470d4941f1857b2f7a81",
+    "eden_last_error": "video_core/vulkan_common/vulkan_surface.cpp:58:CreateSurface: Failed to initialize Android surface",
+    "frames": [
+      "libc abort+160",
+      "libyuzu-android.so +0x207a5d0",
+      "libyuzu-android.so +0x2079ef0",
+      "libyuzu-android.so +0x2079db0",
+      "__cxa_rethrow+220",
+      "Vulkan::PresentManager::CopyToSwapchain+536",
+      "Vulkan::PresentManager::PresentThread+732"
+    ],
+    "abort_message": "common/host_memory.cpp:770: assert virtual_offset + length <= virtual_size",
+    "interpretation": "Source CreateSurface translates Android surface creation failure to VK_ERROR_INITIALIZATION_FAILED; CopyToSwapchain retries only VK_ERROR_SURFACE_LOST_KHR and rethrows this error. Current crash stack matches the rethrow path. Abort-message host-memory assertion alone is not a complete root-cause diagnosis.",
+    "prior_crash": "tombstone_03 at 11:11:32Z contains the same rethrow/CopyToSwapchain+536 stack, before test45 game import."
+  },
+  "configuration": {
+    "policy_marker": "biblioklept",
+    "setting": "Eden async_presentation true -> false; async GPU remains false",
+    "before_sha256": "f869debc2e172b06d427568e5011a50b401aef5b1ccbc01eff99602f472de4cf",
+    "after_sha256": "ec31a943ee0c96ed3c3825a638669d1f9ed697050a3998bbb93a822f9def97ee",
+    "custom_config_unchanged": true,
+    "only_two_lines_changed": true,
+    "backup": "/storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/config/config.ini.panvk-asyncpresent-20261030T115329Z.bak",
+    "driver": "test45, no driver code or new package in this phase",
+    "application": "Native-root guard found no guest/GPU threads and main activity after crash. Stopped cached main process to prevent config overwrite, then reopened main activity.",
+    "status": "applied; runtime and user validation pending",
+    "effect": "Use PresentManager synchronous branch; avoids dedicated VulkanPresent queue. No claim that the transient Android surface failure is fixed.",
+    "persisted_after_main_activity_restart": true
+  },
+  "source_reference": {
+    "present_manager": "references/eden-upstream/src/src/video_core/renderer_vulkan/vk_present_manager.cpp",
+    "constructor_line": 132,
+    "synchronous_branch_line": 197,
+    "surface_creation": "references/eden-upstream/src/src/video_core/vulkan_common/vulkan_surface.cpp",
+    "surface_error_line": 58
+  },
+  "local_sources": [
+    {
+      "path": "tools/work/eden-perf46/transition/record.txt",
+      "sha256": "0e58b382e1de8a405bfc1a92e07a608c4ee8c7d9e779037a0446736a18b8b718",
+      "bytes": 162
+    },
+    {
+      "path": "tools/work/eden-perf46/transition/events.data",
+      "sha256": "9a4e3456cd613df257c427ce9fbd1ccdf0a4979a47e8cc68c3ea6962469a33c8",
+      "bytes": 11132257
+    },
+    {
+      "path": "tools/work/eden-perf46/transition/summary.json",
+      "sha256": "be8000434b987ca56b1f36bc67a63a9d86889f27db7ea5a1e37c9a354d8466e6",
+      "bytes": 50497
+    },
+    {
+      "path": "tools/work/eden-perf46/transition/resources.txt",
+      "sha256": "8978afaac28414cbe01dbebc607c05826d55bd12ae170c477a8e78f2508546ce",
+      "bytes": 15247
+    },
+    {
+      "path": "tools/work/eden-perf46/transition/driver-hashes.txt",
+      "sha256": "38a022962242ce1c7a6c47decb81f060ba3469725ce52a08ff9fb2afa2cde241",
+      "bytes": 132
+    },
+    {
+      "path": "tools/work/eden-perf46/pacing/sf-after.txt",
+      "sha256": "d6bf1524df27a07869b33979dd7386cca87fefaf90dcab06c9a917dc80c14a7c",
+      "bytes": 370886
+    },
+    {
+      "path": "tools/work/eden-perf46/crash-full/eden-old-tail.txt",
+      "sha256": "ba45b085a402a2b2c37eca1259efdb9044744bdb1dcdd4ca4849a52fd6b6540c",
+      "bytes": 114578
+    },
+    {
+      "path": "tools/work/eden-perf46/crash-full/tombstone_04.txt",
+      "sha256": "871ce777a9b5c32a2579a062945894c575f7d592a09b27aab22c304043a5a232",
+      "bytes": 1406326
+    },
+    {
+      "path": "tools/work/eden-perf46/crash-full/tombstone_03.txt",
+      "sha256": "e725b146d21e1b1202d0597854d4681844efeb07ce6d56a0d9e223818b80e7ac",
+      "bytes": 1470013
+    },
+    {
+      "path": "tools/work/eden-perf46/config/candidate.diff",
+      "sha256": "7202a4914067edcdba88b5fb830b7334fac593049310348416e0db93c43a554e",
+      "bytes": 385
+    },
+    {
+      "path": "tools/work/eden-perf46/presentation/config-after.ini",
+      "sha256": "ec31a943ee0c96ed3c3825a638669d1f9ed697050a3998bbb93a822f9def97ee",
+      "bytes": 47094
+    },
+    {
+      "path": "tools/work/eden-perf46/presentation/game-after.ini",
+      "sha256": "476e688202b4fc297853a829dd0551d5ad4e7206ab9489a052a9f183d28ae686",
+      "bytes": 3927
+    },
+    {
+      "path": "tools/work/eden-perf46/config-verify/config.ini",
+      "sha256": "ec31a943ee0c96ed3c3825a638669d1f9ed697050a3998bbb93a822f9def97ee",
+      "bytes": 47094
+    }
+  ]
+}
