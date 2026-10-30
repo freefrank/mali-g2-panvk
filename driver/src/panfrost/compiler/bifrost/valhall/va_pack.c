@@ -1250,6 +1250,7 @@ va_v15_compute_preload_mask(uint64_t preload)
 unsigned
 va_v15_preload_reg(mesa_shader_stage stage, unsigned reg)
 {
+   reg += 32;
    if (stage == MESA_SHADER_COMPUTE || stage == MESA_SHADER_KERNEL)
       return va_v15_compute_preload_reg(reg);
    if (stage == MESA_SHADER_VERTEX) {
@@ -1278,11 +1279,11 @@ uint64_t
 va_v15_preload_regs(mesa_shader_stage stage)
 {
    if (stage == MESA_SHADER_COMPUTE || stage == MESA_SHADER_KERNEL)
-      return BITFIELD64_RANGE(55, 8);
+      return BITFIELD64_RANGE(55 - 32, 8);
    if (stage == MESA_SHADER_VERTEX)
-      return BITFIELD64_RANGE(59, 4);
+      return BITFIELD64_RANGE(59 - 32, 4);
    if (stage == MESA_SHADER_FRAGMENT)
-      return BITFIELD64_RANGE(58, 5);
+      return BITFIELD64_RANGE(58 - 32, 5);
    return 0;
 }
 
@@ -1306,7 +1307,8 @@ bi_pack_valhall(bi_context *ctx, struct util_dynarray *emission)
       const bi_block *first = list_first_entry(&ctx->blocks, bi_block, link);
       uint64_t preload = first->reg_live_in;
       if (ctx->stage == MESA_SHADER_FRAGMENT)
-         preload |= BITFIELD64_BIT(60) | BITFIELD64_BIT(61);
+         preload |= BITFIELD64_BIT(bi_preload_reg(BI_PRELOAD_CUMULATIVE_COVERAGE, 15)) |
+                    BITFIELD64_BIT(bi_preload_reg(BI_PRELOAD_RASTERIZER_COVERAGE, 15));
       preload &= va_v15_preload_regs(ctx->stage);
       u_foreach_bit64(reg, preload) {
          uint64_t encoded;
