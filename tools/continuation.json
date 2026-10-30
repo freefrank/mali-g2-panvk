@@ -7,7 +7,7 @@
   "driver_head": "49bf70ee39f7bb29ea5be30e7ed6cb9633e0aeb3",
   "latest_package": "/storage/emulated/0/Download/panvk-mali-g2-test46-resume-49bf70e-0f5c62e4.zip",
   "current_status": "Applied. ANB retirement guard verified; later Eden/Android-loader surface exception and null-swapchain SIGSEGV remain. User restricts work to driver only. Latest exact app trace: 24 events, 8 successful CreateSurface calls, then GPU thread SIGSEGV in Android vkAcquireNextImageKHR with swapchain argument x1/x25=0. No native application patch made.",
-  "build_note": "Existing driver/build-host and driver/build-android-arm support incremental builds. Read tools/docs/BUILD_AND_TEST.md. test45 symbols and artifact hashes are in tools/artifacts/test45/build.json.",
+  "build_note": "Existing driver/build-host and driver/build-android-arm support incremental builds. Read tools/docs/BUILD_AND_TEST.md. Current test46 symbols: tools/artifacts/symbols/test46-unstripped.so.zst; package/hash manifest: tools/fixtures/test46-build.json. artifacts/work/toolchain are local ignored data, not delivered by Git clone.",
   "git_policy": "Commit and push each milestone to origin/main; user explicitly requested frequent commit/push. Generated-by: LLM and biblioklept markers required. Do not post upstream or rewrite pushed history.",
   "remaining_capabilities": [
     "fillModeNonSolid",
@@ -26,8 +26,8 @@
     "presentation": "Mailbox",
     "async_presentation": false
   },
-  "next_step": "Preserve test46 retirement guard. Driver correctness/performance work must be based on driver-side evidence. Do not claim the Android loader null-handle crash can be fixed via an ICD callback that is never reached. Separate it from GPU page faults. Respect driver-only scope; no speculative Vulkan-layer/loader injection or per-frame waits.",
-  "remaining_capabilities_note": "Historical test8-era list below has not been revalidated in this phase; consult STATUS.md for current capabilities.",
+  "next_step": "Read the handoff runbook and verify current device/foreground/library SHA before development. Continue driver-only correctness/performance work using new driver-side evidence. Preserve test46 baseline; existing retirement wait covers submitted kbase work, not every possible runtime-pending submission. Overall game resume/stutter remains unresolved; distinguish loader null handles from real GPU faults. Do not modify Eden or inject loader hooks. No synthetic GPU work while user game is active.",
+  "remaining_capabilities_note": "Historical test10-era capability checklist, not revalidated during test46 and not the current task priority. Do not assume those feature bits alone identify the present crash or performance issue.",
   "android_access": {
     "preferred": "adb",
     "serial": "127.0.0.1:33641",
@@ -41,5 +41,27 @@
     "scope": "driver only; user explicitly said 只修驱动 after declining application work",
     "eden_changes": "Do not edit, patch, rebuild or replace Eden APK/native code.",
     "diagnostics": "Keep default off; no probes remain."
-  }
+  },
+  "handoff_document": "tools/docs/HANDOFF.md",
+  "read_first": [
+    "AGENTS.md",
+    "driver/AGENTS.md",
+    "tools/docs/HANDOFF.md",
+    "tools/continuation.json",
+    "tools/docs/BUILD_AND_TEST.md"
+  ],
+  "historical_document": "tools/docs/STATUS.md",
+  "checkpoint_before_handoff_documentation": "8277b4956d10ae11d563a775034f7e6775e3eb35",
+  "driver_tree": "df8ccad5ef2f85c4f0d0ce23ebe00442e9641c35",
+  "current_package_manifest": "tools/fixtures/test46-build.json",
+  "library_sha256": "0f5c62e45a6135d68c91c287e51e970276514056a29a2d7a0fb6fdbe0a0a00b2",
+  "next_driver_tag": "test47",
+  "handoff_requested": true,
+  "known_limitations": [
+    "29 candidate regression cases plus 1 expected-failure test45 control do not prove stable gameplay or 60 FPS.",
+    "Latest null swapchain and Android loader null read are directly observed; zero maxImageExtent is source-supported but was not captured as the input value.",
+    "The retirement guard waits per-group submitted sequence completion; queued work not yet in kbase and concurrent lifecycle edges need separate review.",
+    "The early test46 success was superseded by subsequent native crashes.",
+    "ADB serial and process IDs are historical; inspect native state and /proc/current_PID/root mount view."
+  ]
 }

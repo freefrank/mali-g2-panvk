@@ -2,6 +2,8 @@
 
 本目录集中保存 Mali-G2-Ultra-NX（Valhall v15）Android PanVK 移植所需的源码、诊断工具、测试证据、发布物和外部参考。它是唯一的项目 Git 根目录，旧驱动与工具仓库的历史均已合并保留。
 
+接手开发先读 [开发交接](tools/docs/HANDOFF.md) 和 [机器续接状态](tools/continuation.json)。当前基线为 test46，用户限定只修驱动；历史试验记录在 [STATUS.md](tools/docs/STATUS.md)。
+
 ## 目录
 
 | 路径 | 内容 |

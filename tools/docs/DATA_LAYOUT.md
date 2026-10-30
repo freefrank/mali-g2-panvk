@@ -1,5 +1,7 @@
 # 目录与数据约定
 
+本文件中的相对路径以 `tools/` 为基准，整个仓库根目录为 `/root/mali-g2-project`。接手入口是 [HANDOFF.md](HANDOFF.md)，[STATUS.md](STATUS.md) 保存历史快照，[continuation.json](../continuation.json) 提供机器可读状态。
+
 ## 稳定内容
 
 | 路径 | 内容 | Git 策略 |
@@ -27,12 +29,14 @@
 ## 发布规则
 
 1. 驱动源码必须先提交，再构建，以保证 Mesa Git SHA 和 cache UUID 对应正确提交。
-2. 新版本使用新的 `artifacts/testN-SHA/`，不覆盖旧版本。
+2. 新版本使用独立的 `artifacts/testN/` 或带 SHA 的版本目录，不覆盖旧版本；当前 test46 位于 `artifacts/test46/`。
 3. ZIP 使用新的文件名并原子移动到 `/storage/emulated/0/Download`。
 4. 发布前校验 ZIP CRC、库 SHA-256、成员列表和 `RUNPATH`。
 5. 诊断版本必须明确标记，不能称为已修复版本。
 
 ## 保留原则
+
+同一工作区接手时保留 `artifacts/`、`work/`、`captures/`、构建目录和工具链；这些被忽略的文件不会随 Git clone 或 push 传递。包、符号、配置备份和原始设备日志是否存在，要区分“同一工作区仍在”和“远端源码中可取得”。驱动二进制、符号以及具体证据的哈希以对应 `fixtures/testN-build.json` 等 manifest 为准。
 
 整理只移动文件，不删除历史数据。`fixtures/` 中未跟踪的实验结果可能仍有研究价值；确认被稳定报告取代前，不批量清理。
 
