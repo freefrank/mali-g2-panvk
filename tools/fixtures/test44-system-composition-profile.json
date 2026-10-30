@@ -393,6 +393,71 @@
       "local_path": "tools/work/eden-perf45/fence-events/summary.json",
       "sha256": "23b2d5b87d426a12522ca527dfb7829682893a2b848b87367184fbcd32571ee1",
       "bytes": 21575
+    },
+    {
+      "local_path": "tools/work/eden-perf45/blur-control/original.txt",
+      "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+      "bytes": 5
+    },
+    {
+      "local_path": "tools/work/eden-perf45/blur-control/applied.txt",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2
+    },
+    {
+      "local_path": "tools/work/eden-perf45/blur-control/applied-blur-state.txt",
+      "sha256": "1654b1fa59041c54c11164d3829bbc672d484e52efd96f99b7ea9c882645bb7c",
+      "bytes": 51
+    },
+    {
+      "local_path": "tools/work/eden-perf45/blur-control/applied-time.txt",
+      "sha256": "88476b4b9a27732bcab72b00098791c043c3b04b30b5b8325c5dea9154a7daec",
+      "bytes": 21
+    },
+    {
+      "local_path": "tools/work/eden-perf45/blur-control/restored.txt",
+      "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+      "bytes": 5
+    },
+    {
+      "local_path": "tools/work/eden-perf45/blur-control/restored-blur-state.txt",
+      "sha256": "2ee2d2609548dbb96eaf58dbc72472b2b203664eb89a79de55efb4529cfc1474",
+      "bytes": 50
+    },
+    {
+      "local_path": "tools/work/eden-perf45/blur-control/restored-time.txt",
+      "sha256": "2b91be1d95145a00a7d247b9c65d12eb60fa0df9a7754660bb1ecb7ea227b14e",
+      "bytes": 21
+    },
+    {
+      "local_path": "tools/work/eden-perf45/blur-control/access.txt",
+      "sha256": "5e9a7d8add88b105af83bdd6a59a34465b3259df66ffb251d70b0ad795a051a9",
+      "bytes": 10
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-blur-off/events.data",
+      "sha256": "7fc2c58d38958a793ee1c9365567ab055d83a543da870730c5e836c9857c0e5f",
+      "bytes": 2415391
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-blur-off/record.txt",
+      "sha256": "2aa07535f7938510fb340957029819a303bba8d1ab8bf9657725631a5ff83188",
+      "bytes": 162
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-blur-off/summary.json",
+      "sha256": "33887c5f966cbf6cc1e63c1666e0d176fc82ca23a961bc6b649a1e7384e24d90",
+      "bytes": 23386
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-blur-off/ui-before.txt",
+      "sha256": "d93a5e2e5a38964632fdac3fa004a4c8064d06586b4ba7336b4906f94982ecf0",
+      "bytes": 273171
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-blur-off/ui-after.txt",
+      "sha256": "0b8872081a02253ac94f54d6b8df54674d13b38cc0c632f6f6485be2c7b98b27",
+      "bytes": 272636
     }
   ],
   "kernel_fence_window": {
@@ -423,5 +488,25 @@
       "max_ms": 52.370464
     }
   },
-  "conclusion": "Notification gesture capture: the display commit worker spends much more time waiting for SurfaceFlinger GPU fences than game GPU fences. This identifies the downstream late signal; it does not establish whether SurfaceFlinger GPU work itself or its dependencies/scheduling cause the delay. No driver fix yet."
+  "conclusion": "Notification gesture capture: the display commit worker spends much more time waiting for SurfaceFlinger GPU fences than game GPU fences. This identifies the downstream late signal; it does not establish whether SurfaceFlinger GPU work itself or its dependencies/scheduling cause the delay. No driver fix yet.",
+  "blur_control": {
+    "status": "Completed and automatically restored; user feedback pending. Not a validated performance A/B.",
+    "setting": "global disable_window_blurs",
+    "original": "null",
+    "applied": "1",
+    "applied_at": "2026-10-30T10:04:39Z",
+    "applied_blur_enabled": false,
+    "restored": "null",
+    "restored_at": "2026-10-30T10:07:41Z",
+    "restored_blur_enabled": true,
+    "source": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-16.0.0_r2/core/java/android/provider/Settings.java",
+    "observation": "Read-only fence trace during blur-off had no new SystemUI frame records; cannot compare its aggregate wait totals to active notification gestures.",
+    "game_settings_changed": false,
+    "driver_changed": false
+  },
+  "gpu_context_check": {
+    "surfaceflinger_driver": "Stock vendor /vendor/lib64/hw/vulkan.mali.so and libGLES_mali.so are loaded.",
+    "other_context": "Other persistent low-priority GPU context was Termux UI, not an identified synthetic test process. Allocated endpoints in a snapshot do not prove active workload.",
+    "scheduling": "Three read-only debugfs snapshots; mount removed afterwards. No priority or tick change."
+  }
 }

@@ -28,6 +28,8 @@ Policy marker: biblioklept
 - 同窗通知栏新增 119 帧；有效完成时间 115 帧，IntendedVsync→FrameCompleted p50 38.04ms、p95 94.10ms、最大 131.92ms；dequeueBuffer p95 47.88ms、最大 115.38ms。这说明系统卡慢确实进入合成/显示等待链；仍需内核 fence 身份才能分清游戏 GPU、系统合成 GPU、显示控制器各自责任，不能宣布根因已修复。
 - 线程离 CPU 区间含阻塞和就绪调度延迟，不是纯 GPU 时间；累计多线程百分比不能当作单帧占比。gfxinfo 是最多 120 帧滚动窗口，按新 IntendedVsync 去重，不用 Flags=0 过滤通知栏帧。TimeStats 只取前后增量，其 fence 延迟回填也不能当作精确 8 秒 FPS。
 - 用户再次配合后补采 8.148 秒内核显示与 dma_fence 事件：6,916 样本、零丢失。按 TID/context/seqno 配对 wait start/end，保留开始时的驱动/时间线（结束时 fence 可能已 detached）：显示提交线程等待 SF GPU 时间线 170 段、总 4965.04ms，p50 24.86ms、p95 75.42ms、最大 99.90ms；等待游戏 GPU 时间线 32 段、总 424.78ms，p95 30.09ms、最大 52.37ms。因此该操作窗口的主要迟到信号来自 SurfaceFlinger GPU，而不应直接归为游戏 present fence；仍需区分 SF 自己的 GPU 工作、其依赖和 GPU 调度。没有提前修改 fence 等待或序列化游戏呈现。
+- 已核对 SF 实际加载原厂 vulkan.mali.so/libGLES_mali.so。其他常驻低优先级 GPU 上下文属于 Termux UI；快照中的端点分配不是合成 GPU 测试仍运行的证据。补充只读 debugfs 快照结束后挂载已移除，没有改优先级或 tick。
+- 做过有自动恢复的窗口模糊对照：10:04:39Z 将 global disable_window_blurs 从 null 临时设为 1，系统查询 Blur enabled=false；10:07:41Z 自动删除该临时项，读回 null 且 Blur enabled=true。用户体感反馈仍待回复。关闭时补采 8.152 秒、11,350 样本、零丢失，但没有新增 SystemUI 帧，不能拿这段空闲窗口与操作通知栏的窗口比较并宣称模糊开关有效或无效。游戏、驱动和频率设置未变；不要把这次对照写成永久关闭模糊或已解决卡顿。
 - 摘要与本地原始数据哈希在 `tools/fixtures/test44-system-composition-profile.json`；完整原始记录、分析脚本与厂商库反汇编留在忽略目录 `tools/work/eden-perf45/`。单独的 HWC 记录和后续内核栈快照没有覆盖相同操作时段，不能用空闲比例否定联合记录中的等待。下一步核对系统合成效果与依赖/调度，确认后再决定驱动改动。
 
 ## 当前交付：test44，用户确认卡顿依旧，整机卡慢继续定位
