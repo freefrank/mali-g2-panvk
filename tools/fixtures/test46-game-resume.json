@@ -1,0 +1,94 @@
+{
+  "policy_marker": "biblioklept",
+  "driver": "test46",
+  "driver_sha256": "0f5c62e45a6135d68c91c287e51e970276514056a29a2d7a0fb6fdbe0a0a00b2",
+  "status": "User initially reported successful resume, then another native exit. Overall resume stability is not fixed.",
+  "user_feedback": [
+    "切回正常，未再退出",
+    "`又退出了"
+  ],
+  "runtime_mapped_library_sha_verified": true,
+  "runtime_pid": 12997,
+  "library_map_verified_at": "2026-10-30T12:30:58Z",
+  "new_crash": {
+    "utc": "2026-10-30T12:31:03.663177184Z",
+    "pid": 12997,
+    "thread": "GPU",
+    "signal": "SIGABRT",
+    "abort": "uncaught Vulkan::vk::Exception: VK_ERROR_INITIALIZATION_FAILED",
+    "eden_error": "vulkan_surface.cpp:58:CreateSurface: Failed to initialize Android surface",
+    "stack": "std::terminate -> RasterizerVulkan::Draw+1016; synchronous presentation path",
+    "async_presentation": false,
+    "async_gpu": false,
+    "new_eden_gpu_page_fault_observed": false,
+    "kernel_fault_exclusion": "The latest kernel fault belongs to native vulkan_android PID 17620, the intentional old-library retirement regression. It is not the Eden PID 12997."
+  },
+  "next": "Keep retirement guard; capture Android surface creation function lookup and VkResult on the next reproduction. No APK edits applied.",
+  "raw_evidence": [
+    {
+      "path": "tools/work/eden-test46/game-validation/eden-current.txt",
+      "bytes": 60604,
+      "sha256": "a5b7948cf43bc0b3c734f1a9d7980af262a480f3a34dae946d035a5311f72abe"
+    },
+    {
+      "path": "tools/work/eden-test46/game-validation/events.txt",
+      "bytes": 162023,
+      "sha256": "1b408a233ddc85b1ab3f9abe4e5f6a0856c9ff746d87c642e23095e9d3cb2619"
+    },
+    {
+      "path": "tools/work/eden-test46/game-validation/exit-info.txt",
+      "bytes": 6438,
+      "sha256": "1b35c437320e37926617bf5cd6adbfd2b6f9f1eed849ca9f1aa65d6288467e5c"
+    },
+    {
+      "path": "tools/work/eden-test46/game-validation/runtime.txt",
+      "bytes": 919,
+      "sha256": "adc16971930960ccb48311331a3c95fafc5a0aa276942ae7ac3cbc8422458a41"
+    },
+    {
+      "path": "tools/work/eden-test46/new-exit/create-surface.asm",
+      "bytes": 4099,
+      "sha256": "c6812a2fe679d18d0717d6cedde798657b5afe3f8075ce5bf1cfbc841d376e2e"
+    },
+    {
+      "path": "tools/work/eden-test46/new-exit/dmesg.txt",
+      "bytes": 1073223,
+      "sha256": "0e4f3a3ed717a17b5e70204fbcdbb68a8968a9316e01c747c450a15be59d5fcd"
+    },
+    {
+      "path": "tools/work/eden-test46/new-exit/eden-current.txt",
+      "bytes": 2344,
+      "sha256": "5ea8778346ecd6455b0bf9cb8956e13c7485b1eae99a3bcea818f6dbbaa66dbf"
+    },
+    {
+      "path": "tools/work/eden-test46/new-exit/eden-old.txt",
+      "bytes": 60739,
+      "sha256": "1cd0d0733c2d03cd0ce78a40983ec706dc034132e5ea11191634cea867634f11"
+    },
+    {
+      "path": "tools/work/eden-test46/new-exit/events.txt",
+      "bytes": 161412,
+      "sha256": "418f9de5b723556f5e451dd82ed02d0aeaab21d23f5e4fb8a62ad6e30995d38c"
+    },
+    {
+      "path": "tools/work/eden-test46/new-exit/exit-info.txt",
+      "bytes": 6438,
+      "sha256": "acde5d2baad656aa2c057610ca7b527ce71186844bd1cef17b26b3abb92ace62"
+    },
+    {
+      "path": "tools/work/eden-test46/new-exit/logcat-app.txt",
+      "bytes": 68437,
+      "sha256": "97ecef9e2c550f7b11b508655a43ac60d6a6f260aee8b9edeb9d2584da56da38"
+    },
+    {
+      "path": "tools/work/eden-test46/new-exit/status.txt",
+      "bytes": 449,
+      "sha256": "8b839cac0f05a4771604ecf87165fa5f686ef477419e6e8d751542e5f7f218b9"
+    },
+    {
+      "path": "tools/work/eden-test46/new-exit/tombstone.txt",
+      "bytes": 1361206,
+      "sha256": "9a8475a868fdab0afea90a949b3ad623d8a7467831d67f0167f38c4c5ee9ad55"
+    }
+  ]
+}

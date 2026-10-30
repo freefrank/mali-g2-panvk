@@ -4,9 +4,9 @@
   "driver_repo": "/root/mali-g2-project/driver",
   "backend_tools": "/root/mali-g2-project/tools",
   "eden_reference": "/root/mali-g2-project/references/eden",
-  "driver_head": "24e32e8b86164c9375aebab92a037b487f8ed872",
-  "latest_package": "/storage/emulated/0/Download/panvk-mali-g2-test45-perf-24e32e8-7d407064.zip",
-  "current_status": "Standard launcher task did not resolve actual resume crash. Two new native device-loss crashes confirmed with async GPU and presentation false. Zero-loss uprobe capture on unchanged test45 proved imported ANB BO 0x722bc00000 (0x1d8a000 bytes) freed at 439423.784365; GPU wrote inside it at 439427.90058. G2/kbase ANB destroy completion wait candidate and pending-retirement robustness regression implemented; build in progress. No new driver package applied yet.",
+  "driver_head": "49bf70ee39f7bb29ea5be30e7ed6cb9633e0aeb3",
+  "latest_package": "/storage/emulated/0/Download/panvk-mali-g2-test46-resume-49bf70e-0f5c62e4.zip",
+  "current_status": "Applied. Native retirement regression passes; user resume initially successful, then Android surface-creation exception caused another native crash. Overall resume remains unresolved. Runtime mapped SHA verified 0f5c62e4. 29 candidate regression cases plus 1 expected-failure old-library control passed. Test45 backed up and only selected driver_path changed. All prior rendering/performance parameters and diagnostic-off settings retained.",
   "build_note": "Existing driver/build-host and driver/build-android-arm support incremental builds. Read tools/docs/BUILD_AND_TEST.md. test45 symbols and artifact hashes are in tools/artifacts/test45/build.json.",
   "git_policy": "Commit and push each milestone to origin/main; user explicitly requested frequent commit/push. Generated-by: LLM and biblioklept markers required. Do not post upstream or rewrite pushed history.",
   "remaining_capabilities": [
@@ -26,7 +26,7 @@
     "presentation": "Mailbox",
     "async_presentation": false
   },
-  "next_step": "Build/test test46 candidate. Guard native game GPU threads before any synthetic test. Run ANB_RETIRE_PENDING compatibility regression plus Android/fence/render regressions. Commit/push milestone, package with exact source hash and preserve symbols. Apply only after confirming no game threads; real resume validation remains necessary. Current driver still test45, stutter unresolved.",
+  "next_step": "Probe exact installed libyuzu CreateSurface function lookup and underlying return code. Preserve test46 ANB retirement fix, avoid blind settings/driver changes. Do not confuse native baseline PID 17620 fault with the latest Eden surface exception. Commit/push results milestone. Game and UI stutter remains unresolved.",
   "remaining_capabilities_note": "Historical test8-era list below has not been revalidated in this phase; consult STATUS.md for current capabilities.",
   "android_access": {
     "preferred": "adb",

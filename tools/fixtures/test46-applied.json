@@ -1,0 +1,73 @@
+{
+  "policy_marker": "biblioklept",
+  "applied": true,
+  "driver_sha256": "0f5c62e45a6135d68c91c287e51e970276514056a29a2d7a0fb6fdbe0a0a00b2",
+  "only_config_change": "driver_path: test45 ZIP -> test46 ZIP",
+  "game_config_unchanged": true,
+  "backup_path": "/data/data/com.miHoYo.Yuanshen.nightly/files/panvk-backups/test45-before-test46-20261030T122924Z",
+  "applied_at": "2026-10-30T20:29:24+08:00",
+  "standard_launcher_reopened": true,
+  "game_validation": "pending",
+  "raw_evidence": [
+    {
+      "path": "tools/work/eden-test46/applied/access.txt",
+      "sha256": "1ea6fae0687604aa22ea097977f10af5346554c32f14219a2ebad8df097c0e44",
+      "bytes": 17
+    },
+    {
+      "path": "tools/work/eden-test46/applied/applied.txt",
+      "sha256": "049618a8ef2956d628b69fde4ab96de3a1a717dba91f335891bf4ed273600392",
+      "bytes": 26
+    },
+    {
+      "path": "tools/work/eden-test46/applied/backup-path.txt",
+      "sha256": "2c62e49539e15ac02cc7ee8a59348c08f733a12eff34655cb8c26bda15bd8210",
+      "bytes": 97
+    },
+    {
+      "path": "tools/work/eden-test46/applied/config-after-sha.txt",
+      "sha256": "1e7352052ec0ed227d368d278f03181ade28bbffaac591b3079e4b8f92a1e953",
+      "bytes": 319
+    },
+    {
+      "path": "tools/work/eden-test46/applied/config-after.ini",
+      "sha256": "77b154c719123cddcb648c807eb8e38a31889255d1d3ecb93633e847b44e9afd",
+      "bytes": 47096
+    },
+    {
+      "path": "tools/work/eden-test46/applied/config-before-sha.txt",
+      "sha256": "ea7143fc3f2e15ec916b33cef8208f8d1a8feeeff1c5b8c50b1da0d20c8cf4a9",
+      "bytes": 319
+    },
+    {
+      "path": "tools/work/eden-test46/applied/config-before.ini",
+      "sha256": "ec31a943ee0c96ed3c3825a638669d1f9ed697050a3998bbb93a822f9def97ee",
+      "bytes": 47094
+    },
+    {
+      "path": "tools/work/eden-test46/applied/config-candidate.ini",
+      "sha256": "77b154c719123cddcb648c807eb8e38a31889255d1d3ecb93633e847b44e9afd",
+      "bytes": 47096
+    },
+    {
+      "path": "tools/work/eden-test46/applied/driver-after-reopen-sha.txt",
+      "sha256": "49e4ab7f97000c2db274d86ee2022e88cf4a4543aff5ed01acd1d2754f7787e4",
+      "bytes": 144
+    },
+    {
+      "path": "tools/work/eden-test46/applied/driver-sha.txt",
+      "sha256": "1e156e00e7ed1d80e57d2d037e342c3b37667183e13306d6c754656067482e57",
+      "bytes": 470
+    },
+    {
+      "path": "tools/work/eden-test46/applied/start.txt",
+      "sha256": "fddeb05c3ad3259acae94b29e38a3c52f9ed78033d2cb2684b232a7b5f063357",
+      "bytes": 321
+    },
+    {
+      "path": "tools/work/eden-test46/applied/stop.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ]
+}

@@ -13,7 +13,7 @@
 | `references/malibridge/` | Vulkan Headers 与 MaliBridge 外部参考，不纳入 Git |
 | `toolchain/` | Meson、Android 依赖和本地编译工具，不纳入 Git |
 
-test45 初期明显顺滑，但游戏与通知栏仍会持续卡顿。标准入口下已再次复现切回原生崩溃；adb 日志与内核记录确认 GPU 写入了提前释放的 Android 交换链缓冲区，3,639 条生命周期事件零丢失。test46 候选为 G2/kbase 的 ANB 图像销毁增加完成等待，正在构建，尚未发布。保留 1×、Mailbox、两种异步关闭与两侧诊断关闭；证据与验证状态见 [HANDOFF.md](tools/docs/HANDOFF.md)。
+test46 已应用，ANB 图像销毁等待的 29 项候选回归及 1 项旧版故障对照通过。用户先确认切回正常，随后仍退出：最新栈为 Android 显示表面创建失败，当前未见新的 Eden GPU 页错误，切回稳定性仍未解决。保留 1×、Mailbox、两种异步关闭与两侧诊断关闭，继续核对表面创建的实际返回码。证据与验证状态见 [HANDOFF.md](tools/docs/HANDOFF.md)。
 
 现有 `driver/build-host` 和 `driver/build-android-arm` 已可用于增量构建，命令见构建文档。
 

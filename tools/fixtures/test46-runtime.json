@@ -1,0 +1,168 @@
+{
+  "policy_marker": "biblioklept",
+  "driver_sha256": "0f5c62e45a6135d68c91c287e51e970276514056a29a2d7a0fb6fdbe0a0a00b2",
+  "source_commit": "49bf70e",
+  "results": [
+    {
+      "case": "retire-pending",
+      "returncode": 0,
+      "passed": true,
+      "before": 1,
+      "after": 0,
+      "destroy_ms": 139.821
+    },
+    {
+      "case": "retire-baseline",
+      "returncode": 1,
+      "passed": true,
+      "before": 1,
+      "after": 1,
+      "destroy_ms": 0.07,
+      "expected_failure": true,
+      "device_loss_observed": true
+    },
+    {
+      "case": "android-import",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "android-triangle-native",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "android-texture-native",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "android-texture-ahb",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "android-texture-offscreen",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "android-vertex-store",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "android-fragcoord",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "android-fragcoord-clockwise",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "android-drawid",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "submit-1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "submit-16",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "submit-128",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "completion-1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "completion-128",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "acquire-semaphore",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "acquire-fence",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "acquire-both",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "acquire-none",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "acquire-signaled",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "acquire-minusone",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "msaa-37-0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "msaa-37-1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "msaa-97-0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "msaa-97-1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "render-color",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "render-compressed-copy",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "render-depth126",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "render-depth129",
+      "returncode": 0,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "runtime_cases": 30,
+  "method": "Exact stripped candidate; native game-thread guard before each case. Pending ANB retirement is an intentional premature-destruction compatibility test, not a conformance case."
+}

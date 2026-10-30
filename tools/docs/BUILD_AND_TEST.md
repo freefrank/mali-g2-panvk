@@ -82,6 +82,12 @@ python3 test_diagnostics.py /path/to/new/libvulkan_panfrost.so \
 
 该审计在本机 UDP 28643 端口临时接收数据，执行后自动关闭。不要同时运行 driver_monitor。测试覆盖默认关闭、显式关闭、显式开启和旧版对照，验证 socket、信号 handler、日志与实际绘制。`test_log_capture.py` 会只在自身子进程里显式开启诊断，不改变 Android 全局属性。
 
+## ANB 提前销毁容错回归（test46）
+
+游戏完全退出并通过原生线程检查后，可运行 `MALI_G2_ANB_RETIRE_PENDING=1 PANVK_G2_DIAGNOSTICS=0 build/bin/vulkan_android /path/to/libvulkan_panfrost.so`。它在一个 fenced 清除批次仍 pending 时销毁内部拥有内存的 ANB 图像，要求返回时 fence 已完成。测试故意提前销毁资源，是针对 Eden 交换链重建的容错回归，不是 Vulkan 合规性检查；普通无该环境变量的 Android 导入测试行为保持。
+
+test45 对照：before=1、after=1，销毁约 0.070ms，后续等待 VK_ERROR_DEVICE_LOST。test46：before=1、after=0，销毁约 139.821ms，测试通过。原始输出只在 work/eden-test46/，摘要 fixtures/test46-runtime.json；不要把该时间当作每帧开销或游戏 FPS。
+
 ## MSAA 解析回归
 
 `build_helpers.py --android` 构建 `vulkan_msaa`。该工具在有效的 sampled/color attachment/transfer 用途下，清除多采样图像，逐样本读取验证，再执行 CmdResolveImage 并验证最终颜色；数组用例同时解析三层、只给最后一层非零颜色。覆盖 2/4/8/16 倍采样与 RGBA8/RGBA16F/R11G11B10：

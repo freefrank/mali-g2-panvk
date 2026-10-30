@@ -1,4 +1,4 @@
-# 交接文档（2026-10-30，切回已复现 GPU 页错误；ANB 内存提前释放证据已取得，test46 候选构建中）
+# 交接文档（2026-10-30，test46 已应用；内存回收对照通过，仍有 Android 表面创建异常，继续排查）
 
 接手前先读完本文件，再读 `STATUS.md`（历史结论）和 `BUILD_AND_TEST.md`（构建细节）。
 Policy marker: biblioklept
@@ -20,7 +20,17 @@ Policy marker: biblioklept
 
 源码提交、driver 子树、原包库/ZIP/补丁哈希的机器可读映射在 `tools/fixtures/test44-source-checkpoints.json`。原包构建发生在这些提交之前，包名中的 bfcc5d7 与历史 manifest 不改写；其 driver 源码已逐字节对应到表中提交。旧记录中的“无提交或推送”描述当时状态，已由本节补充。构建产物、符号、原始设备日志和私有配置未加入 Git。
 
-## 当前状态：切回崩溃已复现，ANB 退休等待候选构建中
+## 当前状态：test46 内存回收对照通过，仍有表面创建崩溃
+
+- 最新反馈优先：用户先回复「切回正常，未再退出」，随后又报告「又退出了」，不能标记切回稳定性已解决。12:30:58Z 已通过 /proc/12997/map_files 校验实际加载库为 test46 0f5c62e4...。12:31:03.663177184Z 同一 PID 12997 的 GPU 线程 SIGABRT，未捕获 VK_ERROR_INITIALIZATION_FAILED；Eden 最后错误仍为 vulkan_surface.cpp:58 Failed to initialize Android surface，Draw 的 noexcept 路径进入 std::terminate。两种异步保持 false。
+- 这轮没有观察到新的 Eden GPU 页错误。最新 dmesg 页错误属于 vulkan_android PID 17620，是短回归中故意让旧库提前销毁 ANB 的对照，不能误归到用户游戏 PID 12997。最新游戏崩溃与此前 DEVICE_LOST 应分开。下一步记录准确 APK 中 CreateSurface 的函数查找结果及 Android 调用实际 VkResult，当前不修改 APK。
+- test46 源码与初始证据已提交并推送 49bf70ee39f7bb29ea5be30e7ed6cb9633e0aeb3。G2/kbase 的 ANB 图像销毁只读等待现有 CSF 组完成回调，再释放隐式内存；不额外提交 GPU 工作。正常每帧提交/呈现、4/3 仲裁和此前渲染修复保持。
+- 最终 stripped 包完成 29 项候选回归，另 1 项旧 test45 预期故障对照，合计 30：旧版销毁 0.070ms 返回时 fence 仍 pending，随后 VK_ERROR_DEVICE_LOST；新版本等待 139.821ms，返回时 fence 已完成，流程成功。Android 导入/绘制 9、提交/完成/fence/MSAA/颜色/压缩纹理/深度 19 均通过；每项前原生核对没有 Eden GPU 线程。另验证 27 个 SHF_ALLOC 节逐字节一致、ZIP CRC/内部库 SHA 与 Download 副本 SHA；计时不是游戏 FPS 证明。
+- 包 /storage/emulated/0/Download/panvk-mali-g2-test46-resume-49bf70e-0f5c62e4.zip；库 SHA 0f5c62e45a6135d68c91c287e51e970276514056a29a2d7a0fb6fdbe0a0a00b2，ZIP SHA 600a55340c99ae9b05e9359fc259bdf462a2dce2a7f93bea94a9471f8ec67497。符号 artifacts/symbols/test46-unstripped.so.zst，元数据 fixtures/test46-build.json。
+- 游戏再次崩溃回列表后，确认没有游戏线程才停止缓存进程、备份 test45 库/meta/config，再复制新库与 ZIP，并且只改全局配置的一行 driver_path 选中新 ZIP。游戏自定义配置逐字节未变，重开后库 SHA 正确，实际游戏映射也已验证。备份路径及原始文件哈希见 fixtures/test46-applied.json；完整配置仅在忽略目录 work/eden-test46/applied/。分辨率 1×、Mailbox、两种异步=false、两侧诊断关闭均未改动。
+- 最新证据见 fixtures/test46-game-resume.json；原始资料 work/eden-test46/new-exit/。保留当前 test46 的生命周期修复，先定位表面创建异常；持续卡顿尚未解决，不声称本轮提升了游戏 FPS。
+
+## 前一阶段：切回 GPU 页错误与 ANB 生命周期捕获
 
 - 用户最新反馈「游戏又退出回到游戏列表了」。标准启动入口下，本轮确有新的 native crash：PID 2335，12:11:28.958630144Z，GPUFencingThrea，SIGABRT，未捕获 VK_ERROR_DEVICE_LOST；Eden 最后日志为 ReportLoss。内核同窗是 AS4/2335_7973 的 GPU WRITE 页错误，VA 0x723409f880、TRANSLATION_FAULT level 2，已不在映射表。此时 async_presentation=false 与异步 GPU=false 均由运行日志确认。此前入口清理不能解决这次 GPU 故障。
 - 保持原库及所有配置，以内核 uprobe 记录准确 test45 文件偏移上的 ANB 导入/释放与 acquire/release；使用 DWARF 核对 gpu_va=56、size=8、flags=20 偏移，没有打开驱动诊断或 Eden 验证，也没有合成 GPU 负载。用户再次复现，PID 4234 于 12:17:53.250Z native crash。

@@ -1,0 +1,9 @@
+{
+  "policy_marker": "biblioklept",
+  "driver_sha256": "0f5c62e45a6135d68c91c287e51e970276514056a29a2d7a0fb6fdbe0a0a00b2",
+  "elf_allocated_sections_identical": 27,
+  "zip_name": "panvk-mali-g2-test46-resume-49bf70e-0f5c62e4.zip",
+  "zip_crc": true,
+  "zip_library_sha_matches": true,
+  "passed": true
+}
