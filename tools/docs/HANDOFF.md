@@ -27,6 +27,7 @@ Policy marker: biblioklept
 - 12:36:20.898445632Z，PID 15848 GPU 线程 SIGSEGV，空地址读；PC 在 Android libvulkan memfd loader +0x3326c。本机二进制该指令 ldr x8,[x25]；寄存器 x25=0，函数入口将 swapchain 参数 x1 复制到 x25，x1 也为 0。准确 APK 的 Swapchain::AcquireNextImage 从 this+0x18 读出 swapchain，直接调用系统 vkAcquireNextImageKHR，没有空值检查。此调用尚未进入 PanVK 的 AcquireImageANDROID，标准驱动接口不能修正已在系统层解引用的空句柄。
 - 对照源码及准确 APK 反汇编，Swapchain::Create 在 capabilities.maxImageExtent 为 0 时会直接返回；这与空 swapchain 的后续使用相容。但本次未直接捕获该次 capabilities 输入，必须作为源码支持的解释而非已测定值。tombstone 的旧 host_memory assert 文字不是本轮 SIGSEGV 的定位依据。
 - 原始捕获结束于进程退出，4 个 probe 与独立 trace instance 已清理，诊断属性未开启。证据 fixtures/test46-surface-capture.json；原始资料 work/eden-perf49/。保留已验证的 ANB 回收修复，不以新的无依据驱动改动或每帧等待掩盖系统入口的非法参数；后续驱动性能工作需对应实际 GPU 数据。
+- 收尾时 adb 已断开，原生 TermuxService root 通道仍可用。该 root 会话的挂载视图隐藏了直接 /data/data/com.miHoYo.Yuanshen.nightly 路径；PID/UID 与 packages.list 均确认应用还在，通过 /proc/20151/root/data/data/com.miHoYo.Yuanshen.nightly/files/gpu_driver/libvulkan_panfrost.so 再次核对 test46 SHA 成功。不要把直接路径的 ENOENT 误判为驱动删除或应用卸载；后续使用实时原生 PID 的 /proc/PID/root 视图。清理检查确认没有 PanVK uprobe/instance，诊断仍关闭。
 
 ## 前一阶段：test46 内存回收对照通过，仍有表面创建崩溃
 

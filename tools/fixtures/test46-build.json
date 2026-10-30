@@ -62,7 +62,7 @@
     },
     "test46-surface-capture.json": {
       "path": "tools/fixtures/test46-surface-capture.json",
-      "sha256": "484aca61e16653a3f4b42a35dd35ad71a682284df74c6061189069cca0e63a43"
+      "sha256": "f59396de17bfef3f15a94cb238da04e8ea5d830a8e8d1c18c2b83c4fd3baed87"
     }
   }
 }

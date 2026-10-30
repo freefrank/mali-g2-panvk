@@ -141,6 +141,89 @@
       "path": "tools/work/eden-perf49/repro/latest-tombstone.txt",
       "bytes": 1410964,
       "sha256": "d384a1cef9558c104344d2fb1ffda5c115bbc452e55ff0e9915666b4f040c08d"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/access.txt",
+      "bytes": 126,
+      "sha256": "defae416695cb6d27fbcc37a563eb1f43541a4a29d3c30c87b67968349255f9a"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/aliases.txt",
+      "bytes": 240,
+      "sha256": "534dfbe9c000179be7b32290a7efb6f71a81f89d73302fed25173c92b0b19152"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/app-pid.txt",
+      "bytes": 6,
+      "sha256": "e13478ce994f9d2e084396daff10c9f0097231663658896fd60de9b5566d76e7"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/diagnostics.txt",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/directories.txt",
+      "bytes": 233,
+      "sha256": "e352c4127707f3f6bd1e71ef7bc76718eecb15b06da318577ee7b2c87b20363d"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/driver-sha.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/identity.txt",
+      "bytes": 58,
+      "sha256": "08146872f22d77cb945a586f93eb698b487ac68f4440e31605f7f074385ab720"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/instances.txt",
+      "bytes": 25,
+      "sha256": "1bce9c2239b57d25f2e71d75c33e223376db8572d2e4bd070e9c35577210be2e"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/package.txt",
+      "bytes": 70,
+      "sha256": "eebdb9a0b9d5ecab937189eea69435235e71bb56c38b065bc835340b24f02c14"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/packages-list.txt",
+      "bytes": 300,
+      "sha256": "5f6efea63f0c557cfc7f2bab28086e67a19401b256899a7337ddd7bb4e6146a6"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/packages-related.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/probes.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/process-status.txt",
+      "bytes": 211,
+      "sha256": "01ba8388ddb08ba839633497135c2d47c8e968b413b4e6b1b367ba519ab1bf5a"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/process-view-driver-sha.txt",
+      "bytes": 160,
+      "sha256": "7baab4b9defbd1c69ed69b65a480aed318513c14b23d6230a2373f375e35aa09"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/selection.txt",
+      "bytes": 166,
+      "sha256": "0e333722870836425dd7b720cc06b02522cc531ae6849e533f2ecad4c7c0050f"
+    },
+    {
+      "path": "tools/work/eden-perf49/final-state/time.txt",
+      "bytes": 26,
+      "sha256": "09896da28a8b85f71fb93169d41f3f9aaf4a67da8d9a825c2bea6ae317da5ef4"
     }
-  ]
+  ],
+  "cleanup_verified_native_root": true,
+  "driver_retained_verified_via_process_root": true,
+  "verification_time": "2026-10-31T06:49:53+08:00"
 }

@@ -34,7 +34,8 @@
     "shell_uid": 0,
     "paired": true,
     "package": "android-tools 34.0.4-3",
-    "note": "Wireless port may change; inspect adb devices first. Pairing was authorized interactively; do not commit keys/codes. Existing TermuxService native-root bridge remains a fallback. Read /proc/PID/task/TID/comm for thread names; ps NAME is the process name here."
+    "note": "Wireless port may change; inspect adb devices first. Pairing was authorized interactively; do not commit keys/codes. Existing TermuxService native-root bridge remains a fallback. Read /proc/PID/task/TID/comm for thread names; ps NAME is the process name here.",
+    "connection_status": "ADB disconnected at end of phase. Native TermuxService root bridge works; current root mount namespace hides target /data/data path, so access through /proc/<native Eden PID>/root/data/data/<package>. Verified test46 file SHA through process root. Probes removed and diagnostics off. Do not infer uninstall/driver removal from the hidden direct path."
   },
   "constraints": {
     "scope": "driver only; user explicitly said 只修驱动 after declining application work",
