@@ -1,0 +1,427 @@
+{
+  "policy_marker": "biblioklept",
+  "date": "2026-10-30",
+  "status": "User reports test44 and entire Android UI still stutter. Waiting chain observed; no new driver fix or performance claim.",
+  "driver": {
+    "test": "test44",
+    "sha256": "e5c4f67565560404b37a50c334680046ea94341db4f1d62f3dd0f16208206fec",
+    "source_commit": "692b8bb913aab05ee3acf8dbad477243643fbb8d"
+  },
+  "settings": {
+    "resolution": "1x",
+    "async_gpu": false,
+    "diagnostics": false,
+    "present": "Mailbox"
+  },
+  "method": "Observational simpleperf CPU + off-CPU tracing at 99 Hz; no synthetic GPU workload. Pair switch-off/on with same-thread sched sample within 1 ms. Durations include blocked and runnable time; incomplete intervals excluded. p95 uses floor(0.95*(n-1)) sorted rank.",
+  "windows": {
+    "ui": {
+      "seconds": 7.9748,
+      "recorded_samples": 36209,
+      "lost_samples": 0,
+      "waits": {
+        "sf-presentDisplay": {
+          "intervals": 493,
+          "total_ms": 5706.758112000003,
+          "p50_ms": 5.136288,
+          "p95_ms": 46.554496,
+          "max_ms": 141.031904
+        },
+        "ui-dequeueBuffer": {
+          "intervals": 289,
+          "total_ms": 4212.644351999999,
+          "p50_ms": 6.169664,
+          "p95_ms": 49.126144,
+          "max_ms": 97.607136
+        }
+      },
+      "ui_new_frames": {
+        "StatusBar": {
+          "new_frames": 7,
+          "metrics": {
+            "FrameCompleted": {
+              "count": 7,
+              "p50_ms": 15.146838,
+              "p95_ms": 26.331534,
+              "max_ms": 85.05877
+            },
+            "GpuCompleted": {
+              "count": 7,
+              "p50_ms": 15.146838,
+              "p95_ms": 26.022158,
+              "max_ms": 84.913682
+            },
+            "DequeueBufferDuration": {
+              "count": 7,
+              "p50_ms": 0.006176,
+              "p95_ms": 0.008,
+              "max_ms": 0.008512
+            }
+          }
+        },
+        "NotificationShade": {
+          "new_frames": 120,
+          "metrics": {
+            "FrameCompleted": {
+              "count": 116,
+              "p50_ms": 17.830418,
+              "p95_ms": 71.716912,
+              "max_ms": 83.825428
+            },
+            "GpuCompleted": {
+              "count": 116,
+              "p50_ms": 17.830418,
+              "p95_ms": 71.716912,
+              "max_ms": 83.825428
+            },
+            "DequeueBufferDuration": {
+              "count": 120,
+              "p50_ms": 5.660576,
+              "p95_ms": 31.391712,
+              "max_ms": 56.799744
+            }
+          }
+        },
+        "NavigationBar0": {
+          "new_frames": 67,
+          "metrics": {
+            "FrameCompleted": {
+              "count": 67,
+              "p50_ms": 2.644694,
+              "p95_ms": 43.728407,
+              "max_ms": 71.330465
+            },
+            "GpuCompleted": {
+              "count": 67,
+              "p50_ms": 2.644694,
+              "p95_ms": 43.728407,
+              "max_ms": 69.964801
+            },
+            "DequeueBufferDuration": {
+              "count": 67,
+              "p50_ms": 0.006592,
+              "p95_ms": 22.886272,
+              "max_ms": 41.543232
+            }
+          }
+        }
+      }
+    },
+    "joint-active": {
+      "seconds": 7.97785,
+      "recorded_samples": 30373,
+      "lost_samples": 0,
+      "reported_callchain_error_percent": 4.289103,
+      "waits": {
+        "hwc:commitDSI-0:drmModeAtomicCommit": {
+          "intervals": 295,
+          "total_ms": 2038.5881919999995,
+          "p50_ms": 4.06128,
+          "p95_ms": 37.632128,
+          "max_ms": 74.042816
+        },
+        "hwc:android.hardwar:talkWithDriver": {
+          "intervals": 246,
+          "total_ms": 280.803264,
+          "p50_ms": 1.000144,
+          "p95_ms": 2.033056,
+          "max_ms": 2.384768
+        },
+        "hwc:commitDSI-0:condition_variable": {
+          "intervals": 246,
+          "total_ms": 360.28073599999993,
+          "p50_ms": 1.3191519999999999,
+          "p95_ms": 2.533056,
+          "max_ms": 2.983424
+        },
+        "sf:surfaceflinger:executeCommands": {
+          "intervals": 123,
+          "total_ms": 58.58832000000002,
+          "p50_ms": 0.44688,
+          "p95_ms": 0.707712,
+          "max_ms": 1.015168
+        },
+        "hwc:android.hardwar:Fence::wait": {
+          "intervals": 122,
+          "total_ms": 2053.457184,
+          "p50_ms": 5.732912,
+          "p95_ms": 47.592576,
+          "max_ms": 79.800416
+        },
+        "sf:surfaceflinger:presentDisplay": {
+          "intervals": 122,
+          "total_ms": 2087.4810879999995,
+          "p50_ms": 6.028816,
+          "p95_ms": 47.905696,
+          "max_ms": 80.068672
+        },
+        "ui:RenderThread:dequeueBuffer": {
+          "intervals": 119,
+          "total_ms": 1967.5799360000003,
+          "p50_ms": 6.435616,
+          "p95_ms": 49.377504,
+          "max_ms": 72.376512
+        },
+        "ui:RenderThread:condition_variable": {
+          "intervals": 3,
+          "total_ms": 14.35536,
+          "p50_ms": 6.327488,
+          "p95_ms": 6.327488,
+          "max_ms": 7.829152
+        }
+      },
+      "ui_new_frames": {
+        "StatusBar": {
+          "new_frames": 8,
+          "metrics": {
+            "FrameCompleted": {
+              "count": 8,
+              "p50_ms": 48.3916155,
+              "p95_ms": 68.670604,
+              "max_ms": 75.997433
+            },
+            "GpuCompleted": {
+              "count": 8,
+              "p50_ms": 48.3916155,
+              "p95_ms": 68.366956,
+              "max_ms": 75.997433
+            },
+            "DequeueBufferDuration": {
+              "count": 8,
+              "p50_ms": 0.006768,
+              "p95_ms": 0.011232,
+              "max_ms": 0.012832
+            }
+          }
+        },
+        "NotificationShade": {
+          "new_frames": 119,
+          "metrics": {
+            "FrameCompleted": {
+              "count": 115,
+              "p50_ms": 38.042645,
+              "p95_ms": 94.097097,
+              "max_ms": 131.922595
+            },
+            "GpuCompleted": {
+              "count": 115,
+              "p50_ms": 38.042645,
+              "p95_ms": 94.097097,
+              "max_ms": 131.922595
+            },
+            "DequeueBufferDuration": {
+              "count": 119,
+              "p50_ms": 6.918496,
+              "p95_ms": 47.875104,
+              "max_ms": 115.375072
+            }
+          }
+        },
+        "NavigationBar0": {
+          "new_frames": 28,
+          "metrics": {
+            "FrameCompleted": {
+              "count": 27,
+              "p50_ms": 9.197006,
+              "p95_ms": 52.520318,
+              "max_ms": 171.883807
+            },
+            "GpuCompleted": {
+              "count": 27,
+              "p50_ms": 9.197006,
+              "p95_ms": 52.382302,
+              "max_ms": 171.883807
+            },
+            "DequeueBufferDuration": {
+              "count": 28,
+              "p50_ms": 3.176688,
+              "p95_ms": 32.655424,
+              "max_ms": 164.251168
+            }
+          }
+        }
+      },
+      "longest_correlated_stall": {
+        "sf:surfaceflinger:presentDisplay": {
+          "start_ms": 0.0,
+          "end_ms": 80.068672,
+          "duration_ms": 80.068672
+        },
+        "hwc:android.hardwar:Fence::wait": {
+          "start_ms": 0.102432,
+          "end_ms": 79.902848,
+          "duration_ms": 79.800416
+        },
+        "hwc:commitDSI-0:drmModeAtomicCommit": {
+          "start_ms": 0.157344,
+          "end_ms": 74.20016,
+          "duration_ms": 74.042816
+        }
+      }
+    }
+  },
+  "vendor_hwc": {
+    "library_sha256": "145d2bb103ddfe387ff8390f8c4b2aad9002932bfc502c24a80c27407f15e758",
+    "wait_path": "DrmDisplay::commit -> android::Fence::wait -> sync_wait -> ppoll",
+    "atomic_commit_path": "commitDSI-0 -> DrmDisplay::commitInternal -> callAtomicCommit -> drmModeAtomicCommit -> ioctl",
+    "binary_evidence": "Call to Fence::wait at ELF VA 0x92bac; adjacent timeout log at 0x341a1 says it waits for last frame present. No vendor binaries uploaded."
+  },
+  "limitations": [
+    "Kernel fence identity is known for a separate gesture window; GPU-side dependency and scheduling causes remain unproven.",
+    "The HWC-only six-second trace and later kernel stack snapshots do not cover the joint gesture window; not negative evidence against the observed waits.",
+    "Off-CPU durations are not GPU job durations or whole-frame time fractions.",
+    "gfxinfo contains a rolling 120-frame history; only new IntendedVsync entries are summarized; valid positive completion durations under 5 s only. Flags are not restricted to zero.",
+    "TimeStats counters were differenced rather than interpreting old cumulative data. Initial global histogram increments can include delayed prior fence completions; not a precise eight-second FPS measure."
+  ],
+  "local_sources": [
+    {
+      "local_path": "tools/work/eden-perf45/ui/waits.data",
+      "sha256": "830d604fcc7a8bc70155d1644decbc47d041f3389cad0eb55fd081cfe0a78570",
+      "bytes": 15487097
+    },
+    {
+      "local_path": "tools/work/eden-perf45/ui/record.txt",
+      "sha256": "50d39dccb1f3ceb337f1bcf4fe947d2ee794376a5b1ca63fdd46351a30520f3e",
+      "bytes": 161
+    },
+    {
+      "local_path": "tools/work/eden-perf45/ui/samples-ui.txt",
+      "sha256": "18597dba15557ee1d79a6065486b731debbbd4f62013c853853bb011ea92bb34",
+      "bytes": 17419738
+    },
+    {
+      "local_path": "tools/work/eden-perf45/ui/ui-frames-before.txt",
+      "sha256": "34e28a79b07461596ccddc9ccf4dd9d0929697a11354aeaa2b5da86511ddc3d4",
+      "bytes": 279021
+    },
+    {
+      "local_path": "tools/work/eden-perf45/ui/ui-frames-after.txt",
+      "sha256": "9a08e1bc3fd210123f01c92e43545251c379e383cc07be04f4c2936369b3b1ca",
+      "bytes": 277687
+    },
+    {
+      "local_path": "tools/work/eden-perf45/ui/present-before.txt",
+      "sha256": "84a809c17a63be892d8dab3fa8ae9a4fd383e8fb3592638b0428aadc28b01494",
+      "bytes": 121552
+    },
+    {
+      "local_path": "tools/work/eden-perf45/ui/present-after.txt",
+      "sha256": "ef615b3a3d11c9afe5b9f0393cebfc739f2581efc04553b84ea039c8aa46aaff",
+      "bytes": 132986
+    },
+    {
+      "local_path": "tools/work/eden-perf45/ui/driver-hashes.txt",
+      "sha256": "461b339e39be3f003e11027c61da9fa42eda2c2ad195f05abee4215deb3b8502",
+      "bytes": 264
+    },
+    {
+      "local_path": "tools/work/eden-perf45/joint-active/waits.data",
+      "sha256": "7507b277a7435a3f4f8dd3c9b60d031d4eb85bcbba92dc2a8d5b116449b5432f",
+      "bytes": 13605961
+    },
+    {
+      "local_path": "tools/work/eden-perf45/joint-active/record.txt",
+      "sha256": "a918e0f2cdd0dc3fdea1cd39233d4e58ae261e292021722346b0ba1c263717ce",
+      "bytes": 162
+    },
+    {
+      "local_path": "tools/work/eden-perf45/joint-active/samples.txt",
+      "sha256": "bf3b95ac11a0d0df9d399841e6dcf8b43eaa98515bad9048d5fc893c1285fe38",
+      "bytes": 56260079
+    },
+    {
+      "local_path": "tools/work/eden-perf45/joint-active/ui-before.txt",
+      "sha256": "e6b30c6ef0aa138841ed37525e276a17b2a9f97292f617dce6c80e50a7ba8a04",
+      "bytes": 280164
+    },
+    {
+      "local_path": "tools/work/eden-perf45/joint-active/ui-after.txt",
+      "sha256": "590d33efc61aae21990d16f5d4374b907bfc30e079453b53e9cf9a2cf4604b43",
+      "bytes": 280334
+    },
+    {
+      "local_path": "tools/work/eden-perf45/hwc/waits.data",
+      "sha256": "b3be6d9423c042ae60802adb88cbe177f44e62c830f0c5b699810ec433ed5656",
+      "bytes": 880912
+    },
+    {
+      "local_path": "tools/work/eden-perf45/hwc/record.txt",
+      "sha256": "ab8dc891d62b426e5a5b9d061ff561f8fae92162a20913e814ccdc347b7a9d3e",
+      "bytes": 161
+    },
+    {
+      "local_path": "tools/work/eden-perf45/kernel/stacks.txt",
+      "sha256": "8af81e603296ff8b4328f73046957d33e66f4a3aa2e20048e27c819d984c63ec",
+      "bytes": 48041
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-events-baseline/record.txt",
+      "sha256": "1d25b176ad3dc27e5b37059d94dcbb9caedae64c5778d4499e747d0d35ccca43",
+      "bytes": 162
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-events-baseline/events.data",
+      "sha256": "fb48014edadc8479846cf3bd730c3d46095e0f5dea6deece18ef78da6411fb75",
+      "bytes": 2457191
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-events-baseline/events-dump.txt",
+      "sha256": "78cb08f038275134214778b734c0840e94d114c6594751bd60b1cb7380e90946",
+      "bytes": 11126657
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-events-baseline/summary.json",
+      "sha256": "ee9877ee8cddcbf2bd3ec0c35cf4aad2dea9e4e3d30f5ea581c681bbd685f947",
+      "bytes": 25309
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-events/record.txt",
+      "sha256": "338c25c3707b0f6ed5ba968ed2d4899fc131f7fa19842ebe2b4ff050387fc2a6",
+      "bytes": 160
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-events/events.data",
+      "sha256": "ce6f1b33822a2021326e4f7681f67301a9dfe423b7737de432d62b00c860fef9",
+      "bytes": 2601750
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-events/events-dump.txt",
+      "sha256": "5433894bb75c8036fcc586820cf66d33f34d0845a9d772607354fd42ee85dd69",
+      "bytes": 9016056
+    },
+    {
+      "local_path": "tools/work/eden-perf45/fence-events/summary.json",
+      "sha256": "23b2d5b87d426a12522ca527dfb7829682893a2b848b87367184fbcd32571ee1",
+      "bytes": 21575
+    }
+  ],
+  "kernel_fence_window": {
+    "seconds": 8.1479,
+    "recorded_samples": 6916,
+    "lost_samples": 0,
+    "event_counts": {
+      "dma_fence_signaled": 5125,
+      "dma_fence_wait_start": 468,
+      "dma_fence_wait_end": 467,
+      "dpu_kms_wait_for_fences": 856
+    },
+    "method": "Pair kernel dma_fence wait start/end by TID, context, seqno. Classify using wait-start timeline; end may be detached after signal. Exclude unmatched capture-edge waits.",
+    "surfaceflinger_gpu": {
+      "driver": "mali",
+      "intervals": 170,
+      "total_ms": 4965.042912,
+      "p50_ms": 24.857376000000002,
+      "p95_ms": 75.421984,
+      "max_ms": 99.903488
+    },
+    "game_gpu": {
+      "driver": "mali",
+      "intervals": 32,
+      "total_ms": 424.78364799999997,
+      "p50_ms": 9.108144,
+      "p95_ms": 30.092,
+      "max_ms": 52.370464
+    }
+  },
+  "conclusion": "Notification gesture capture: the display commit worker spends much more time waiting for SurfaceFlinger GPU fences than game GPU fences. This identifies the downstream late signal; it does not establish whether SurfaceFlinger GPU work itself or its dependencies/scheduling cause the delay. No driver fix yet."
+}

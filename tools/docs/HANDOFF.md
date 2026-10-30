@@ -1,4 +1,4 @@
-# 交接文档（2026-10-30，test44 重复缓存清理试版；test44 仍卡、整机卡慢继续定位）
+# 交接文档（2026-10-30，test44 仍卡；已捕获系统合成与 HWC 显示等待链）
 
 接手前先读完本文件，再读 `STATUS.md`（历史结论）和 `BUILD_AND_TEST.md`（构建细节）。
 Policy marker: biblioklept
@@ -20,10 +20,20 @@ Policy marker: biblioklept
 
 源码提交、driver 子树、原包库/ZIP/补丁哈希的机器可读映射在 `tools/fixtures/test44-source-checkpoints.json`。原包构建发生在这些提交之前，包名中的 bfcc5d7 与历史 manifest 不改写；其 driver 源码已逐字节对应到表中提交。旧记录中的“无提交或推送”描述当时状态，已由本节补充。构建产物、符号、原始设备日志和私有配置未加入 Git。
 
+## 当前排查：通知栏、SurfaceFlinger 与 HWC 同一时间线
+
+- 本轮通过运行中 map_files 校验，当前实际库为 test44 `e5c4f675...`。没有新驱动改动或 test45 发布；旧 test43 映射仍可见，不能只按第一条映射判断当前版本。
+- 用户配合反复下拉、收起通知栏。首次 7.975 秒观察性采样记录 36,209 样本；确认配合操作后的联合 7.978 秒采样记录 30,373 样本，两次均零丢失。联合覆盖游戏、SystemUI、SurfaceFlinger 和厂商 HWC 所有线程，调用链错误约 4.29%。没有并行合成 GPU 负载，也没有修改驱动、Eden 配置或调度参数。
+- 联合记录按上下文切换配对：SF 的 presentDisplay 等待 122 段，p95 47.91ms、最大 80.07ms；HWC 的 Fence::wait 同为 122 段，p95 47.59ms、最大 79.80ms；commitDSI-0 在 drmModeAtomicCommit 中的离 CPU 区间 p95 37.63ms、最大 74.04ms。最长一次 SF、HWC、DRM 等待的起止时间嵌套吻合。厂商库本地反汇编与相邻超时日志表明，HWC 的这个 Fence::wait 等上一帧 present 完成，不能直接称为等待新游戏图层的 acquire fence。
+- 同窗通知栏新增 119 帧；有效完成时间 115 帧，IntendedVsync→FrameCompleted p50 38.04ms、p95 94.10ms、最大 131.92ms；dequeueBuffer p95 47.88ms、最大 115.38ms。这说明系统卡慢确实进入合成/显示等待链；仍需内核 fence 身份才能分清游戏 GPU、系统合成 GPU、显示控制器各自责任，不能宣布根因已修复。
+- 线程离 CPU 区间含阻塞和就绪调度延迟，不是纯 GPU 时间；累计多线程百分比不能当作单帧占比。gfxinfo 是最多 120 帧滚动窗口，按新 IntendedVsync 去重，不用 Flags=0 过滤通知栏帧。TimeStats 只取前后增量，其 fence 延迟回填也不能当作精确 8 秒 FPS。
+- 用户再次配合后补采 8.148 秒内核显示与 dma_fence 事件：6,916 样本、零丢失。按 TID/context/seqno 配对 wait start/end，保留开始时的驱动/时间线（结束时 fence 可能已 detached）：显示提交线程等待 SF GPU 时间线 170 段、总 4965.04ms，p50 24.86ms、p95 75.42ms、最大 99.90ms；等待游戏 GPU 时间线 32 段、总 424.78ms，p95 30.09ms、最大 52.37ms。因此该操作窗口的主要迟到信号来自 SurfaceFlinger GPU，而不应直接归为游戏 present fence；仍需区分 SF 自己的 GPU 工作、其依赖和 GPU 调度。没有提前修改 fence 等待或序列化游戏呈现。
+- 摘要与本地原始数据哈希在 `tools/fixtures/test44-system-composition-profile.json`；完整原始记录、分析脚本与厂商库反汇编留在忽略目录 `tools/work/eden-perf45/`。单独的 HWC 记录和后续内核栈快照没有覆盖相同操作时段，不能用空闲比例否定联合记录中的等待。下一步核对系统合成效果与依赖/调度，确认后再决定驱动改动。
+
 ## 当前交付：test44，用户确认卡顿依旧，整机卡慢继续定位
 
 - 最新用户反馈优先：test44「卡顿依旧」。用户进一步观察到系统界面卡慢随游戏 FPS 变化：游戏 60 FPS 时系统不卡，游戏低帧时系统更卡；下拉状态栏会拉低游戏 FPS，随之整个 Android 界面都卡慢。此前 test43、Mailbox 和 10ms 调度 tick 均无改善；本地 GPU 回归结束后系统仍慢。下一步应区分 GPU 资源争用与系统合成等待，不能据此直接宣布某一根因，也不能继续把 test44 标为待用户验证或已修复。
-- 运行中的库 SHA 校验为 test43 `c1e421b0...`。首个 TimeStats 窗口因错误地用 dump 是否为空判断 enabled 而没有实际启用，混入旧统计，已排除其呈现间隔。正确启用后的新窗口按前后增量解析，同一 SurfaceView 60 Hz 分组新增 724 帧：16ms×421、33ms×281、50ms×22；该新图层累计平均 42.317 FPS。这是实际呈现统计，不等于游戏内部 FPS。解析器 `tools/work/eden-perf44/analyze_intervals.py`，已核对相同文件差分为零和 724 帧直方图。
+- 上一轮运行中的库 SHA 校验为 test43 `c1e421b0...`；本轮已经确认 test44，见上节。首个 TimeStats 窗口因错误地用 dump 是否为空判断 enabled 而没有实际启用，混入旧统计，已排除其呈现间隔。正确启用后的新窗口按前后增量解析，同一 SurfaceView 60 Hz 分组新增 724 帧：16ms×421、33ms×281、50ms×22；该新图层累计平均 42.317 FPS。这是实际呈现统计，不等于游戏内部 FPS。解析器 `tools/work/eden-perf44/analyze_intervals.py`，已核对相同文件差分为零和 724 帧直方图。
 - 标准刷新率接口做过有恢复措施的短对照：min_refresh_rate 临时 120、非持久 preferred mode 临时 120/120.00001。精确值可匹配 preferred mode1，但实际面板一直 mode4/60 Hz，所以没有成功的 120 Hz 对照，不能据此声称刷新率无关或锁 120 有效。min 已恢复 null，preferred 已恢复 -1/-1/0。root 下 cmd/settings 直接把 stdout 指向共享存储会 Failed transaction；经管道到 cat 可正常工作。证据 `refresh-aba/`、`exact-refresh/`、`cmd-probe/`。
 - 用户明确存档并完全退出后，已备份并只改 Eden 两行：use_vsync=2→1、default=true→false。官方 settings_enums.h 已获取，实际旧日志也确认 Fifo；重启日志确认 Mailbox、Res1X、异步 GPU=false、debug=false、GPU log=Off。游戏自定义配置逐字节未变。备份 `config.ini.panvk-vsync44-20261030T084142Z.bak`，diff/哈希 `config-result.json`、`config-applied.diff`，原始副本在 `config-applied/`。用户确认无改善；当前仍为 Mailbox，未在游戏运行中强改回去，后续对照应记录这个状态。
 - 用户报告整机卡慢时本地回归已结束，没有再运行任何合成 GPU 测试。只读资源采样中 CPU 约 70% idle、MemAvailable 约 3.9 GB，memory/IO PSI 很低，2 秒 pswpin=12、pswpout=0；不能用这一个窗口排除所有 CPU/内存问题。系统有 100ms GPU scheduling tick；临时改为 10ms、读回确认后用户仍报告卡慢，已恢复并多次读回 100。仅为诊断，没有写入永久配置。原始 `tick/`、`scheduler-params/`、`resources/`。
