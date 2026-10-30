@@ -1509,7 +1509,6 @@ panvk_queue_kbase_decode(struct panvk_gpu_queue *queue, const struct vk_queue_su
 /* What a kbase submission still has to do once the GPU is done with it. */
 struct panvk_kbase_csf_done {
    struct panvk_gpu_queue *queue;
-   uint32_t trace_id;
    uint32_t nr_signals;
    uint32_t signals[];
 };
@@ -1521,15 +1520,8 @@ panvk_kbase_csf_done(void *data, bool ok)
    struct panvk_kbase_csf_done *d = data;
    struct panvk_device *dev = to_panvk_device(d->queue->vk.base.device);
 
-   if (PAN_ARCH == 15 && panvk_g2_diagnostics &&
-       (panvk_g2_trace_submission(d->trace_id) || !ok))
-      panvk_g2_trace("gpu complete id=%u ok=%u", d->trace_id, ok);
-
-   if (!ok) {
-      if (PAN_ARCH == 15 && panvk_g2_diagnostics && !d->queue->kbase_lost)
-         pan_kmod_kbase_dump_freed(panvk_g2_trace, 4096);
+   if (!ok)
       d->queue->kbase_lost = true;
-   }
    if (d->nr_signals)
       dev->vk.sync->signal(dev->vk.sync, d->signals, d->nr_signals);
    free(d);
@@ -1544,8 +1536,7 @@ panvk_kbase_csf_done(void *data, bool ok)
  * alongside the producer's remaining ones.
  */
 static VkResult
-panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *vk_submit,
-                         uint32_t trace_id)
+panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *vk_submit)
 {
    struct panvk_device *dev = to_panvk_device(queue->vk.base.device);
 
@@ -1633,7 +1624,7 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
    }
 
    d->queue = queue;
-   d->trace_id = trace_id;
+
    d->nr_signals = vk_submit->signal_count;
    for (uint32_t i = 0; i < vk_submit->signal_count; i++)
       d->signals[i] = vk_sync_as_drm_syncobj(vk_submit->signals[i].sync)->syncobj;
@@ -1681,62 +1672,6 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
                 so[0].error, so[1].error, so[2].error);
       if (PANVK_DEBUG(TRACE))
          panvk_queue_kbase_decode(queue, vk_submit);
-#if PAN_ARCH >= 15
-      if (queue->kbase_lost || pan_kmod_kbase_csf_group_faulted(queue->kbase_group)) {
-         if (dev->g2_crumbs) {
-            const uint64_t *c = dev->g2_crumbs->addr.host;
-            panvk_g2_trace("fault crumbs done vt=%#" PRIx64 " frag=%#" PRIx64 " cs=%#" PRIx64
-                           " started vt=%#" PRIx64 " frag=%#" PRIx64 " cs=%#" PRIx64,
-                           c[PANVK_SUBQUEUE_VERTEX_TILER * 8], c[PANVK_SUBQUEUE_FRAGMENT * 8],
-                           c[PANVK_SUBQUEUE_COMPUTE * 8], c[PANVK_SUBQUEUE_VERTEX_TILER * 8 + 4],
-                           c[PANVK_SUBQUEUE_FRAGMENT * 8 + 4], c[PANVK_SUBQUEUE_COMPUTE * 8 + 4]);
-         }
-         for (uint32_t i = 0; i < vk_submit->command_buffer_count; i++) {
-            const struct panvk_cmd_buffer *cb = container_of(
-               vk_submit->command_buffers[i], struct panvk_cmd_buffer, vk);
-            const uint32_t total = cb->g2_draws.count;
-            const uint32_t first = total > PANVK_G2_DRAW_LOG ? total - PANVK_G2_DRAW_LOG : 0;
-            panvk_g2_trace("fault submit=%u cmdbuf=%u serial=%u work=%u", trace_id, i,
-                           cb->g2_draws.serial, total);
-            for (uint32_t k = first; k < total; k++) {
-               const uint64_t *e = cb->g2_draws.entries[k % PANVK_G2_DRAW_LOG];
-               if (e[0] == 3) {
-                  uint64_t sv, ss, dv, ds;
-                  bool sl = pan_kmod_kbase_va_live(e[1], e[3], &sv, &ss);
-                  bool dl = pan_kmod_kbase_va_live(e[2], e[3], &dv, &ds);
-                  panvk_g2_trace("fault work=%u copy src=0x%" PRIx64 " dst=0x%" PRIx64
-                                 " size=0x%" PRIx64 " src_live=%u dst_live=%u", k, e[1], e[2],
-                                 e[3], sl, dl);
-               } else if (e[0] == 4) {
-                  panvk_g2_trace("fault work=%u frag fbds=0x%" PRIx64 " %ux%u layers=%u rts=%u "
-                                 "rt0=0x%" PRIx64 " info0=0x%" PRIx64 " info1=0x%" PRIx64
-                                 " zsinfo=0x%" PRIx64 " base1=0x%" PRIx64, k, e[1],
-                                 (uint32_t)(e[2] & 0xffff), (uint32_t)((e[2] >> 16) & 0xffff),
-                                 (uint32_t)((e[2] >> 32) & 0xffff), (uint32_t)(e[2] >> 48), e[3],
-                                 e[4], e[5], e[6], e[7]);
-                  for (uint32_t w = 0; w < 4; w++)
-                     panvk_g2_fault_words(k, "fbd", e[1] + w * 128, 32);
-               } else if (e[0] == 2) {
-                  uint64_t v, sz;
-                  panvk_g2_trace("fault work=%u dispatch shader=%u pc0=0x%" PRIx64
-                                 " pc1=0x%" PRIx64 " pc0_live=%u pc1_live=%u", k,
-                                 (unsigned)e[1], e[2], e[3],
-                                 pan_kmod_kbase_va_live(e[2], 1, &v, &sz),
-                                 pan_kmod_kbase_va_live(e[3], 1, &v, &sz));
-                  panvk_g2_fault_words(k, "cs_fau", e[5], 16);
-                  panvk_g2_fault_res_table(k, "cs", e[4]);
-               } else {
-                  panvk_g2_trace("fault work=%u %s shader=%u fs=%u verts=%u inst=%u ib=0x%" PRIx64,
-                                 k, e[0] == 1 ? "draw" : "dispatch", (unsigned)e[1],
-                                 (unsigned)e[2], (uint32_t)e[3], (uint32_t)(e[3] >> 32), e[7]);
-                  panvk_g2_fault_words(k, "vs_fau", e[6], 16);
-                  panvk_g2_fault_res_table(k, "vs", e[4]);
-                  panvk_g2_fault_res_table(k, "fs", e[5]);
-               }
-            }
-         }
-      }
-#endif
       return panvk_per_arch(gpu_queue_check_status)(&queue->vk);
    }
 
@@ -1761,19 +1696,9 @@ panvk_per_arch(gpu_queue_submit)(struct vk_queue *vk_queue, struct vk_queue_subm
 
    struct panvk_gpu_queue *gpu_queue = container_of(vk_queue, struct panvk_gpu_queue, vk);
    if (gpu_queue->kbase_group) {
-      static uint32_t trace_count;
-      uint32_t trace_id = PAN_ARCH == 15 && panvk_g2_diagnostics ?
-         p_atomic_inc_return(&trace_count) : 0;
-      bool trace = PAN_ARCH == 15 && panvk_g2_trace_submission(trace_id);
-      if (trace && PANVK_DEBUG(SYNC))
-         panvk_g2_trace_eden_log();
-      if (trace)
-         panvk_g2_trace("submit begin id=%u cmds=%u waits=%u signals=%u", trace_id,
-                        vk_submit->command_buffer_count, vk_submit->wait_count,
-                        vk_submit->signal_count);
-      result = panvk_queue_submit_kbase(gpu_queue, vk_submit, trace_id);
-      if (trace || (PAN_ARCH == 15 && result != VK_SUCCESS))
-         panvk_g2_trace("submit end id=%u result=%d", trace_id, result);
+      result = panvk_queue_submit_kbase(gpu_queue, vk_submit);
+      if (PAN_ARCH == 15 && result != VK_SUCCESS)
+         panvk_g2_trace("submit failed result=%d", result);
       return result;
    }
 

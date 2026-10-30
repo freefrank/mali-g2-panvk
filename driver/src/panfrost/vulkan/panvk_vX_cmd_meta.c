@@ -8,7 +8,6 @@
 #include "panvk_bc_emu.h"
 #include "panvk_buffer.h"
 #include "panvk_cmd_meta.h"
-#include "panvk_g2_trace.h"
 #include "panvk_entrypoints.h"
 #include "panvk_meta.h"
 #include "panvk_tracepoints.h"
@@ -395,20 +394,6 @@ panvk_per_arch(CmdCopyMemoryKHR)(VkCommandBuffer commandBuffer,
    struct panvk_device *dev = to_panvk_device(cmdbuf->vk.base.device);
    struct panvk_cmd_meta_compute_save_ctx save = {0};
 
-#if PAN_ARCH >= 15
-   for (uint32_t r = 0; panvk_g2_diagnostics && r < pCopyMemoryInfo->regionCount; r++) {
-      const VkDeviceMemoryCopyKHR *reg = &pCopyMemoryInfo->pRegions[r];
-      panvk_g2_check_range(reg->srcRange.address, reg->srcRange.size, "copy_src", r,
-                           pCopyMemoryInfo->regionCount);
-      panvk_g2_check_range(reg->dstRange.address, reg->srcRange.size, "copy_dst", r,
-                           pCopyMemoryInfo->regionCount);
-      uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
-      cmdbuf->g2_draws.entries[n][0] = 3;
-      cmdbuf->g2_draws.entries[n][1] = reg->srcRange.address;
-      cmdbuf->g2_draws.entries[n][2] = reg->dstRange.address;
-      cmdbuf->g2_draws.entries[n][3] = reg->srcRange.size;
-   }
-#endif
    meta_compute_start(cmdbuf, &save);
    vk_meta_copy_memory(&cmdbuf->vk, &dev->meta, pCopyMemoryInfo);
    meta_compute_end(cmdbuf, &save);
@@ -742,11 +727,6 @@ panvk_per_arch(CmdCopyMemoryToImageKHR)(
    VkCommandBuffer commandBuffer,
    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo)
 {
-#if PAN_ARCH >= 15
-   for (uint32_t r = 0; r < pCopyMemoryInfo->regionCount; r++)
-      panvk_g2_check_range(pCopyMemoryInfo->pRegions[r].addressRange.address, 1,
-                           "copy_mem_to_img", r, pCopyMemoryInfo->regionCount);
-#endif
    VK_FROM_HANDLE(panvk_cmd_buffer, cmdbuf, commandBuffer);
    struct panvk_device *dev = to_panvk_device(cmdbuf->vk.base.device);
    VK_FROM_HANDLE(panvk_image, img, pCopyMemoryInfo->image);
@@ -804,11 +784,6 @@ panvk_per_arch(CmdCopyImageToMemoryKHR)(
    VkCommandBuffer commandBuffer,
    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo)
 {
-#if PAN_ARCH >= 15
-   for (uint32_t r = 0; r < pCopyMemoryInfo->regionCount; r++)
-      panvk_g2_check_range(pCopyMemoryInfo->pRegions[r].addressRange.address, 1,
-                           "copy_img_to_mem", r, pCopyMemoryInfo->regionCount);
-#endif
    VK_FROM_HANDLE(panvk_cmd_buffer, cmdbuf, commandBuffer);
    struct panvk_device *dev = to_panvk_device(cmdbuf->vk.base.device);
    VK_FROM_HANDLE(panvk_image, img, pCopyMemoryInfo->image);

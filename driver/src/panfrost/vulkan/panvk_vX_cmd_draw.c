@@ -5,7 +5,6 @@
  */
 
 #include "panvk_buffer.h"
-#include "panvk_g2_trace.h"
 #include "panvk_cmd_alloc.h"
 #include "panvk_cmd_buffer.h"
 #include "panvk_device_memory.h"
@@ -1145,10 +1144,6 @@ panvk_per_arch(CmdBindIndexBuffer2)(VkCommandBuffer commandBuffer,
       cmdbuf->state.gfx.ib.size = panvk_buffer_range(buf, offset, size);
       assert(cmdbuf->state.gfx.ib.size <= UINT32_MAX);
       cmdbuf->state.gfx.ib.dev_addr = panvk_buffer_gpu_ptr(buf, offset);
-#if PAN_ARCH >= 15
-      panvk_g2_check_range(cmdbuf->state.gfx.ib.dev_addr, cmdbuf->state.gfx.ib.size,
-                           "index_buffer", 0, 0);
-#endif
 
       /* Every usage through which the GPU could write the buffer. Without any of them, the
        * contents at execution time are what the CPU wrote, which a streaming index buffer has

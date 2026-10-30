@@ -547,14 +547,8 @@ struct panvk_cond_render_state {
    enum mali_cs_condition exec_cond;
 };
 
-#define PANVK_G2_DRAW_LOG 1024
 struct panvk_cmd_buffer {
    struct vk_command_buffer vk;
-   struct {
-      uint32_t count;
-      uint32_t serial;
-      uint64_t entries[PANVK_G2_DRAW_LOG][8];
-   } g2_draws;
    VkCommandBufferUsageFlags flags;
    struct panvk_pool cs_pool;
    struct panvk_pool desc_pool;
@@ -1040,40 +1034,5 @@ void panvk_per_arch(collect_crc_invalidation_deps)(const VkDependencyInfo *info,
                                                    uint64_t *crc_addrs);
 void panvk_per_arch(cmd_invalidate_crc)(struct cs_builder *b,
                                         uint64_t crc_header_addr);
-
-#if PAN_ARCH >= 15
-/* Sync-mode G2 breadcrumb: once the work just emitted on this subqueue is done, record its
- * index in the command buffer, so a fault can be pinned to one draw or dispatch. */
-static inline void
-panvk_g2_crumb_at(struct panvk_cmd_buffer *cmdbuf, uint32_t subqueue, bool done)
-{
-   struct panvk_device *dev = to_panvk_device(cmdbuf->vk.base.device);
-   if (!dev->g2_crumbs)
-      return;
-   struct cs_builder *b = panvk_get_cs_builder(cmdbuf, subqueue);
-   struct cs_index addr = cs_scratch_reg64(b, 0);
-   struct cs_index val = cs_scratch_reg64(b, 2);
-   if (done)
-      cs_wait_slots(b, BITFIELD_MASK(CS_MAX_SB_COUNT));
-   cs_move64_to(b, addr, dev->g2_crumbs->addr.dev + subqueue * 64 + (done ? 0 : 32));
-   cs_move64_to(b, val, ((uint64_t)cmdbuf->g2_draws.serial << 32) |
-                           (cmdbuf->g2_draws.count - 1));
-   cs_store64(b, val, addr, 0);
-   cs_flush_stores(b);
-}
-
-/* Done crumb at +0, started crumb at +32 of the subqueue's 64-byte slot. */
-static inline void
-panvk_g2_crumb(struct panvk_cmd_buffer *cmdbuf, uint32_t subqueue)
-{
-   panvk_g2_crumb_at(cmdbuf, subqueue, true);
-}
-
-static inline void
-panvk_g2_crumb_start(struct panvk_cmd_buffer *cmdbuf, uint32_t subqueue)
-{
-   panvk_g2_crumb_at(cmdbuf, subqueue, false);
-}
-#endif
 
 #endif /* PANVK_CMD_BUFFER_H */

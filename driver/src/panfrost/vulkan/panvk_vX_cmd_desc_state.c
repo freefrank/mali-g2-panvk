@@ -24,7 +24,6 @@
 #include "vk_alloc.h"
 #include "vk_command_buffer.h"
 #include "vk_command_pool.h"
-#include "panvk_g2_trace.h"
 
 static void
 cmd_desc_state_bind_sets(struct panvk_descriptor_state *desc_state,
@@ -256,11 +255,6 @@ panvk_per_arch(cmd_fill_dyn_bufs)(
          cfg.size = align(set->dyn_bufs[dyn_buf_idx].size, is_ssbo ? 4 : 16);
          cfg.address = set->dyn_bufs[dyn_buf_idx].dev_addr + dyn_buf_offset;
       }
-#if PAN_ARCH >= 15
-      panvk_g2_check_range(set->dyn_bufs[dyn_buf_idx].dev_addr + dyn_buf_offset,
-                           set->dyn_bufs[dyn_buf_idx].size,
-                           is_ssbo ? "dyn_ssbo" : "dyn_ubo", set_idx, dyn_buf_idx);
-#endif
    }
 }
 
@@ -298,14 +292,7 @@ panvk_per_arch(cmd_prepare_shader_res_table)(
 
          pan_pack(&res_table[i + 1], RESOURCE, cfg) {
             if (desc_info->used_set_mask & BITFIELD_BIT(i)) {
-#if PAN_ARCH >= 15
-               if (!set)
-                  panvk_g2_trace("badrange kind=unbound_set set=%u", i);
-               else
-                  panvk_g2_check_range(set->descs.dev,
-                                       set->desc_count * PANVK_DESCRIPTOR_SIZE,
-                                       "desc_set", i, set->desc_count);
-#endif
+
                cfg.address = set->descs.dev;
                cfg.contains_descriptors = true;
                cfg.size = set->desc_count * PANVK_DESCRIPTOR_SIZE;

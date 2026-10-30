@@ -175,7 +175,5 @@ bool pan_kmod_kbase_csf_wait(struct pan_kmod_kbase_csf_group *group, uint64_t se
  * could be made: the caller then waits on the CPU as before). */
 int pan_kmod_kbase_csf_fence_fd(struct pan_kmod_kbase_csf_group *group, uint64_t seq);
 bool pan_kmod_kbase_csf_group_faulted(const struct pan_kmod_kbase_csf_group *group);
-bool pan_kmod_kbase_va_live(uint64_t va, uint64_t size, uint64_t *bo_va, uint64_t *bo_size);
-void pan_kmod_kbase_dump_freed(void (*report)(const char *fmt, ...), unsigned count);
 
 #endif /* KBASE_KMOD_H */

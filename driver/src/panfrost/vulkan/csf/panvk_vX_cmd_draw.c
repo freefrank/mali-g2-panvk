@@ -21,7 +21,6 @@
 #include "panvk_cmd_buffer.h"
 #include "panvk_cmd_desc_state.h"
 #include "panvk_cmd_draw.h"
-#include "panvk_g2_trace.h"
 #include "panfrost/lib/kmod/kbase_kmod.h"
 #include "panvk_cmd_frame_shaders.h"
 #include "panvk_cmd_meta.h"
@@ -384,10 +383,7 @@ prepare_vs_driver_set(struct panvk_cmd_buffer *cmdbuf, uint32_t repeat_count)
                cfg.address = vb->address;
                cfg.size = vb->size;
             }
-#if PAN_ARCH >= 15
-            if (r == 0)
-               panvk_g2_check_range(vb->address, vb->size, "vertex_buffer", i, 0);
-#endif
+
          } else {
             /* Write a NullDescriptor and rely on OOB behavior */
             pan_cast_and_pack(&descs[vb_offset + i], NULL_DESCRIPTOR, cfg)
@@ -398,32 +394,6 @@ prepare_vs_driver_set(struct panvk_cmd_buffer *cmdbuf, uint32_t repeat_count)
       descs += desc_count;
    }
 
-#if PAN_ARCH >= 15
-   {
-      const struct panvk_shader_variant *g2vs =
-         panvk_shader_hw_variant(cmdbuf->state.gfx.vs.shader);
-      static uint32_t g2dumped;
-      if (to_panvk_device(cmdbuf->vk.base.device)->g2_crumbs && g2vs &&
-          g2vs->info.attribute_count && p_atomic_inc_return(&g2dumped) <= 2048) {
-         const uint32_t *w = driver_set.cpu;
-         u_foreach_bit(a, vi->attributes_valid) {
-            const uint32_t *e = w + a * (PANVK_DESCRIPTOR_SIZE / 4);
-            panvk_g2_trace("vsattr shader=%u a=%u bind=%u fmt=%u off=%u w=%08x %08x %08x %08x %08x %08x",
-                           g2vs->g2_trace_id, a, vi->attributes[a].binding,
-                           vi->attributes[a].format, vi->attributes[a].offset, e[0], e[1], e[2],
-                           e[3], e[4], e[5]);
-         }
-         for (uint32_t i = 0; i < vb_count; i++) {
-            const uint32_t *e = w + (vb_offset + i) * (PANVK_DESCRIPTOR_SIZE / 4);
-            uint64_t addr = e[2] | ((uint64_t)e[3] << 32), bv, bs;
-            panvk_g2_trace("vsbuf shader=%u b=%u w=%08x %08x %08x %08x %08x %08x addr=0x%" PRIx64
-                           " live=%u stride=%u rate=%u", g2vs->g2_trace_id, i, e[0], e[1], e[2],
-                           e[3], e[4], e[5], addr, pan_kmod_kbase_va_live(addr, 1, &bv, &bs),
-                           dyns->vi_binding_strides[i], vi->bindings[i].input_rate);
-         }
-      }
-   }
-#endif
    vs_desc_state->driver_set.dev_addr = driver_set.gpu;
    vs_desc_state->driver_set.size = desc_count * PANVK_DESCRIPTOR_SIZE;
    gfx_state_set_dirty(cmdbuf, DESC_STATE);
@@ -3499,20 +3469,6 @@ panvk_cmd_draw(struct panvk_cmd_buffer *cmdbuf, struct panvk_draw_info draw)
    if (!panvk_priv_mem_check_alloc(vs->spd))
       return;
 
-#if PAN_ARCH >= 15
-   if (panvk_g2_diagnostics) {
-      const struct panvk_shader_variant *g2fs =
-         cmdbuf->state.gfx.fs.shader ? panvk_shader_only_variant(cmdbuf->state.gfx.fs.shader) : NULL;
-      uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
-      cmdbuf->g2_draws.entries[n][0] = 1;
-      cmdbuf->g2_draws.entries[n][1] = vs->g2_trace_id;
-      cmdbuf->g2_draws.entries[n][2] = g2fs ? g2fs->g2_trace_id : 0;
-      cmdbuf->g2_draws.entries[n][3] =
-         draw.vertex.count | (uint64_t)draw.instance.count << 32;
-      for (uint32_t i = 4; i < 8; i++)
-         cmdbuf->g2_draws.entries[n][i] = 0;
-   }
-#endif
 
    /* Needs to be done before get_fs() is called because it depends on
     * fs.required being initialized. */
@@ -3545,25 +3501,12 @@ panvk_cmd_draw(struct panvk_cmd_buffer *cmdbuf, struct panvk_draw_info draw)
    if (result != VK_SUCCESS)
       return;
 
-#if PAN_ARCH >= 15
-   if (panvk_g2_diagnostics) {
-      uint64_t *e = cmdbuf->g2_draws.entries[(cmdbuf->g2_draws.count - 1) % PANVK_G2_DRAW_LOG];
-      e[4] = cmdbuf->state.gfx.vs.desc.res_table;
-      e[5] = cmdbuf->state.gfx.fs.desc.res_table;
-      e[6] = cmdbuf->state.gfx.vs.push_uniforms;
-      e[7] = draw.index.buffer_dev_addr ? draw.index.buffer_dev_addr : draw.indirect.buffer_dev_addr;
-   }
-   panvk_g2_crumb_start(cmdbuf, PANVK_SUBQUEUE_VERTEX_TILER);
-#endif
    update_prims_generated_query(cmdbuf, &draw);
 
    if (draw.indirect.buffer_dev_addr)
       launch_indirect_draw(cmdbuf, &draw);
    else
       launch_draw(cmdbuf, &draw);
-#if PAN_ARCH >= 15
-   panvk_g2_crumb(cmdbuf, PANVK_SUBQUEUE_VERTEX_TILER);
-#endif
 }
 
 VkResult
@@ -3654,7 +3597,7 @@ panvk_per_arch(CmdDrawIndirect)(VkCommandBuffer commandBuffer, VkBuffer _buffer,
       return;
 
    struct panvk_draw_info draw = {
-      .indirect.buffer_dev_addr = panvk_g2_checked_ptr(panvk_buffer_gpu_ptr(buffer, offset), 16, "indirect"),
+      .indirect.buffer_dev_addr = panvk_buffer_gpu_ptr(buffer, offset),
       .indirect.draw_count = drawCount,
       .indirect.stride = stride,
       .prim = panvk_get_client_prim(cmdbuf),
@@ -3676,7 +3619,7 @@ panvk_per_arch(CmdDrawIndexedIndirect)(VkCommandBuffer commandBuffer,
 
    struct panvk_draw_info draw = {
       .index = panvk_draw_info_index(cmdbuf, 0),
-      .indirect.buffer_dev_addr = panvk_g2_checked_ptr(panvk_buffer_gpu_ptr(buffer, offset), 16, "indirect"),
+      .indirect.buffer_dev_addr = panvk_buffer_gpu_ptr(buffer, offset),
       .indirect.draw_count = drawCount,
       .indirect.stride = stride,
       .prim = panvk_get_client_prim(cmdbuf),
@@ -3702,7 +3645,7 @@ panvk_per_arch(CmdDrawIndirectCount)(VkCommandBuffer commandBuffer,
       return;
 
    struct panvk_draw_info draw = {
-      .indirect.buffer_dev_addr = panvk_g2_checked_ptr(panvk_buffer_gpu_ptr(buffer, offset), 16, "indirect"),
+      .indirect.buffer_dev_addr = panvk_buffer_gpu_ptr(buffer, offset),
       .indirect.count_buffer_dev_addr =
          panvk_buffer_gpu_ptr(count_buffer, countBufferOffset),
       .indirect.draw_count = maxDrawCount,
@@ -3731,7 +3674,7 @@ panvk_per_arch(CmdDrawIndexedIndirectCount)(VkCommandBuffer commandBuffer,
 
    struct panvk_draw_info draw = {
       .index = panvk_draw_info_index(cmdbuf, 0),
-      .indirect.buffer_dev_addr = panvk_g2_checked_ptr(panvk_buffer_gpu_ptr(buffer, offset), 16, "indirect"),
+      .indirect.buffer_dev_addr = panvk_buffer_gpu_ptr(buffer, offset),
       .indirect.count_buffer_dev_addr =
          panvk_buffer_gpu_ptr(count_buffer, countBufferOffset),
       .indirect.draw_count = maxDrawCount,
@@ -4535,24 +4478,6 @@ cs_emit_static_fragment_state(struct cs_builder *b,
 #endif /* PAN_ARCH >= 14 */
 
 
-#if PAN_ARCH >= 15
-static uint64_t
-g2_att_info(const struct pan_image_view *pv, uint32_t load, uint64_t *base)
-{
-   const struct pan_image_plane_ref *ref = &pv->planes[0];
-   if (!ref->image || !ref->image->planes[ref->plane_idx])
-      return 0;
-   const struct pan_image_plane *pl = ref->image->planes[ref->plane_idx];
-   uint64_t bv, bs;
-   bool live = pan_kmod_kbase_va_live(pl->base, pl->layout.data_size_B, &bv, &bs);
-   *base = pl->base;
-   return pv->first_level | (uint64_t)(pv->first_layer_or_z_slice & 0xfff) << 8 |
-          (uint64_t)(pv->format & 0x3ff) << 20 | (uint64_t)(load & 0xf) << 32 |
-          (uint64_t)live << 36 | (uint64_t)drm_is_afbc(ref->image->props.modifier) << 37 |
-          (uint64_t)(ref->image->props.nr_slices & 0x3) << 38 |
-          ((pl->layout.data_size_B >> 16) & 0xffffff) << 40;
-}
-#endif
 
 static VkResult
 issue_fragment_jobs(struct panvk_cmd_buffer *cmdbuf)
@@ -4645,37 +4570,6 @@ issue_fragment_jobs(struct panvk_cmd_buffer *cmdbuf)
       cs_wait_slot(b, SB_ID(IMM_FLUSH));
    }
 
-#if PAN_ARCH >= 15
-   if (panvk_g2_diagnostics) {
-      struct panvk_rendering_state *render = &cmdbuf->state.gfx.render;
-      uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
-      uint64_t *e = cmdbuf->g2_draws.entries[n];
-      memset(e, 0, 8 * sizeof(*e));
-      e[0] = 4;
-      e[1] = render->fbds.gpu;
-      e[2] = render->fb.layout.width_px | (uint64_t)render->fb.layout.height_px << 16 |
-             (uint64_t)render->layer_count << 32 | (uint64_t)render->fb.layout.rt_count << 48;
-      for (uint32_t rt = 0; rt < 2; rt++) {
-         const struct panvk_image_view *iv = render->color_attachments.preload_iviews[rt]
-            ? render->color_attachments.preload_iviews[rt] : render->color_attachments.iviews[rt];
-         if (iv)
-            e[4 + rt] = g2_att_info(&iv->pview, render->fb.load.rts[rt].in_bounds_load,
-                                    &e[rt == 0 ? 3 : 7]);
-      }
-      const struct panvk_image_view *zv = render->z_attachment.preload_iview
-         ? render->z_attachment.preload_iview : render->z_attachment.iview;
-      if (!zv)
-         zv = render->s_attachment.iview;
-      uint64_t zbase = 0;
-      if (zv)
-         e[6] = g2_att_info(&zv->pview, render->fb.load.z.in_bounds_load |
-                                           render->fb.load.s.in_bounds_load << 2, &zbase);
-      /* The ZS base shares the slot of the second render target when both are present. */
-      if (!e[7])
-         e[7] = zbase;
-   }
-   panvk_g2_crumb_start(cmdbuf, PANVK_SUBQUEUE_FRAGMENT);
-#endif
    struct cs_index fbd_pointer = cs_sr_reg64(b, FRAGMENT, FBD_POINTER);
 
    if (cmdbuf->state.gfx.render.layer_count <= 1) {
@@ -4716,9 +4610,6 @@ issue_fragment_jobs(struct panvk_cmd_buffer *cmdbuf)
    mark_crc_valid_after_fragment(b, cmdbuf);
 #endif
 
-#if PAN_ARCH >= 15
-   panvk_g2_crumb(cmdbuf, PANVK_SUBQUEUE_FRAGMENT);
-#endif
 
    struct cs_index sync_addr = cs_scratch_reg64(b, 0);
    struct cs_index sb_update_scratch_regs = cs_scratch_reg_tuple(b, 2, 2);

@@ -20,17 +20,6 @@
 #include "pan_pool.h"
 #include "pan_util.h"
 
-#if PAN_ARCH >= 15
-void (*pan_g2_check_texture_plane)(uint64_t addr, uint64_t size, const char *kind);
-#define G2_CHECK_PLANE(addr, size, kind)                                       \
-   do {                                                                        \
-      if (pan_g2_check_texture_plane)                                          \
-         pan_g2_check_texture_plane((addr), (size), (kind));                   \
-   } while (0)
-#else
-#define G2_CHECK_PLANE(addr, size, kind) do { } while (0)
-#endif
-
 #if PAN_ARCH >= 5
 /*
  * Arm Scalable Texture Compression (ASTC) corresponds to just a few formats.
@@ -465,7 +454,6 @@ emit_generic_plane(const struct pan_image_view *iview, int plane_idx,
    get_linear_or_u_tiled_plane_props(iview, plane_idx, mip_level,
                                      layer_or_z_slice, &plane_addr, &row_stride,
                                      &slice_stride, &plane_size);
-   G2_CHECK_PLANE(plane_addr, plane_size, "linear_or_u_tiled");
 
    const bool raw_linear = raw_block_view_is_linear(iview, props);
    unsigned width = u_minify(props->extent_px.width, mip_level);
@@ -517,7 +505,6 @@ emit_astc_plane(const struct pan_image_view *iview, int plane_idx,
    get_linear_or_u_tiled_plane_props(iview, plane_idx, mip_level,
                                      layer_or_z_slice, &plane_addr, &row_stride,
                                      &slice_stride, &plane_size);
-   G2_CHECK_PLANE(plane_addr, plane_size, "linear_or_u_tiled");
 
 #define ASTC_PLANE_SET_COMMON_PROPS()                                          \
    cfg.clump_ordering = modifier_clump_ordering(props->modifier);              \
@@ -674,7 +661,6 @@ emit_afbc_plane(const struct pan_image_view *iview, int plane_idx,
    get_afbc_plane_props(iview, plane_idx, mip_level, layer_or_z_slice,
                         &header_addr, &header_row_stride, &header_slice_size,
                         &header_slice_stride, &plane_size);
-   G2_CHECK_PLANE(header_addr, plane_size, "afbc");
 
    /* We can't do 3-planar formats with AFBC. */
    assert(desc->layout != UTIL_FORMAT_LAYOUT_PLANAR3);

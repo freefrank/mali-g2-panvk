@@ -13,7 +13,6 @@
 
 #include "panvk_buffer.h"
 #include "panvk_buffer_view.h"
-#include "panvk_g2_trace.h"
 #include "panvk_device.h"
 #include "panvk_entrypoints.h"
 #include "panvk_priv_bo.h"
@@ -55,9 +54,6 @@ panvk_per_arch(CreateBufferView)(VkDevice _device,
          .width_el = view->vk.elements,
          .base = panvk_buffer_gpu_ptr(buffer, pCreateInfo->offset),
       };
-#if PAN_ARCH >= 15
-      panvk_g2_check_range(bview.base, view->vk.range, "texel_buffer", ~0u, ~0u);
-#endif
 #if PAN_ARCH >= 9
       GENX(pan_buffer_texture_emit)(&bview, &view->descs.buf);
 #else

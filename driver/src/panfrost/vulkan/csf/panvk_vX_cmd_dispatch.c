@@ -15,8 +15,6 @@
 #include "panvk_buffer.h"
 #include "panvk_cmd_alloc.h"
 #include "panvk_cmd_buffer.h"
-#include "panvk_g2_trace.h"
-#include "panfrost/lib/kmod/kbase_kmod.h"
 #include "panvk_cmd_desc_state.h"
 #include "panvk_cmd_meta.h"
 #include "panvk_cmd_push_constant.h"
@@ -302,9 +300,6 @@ panvk_per_arch(cmd_dispatch_shader)(
       }
    }
 
-#if PAN_ARCH >= 15
-   panvk_g2_crumb_start(cmdbuf, PANVK_SUBQUEUE_COMPUTE);
-#endif
    cs_next_iter_sb(cmdbuf, PANVK_SUBQUEUE_COMPUTE,
                    cs_scratch_reg_tuple(b, 0, 2));
 
@@ -334,9 +329,6 @@ panvk_per_arch(cmd_dispatch_shader)(
       }
    }
 
-#if PAN_ARCH >= 15
-   panvk_g2_crumb(cmdbuf, PANVK_SUBQUEUE_COMPUTE);
-#endif
    panvk_per_arch(cmd_signal_barrier)(cmdbuf, info->barrier);
 
    clear_dirty_after_dispatch(cmdbuf);
@@ -347,16 +339,6 @@ cmd_dispatch(struct panvk_cmd_buffer *cmdbuf, struct panvk_dispatch_info *info)
 {
    const struct panvk_shader_variant *cs =
       panvk_shader_only_variant(cmdbuf->state.compute.shader);
-#if PAN_ARCH >= 15
-   if (panvk_g2_diagnostics) {
-      uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
-      cmdbuf->g2_draws.entries[n][0] = 2;
-      cmdbuf->g2_draws.entries[n][1] = cs ? cs->g2_trace_id : 0;
-      cmdbuf->g2_draws.entries[n][2] = cmdbuf->state.push_constants.data[0];
-      cmdbuf->g2_draws.entries[n][3] = cmdbuf->state.push_constants.data[1];
-      cmdbuf->g2_draws.entries[n][4] = cmdbuf->g2_draws.entries[n][5] = 0;
-   }
-#endif
    VkResult result;
 
    /* If there's no compute shader, we can skip the dispatch. */
@@ -411,34 +393,6 @@ cmd_dispatch(struct panvk_cmd_buffer *cmdbuf, struct panvk_dispatch_info *info)
          return;
    }
 
-#if PAN_ARCH >= 15
-   if (panvk_g2_diagnostics) {
-      uint64_t *e = cmdbuf->g2_draws.entries[(cmdbuf->g2_draws.count - 1) % PANVK_G2_DRAW_LOG];
-      e[4] = cs_desc_state->res_table;
-      e[5] = push_uniforms.gpu;
-   }
-   if (to_panvk_device(cmdbuf->vk.base.device)->g2_crumbs) {
-      static uint32_t dumped;
-      if (cs->info.tls_size == 0 && cs->bin_size > 2048 &&
-          p_atomic_inc_return(&dumped) <= 4096) {
-         u_foreach_bit(si, cs_desc_info->used_set_mask) {
-            const struct panvk_descriptor_set *set = desc_state->sets[si];
-            if (!set) {
-               panvk_g2_trace("desc shader=%u set=%u unbound", cs->g2_trace_id, si);
-               continue;
-            }
-            const uint32_t *w = set->descs.host;
-            for (uint32_t d = 0; w && d < MIN2(set->desc_count, 16); d++) {
-               const uint32_t *e = w + d * (PANVK_DESCRIPTOR_SIZE / 4);
-               uint64_t addr = e[2] | ((uint64_t)e[3] << 32), bv, bs;
-               panvk_g2_trace("desc shader=%u set=%u d=%u w=%08x %08x %08x %08x addr=0x%" PRIx64
-                              " live=%u", cs->g2_trace_id, si, d, e[0], e[1], e[2], e[3], addr,
-                              pan_kmod_kbase_va_live(addr, 1, &bv, &bs));
-            }
-         }
-      }
-   }
-#endif
    struct cs_builder *b = panvk_get_cs_builder(cmdbuf, PANVK_SUBQUEUE_COMPUTE);
 
    /* Copy the global TLS pointer and size to the per-job TSD. */
