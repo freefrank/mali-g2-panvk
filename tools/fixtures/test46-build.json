@@ -29,7 +29,7 @@
     "elf_allocated_sections_identical": 27,
     "zip_crc_and_library_sha": true,
     "runtime": "29 candidate cases and 1 expected-failure baseline control passed.",
-    "game": "Initially normal, then GPU-thread SIGABRT on VK_ERROR_INITIALIZATION_FAILED from CreateSurface; no new Eden GPU page fault observed."
+    "game": "Initial successful resumes followed by surface exception, then null-swapchain SIGSEGV. Latest probe recorded 8 successful surface creations; remaining application/loader path is outside ICD handling."
   },
   "settings": {
     "resolution": "1x",
@@ -40,7 +40,7 @@
   },
   "download_path": "/storage/emulated/0/Download/panvk-mali-g2-test46-resume-49bf70e-0f5c62e4.zip",
   "applied_to_eden": true,
-  "status": "Applied. Native retirement regression passes; user resume initially successful, then Android surface-creation exception caused another native crash. Overall resume remains unresolved.",
+  "status": "Applied. ANB retirement guard verified; later Eden/Android-loader surface exception and null-swapchain SIGSEGV remain. User restricts work to driver only.",
   "runtime_candidate_cases": 29,
   "runtime_baseline_controls": 1,
   "reports": {
@@ -59,6 +59,10 @@
     "test46-game-resume.json": {
       "path": "tools/fixtures/test46-game-resume.json",
       "sha256": "6107be0425ed9e9607822dbab108ac62444d6135b4f9f063af502e38eae5dbda"
+    },
+    "test46-surface-capture.json": {
+      "path": "tools/fixtures/test46-surface-capture.json",
+      "sha256": "484aca61e16653a3f4b42a35dd35ad71a682284df74c6061189069cca0e63a43"
     }
   }
 }

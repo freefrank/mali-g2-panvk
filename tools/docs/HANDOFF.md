@@ -1,4 +1,4 @@
-# 交接文档（2026-10-30，test46 已应用；内存回收对照通过，仍有 Android 表面创建异常，继续排查）
+# 交接文档（2026-10-30，test46 内存回收修复已应用；最新空交换链崩溃在系统接口，用户限定只修驱动）
 
 接手前先读完本文件，再读 `STATUS.md`（历史结论）和 `BUILD_AND_TEST.md`（构建细节）。
 Policy marker: biblioklept
@@ -20,7 +20,15 @@ Policy marker: biblioklept
 
 源码提交、driver 子树、原包库/ZIP/补丁哈希的机器可读映射在 `tools/fixtures/test44-source-checkpoints.json`。原包构建发生在这些提交之前，包名中的 bfcc5d7 与历史 manifest 不改写；其 driver 源码已逐字节对应到表中提交。旧记录中的“无提交或推送”描述当时状态，已由本节补充。构建产物、符号、原始设备日志和私有配置未加入 Git。
 
-## 当前状态：test46 内存回收对照通过，仍有表面创建崩溃
+## 当前状态：用户限定只修驱动；保留 test46，不改 Eden
+
+- 用户在询问是否处理 Eden 应用层后明确要求「继续」「只修驱动」。没有准备、修改、构建或替换 Eden 源码/APK；后续不要再请求同一范围确认，也不要通过进程注入、系统 loader 热补丁等方式绕过这个约束。test46 的源码、30 项运行回归/对照和包已保留；整体切回稳定性和卡顿未解决。
+- 最新 surface 只读 uprobe 捕获 24/24 事件、8 次 CreateSurface：函数指针全部非空，底层 VkResult 全为 VK_SUCCESS，包括切回后的两次调用。故本窗口没有复现上一轮的表面创建异常；不能把所有退出都归到创建失败。
+- 12:36:20.898445632Z，PID 15848 GPU 线程 SIGSEGV，空地址读；PC 在 Android libvulkan memfd loader +0x3326c。本机二进制该指令 ldr x8,[x25]；寄存器 x25=0，函数入口将 swapchain 参数 x1 复制到 x25，x1 也为 0。准确 APK 的 Swapchain::AcquireNextImage 从 this+0x18 读出 swapchain，直接调用系统 vkAcquireNextImageKHR，没有空值检查。此调用尚未进入 PanVK 的 AcquireImageANDROID，标准驱动接口不能修正已在系统层解引用的空句柄。
+- 对照源码及准确 APK 反汇编，Swapchain::Create 在 capabilities.maxImageExtent 为 0 时会直接返回；这与空 swapchain 的后续使用相容。但本次未直接捕获该次 capabilities 输入，必须作为源码支持的解释而非已测定值。tombstone 的旧 host_memory assert 文字不是本轮 SIGSEGV 的定位依据。
+- 原始捕获结束于进程退出，4 个 probe 与独立 trace instance 已清理，诊断属性未开启。证据 fixtures/test46-surface-capture.json；原始资料 work/eden-perf49/。保留已验证的 ANB 回收修复，不以新的无依据驱动改动或每帧等待掩盖系统入口的非法参数；后续驱动性能工作需对应实际 GPU 数据。
+
+## 前一阶段：test46 内存回收对照通过，仍有表面创建崩溃
 
 - 最新反馈优先：用户先回复「切回正常，未再退出」，随后又报告「又退出了」，不能标记切回稳定性已解决。12:30:58Z 已通过 /proc/12997/map_files 校验实际加载库为 test46 0f5c62e4...。12:31:03.663177184Z 同一 PID 12997 的 GPU 线程 SIGABRT，未捕获 VK_ERROR_INITIALIZATION_FAILED；Eden 最后错误仍为 vulkan_surface.cpp:58 Failed to initialize Android surface，Draw 的 noexcept 路径进入 std::terminate。两种异步保持 false。
 - 这轮没有观察到新的 Eden GPU 页错误。最新 dmesg 页错误属于 vulkan_android PID 17620，是短回归中故意让旧库提前销毁 ANB 的对照，不能误归到用户游戏 PID 12997。最新游戏崩溃与此前 DEVICE_LOST 应分开。下一步记录准确 APK 中 CreateSurface 的函数查找结果及 Android 调用实际 VkResult，当前不修改 APK。

@@ -1,0 +1,146 @@
+{
+  "policy_marker": "biblioklept",
+  "driver": "test46",
+  "driver_sha256": "0f5c62e45a6135d68c91c287e51e970276514056a29a2d7a0fb6fdbe0a0a00b2",
+  "user_scope": "只修驱动",
+  "status": "Driver-only scope; remaining application/Android-loader failures are unresolved. No Eden source or APK change prepared or applied.",
+  "surface_capture": {
+    "events": 24,
+    "written": 24,
+    "calls": 8,
+    "all_underlying_results": "VK_SUCCESS",
+    "all_function_pointers_nonnull": true,
+    "failed_surface_creations_observed": 0,
+    "latest_resume_surface_creations_boot_s": [
+      440528.79454,
+      440528.810864
+    ],
+    "cleanup": "Stopped on process exit and all four probes/private instance removed."
+  },
+  "latest_crash": {
+    "utc": "2026-10-30T12:36:20.898445632Z",
+    "pid": 15848,
+    "thread": "GPU",
+    "signal": "SIGSEGV",
+    "fault_address": "0x0",
+    "library": "Android libvulkan.so memfd loader",
+    "pc_offset": "0x3326c",
+    "instruction": "ldr x8, [x25]",
+    "register_x25": "0x0",
+    "register_x1": "0x0",
+    "argument_origin": "Loader prologue at 0x33258 copies swapchain argument x1 to x25. Eden AcquireNextImage loads swapchain field +0x18 into x1 and calls Android vkAcquireNextImageKHR without a null check.",
+    "frames": [
+      "Android Vulkan loader +0x3326c",
+      "Vulkan::Swapchain::AcquireNextImage+88",
+      "PresentManager::CopyToSwapchainImpl+284",
+      "PresentManager::CopyToSwapchain+296",
+      "PresentManager::Present+196"
+    ],
+    "stale_abort_message_note": "host_memory assert remains in abort-message slot; actual signal/PC/operands establish the current null read, not that older assert."
+  },
+  "interpretation": {
+    "confirmed": "This crash reaches Android swapchain acquisition with a null application-supplied swapchain handle before any PanVK image-acquire callback.",
+    "source_inference": "The matching installed Swapchain::Create can return early on zero maxImageExtent; AcquireNextImage has no null-swapchain guard. Exact zero-capability event was not captured here, so it remains a source-supported explanation rather than a measured input.",
+    "earlier_surface_exception": "The previous test46 VK_ERROR_INITIALIZATION_FAILED event remains separately documented; all creations in this latest capture succeeded.",
+    "boundary": "A standards-compliant ICD cannot repair an invalid handle consumed by Android loader code before the ICD receives the call. Do not add speculative per-frame GPU serialization or modify Eden under the driver-only constraint.",
+    "architecture_reference": "https://source.android.com/docs/core/graphics/implement-vulkan"
+  },
+  "driver_work_retained": "Test46 waits for submitted CSF group completion before freeing ANB-owned images. 29 candidate regressions and 1 expected-failure test45 control passed. Overall game resume/stutter are not declared solved.",
+  "raw_evidence": [
+    {
+      "path": "tools/work/eden-perf49/surface/access.txt",
+      "bytes": 41,
+      "sha256": "cd4bba400cf6e582cc8cb20a4b40f525b25f55f5ada16b1cb06f8b9494122f01"
+    },
+    {
+      "path": "tools/work/eden-perf49/surface/app-pid.txt",
+      "bytes": 6,
+      "sha256": "fc782d94d5ae074dd500e8c0409a98aabae6c2b899e643454fb9dc519eb8efe5"
+    },
+    {
+      "path": "tools/work/eden-perf49/surface/begin-format.txt",
+      "bytes": 675,
+      "sha256": "6a623b7ee99d3f5ba7a2cfb7fda62967f734be8cf27dd409b7a95a046a609b84"
+    },
+    {
+      "path": "tools/work/eden-perf49/surface/error-format.txt",
+      "bytes": 474,
+      "sha256": "25ac568d8ad939344cc62609657ab5268c21edbdf60cdb23d6d1adafba75697f"
+    },
+    {
+      "path": "tools/work/eden-perf49/surface/lookup-format.txt",
+      "bytes": 522,
+      "sha256": "9dd749b799252d76f4b518ceade2a3f85e302a6b632cbcc1652ca3bd68ce58f8"
+    },
+    {
+      "path": "tools/work/eden-perf49/surface/maps-before.txt",
+      "bytes": 401829,
+      "sha256": "e7a583ee97be9304c1b8e43685d00e158183a1f8a539b57103488bdd02e255df"
+    },
+    {
+      "path": "tools/work/eden-perf49/surface/ready.txt",
+      "bytes": 26,
+      "sha256": "c919dfeac7c8960b218468deff613c6c653a2888a105dca7672d1b21a3a9eb2d"
+    },
+    {
+      "path": "tools/work/eden-perf49/surface/returned-format.txt",
+      "bytes": 527,
+      "sha256": "6723fc8d9fa5008f35f2f6290a269461dea274e1d7f92a7382663e4bcc58cd90"
+    },
+    {
+      "path": "tools/work/eden-perf49/surface/stats.txt",
+      "bytes": 2003,
+      "sha256": "1b2c4016b3e3e0d51b7d32192eb822b4e0a8d450042188e36521c5833311fb0d"
+    },
+    {
+      "path": "tools/work/eden-perf49/surface/stop",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/work/eden-perf49/surface/stopped.txt",
+      "bytes": 26,
+      "sha256": "78caeaa1212cf1df0c18d987209ca7bd78584f3d30e116d2d2c76dbf371f963b"
+    },
+    {
+      "path": "tools/work/eden-perf49/surface/trace.txt",
+      "bytes": 3614,
+      "sha256": "d1b6d767a7f782c99696184c34443aa8d96b7c59decdbc25dfd539f4fa0f5906"
+    },
+    {
+      "path": "tools/work/eden-perf49/repro/activities.txt",
+      "bytes": 173188,
+      "sha256": "750ce60fb46758e832dafe5adaa8e649007a5d2e7e848044fa4a71011675f830"
+    },
+    {
+      "path": "tools/work/eden-perf49/repro/dmesg.txt",
+      "bytes": 1073132,
+      "sha256": "41d0eca319fea7f316ba886f6f9dc8dd8ab61cb82a207144fa10d91c64c52c71"
+    },
+    {
+      "path": "tools/work/eden-perf49/repro/eden-current.txt",
+      "bytes": 2592,
+      "sha256": "a7bba66e72a21959a617f47204a82fca411aded8c8872613c4f93d4a832644ae"
+    },
+    {
+      "path": "tools/work/eden-perf49/repro/eden-old.txt",
+      "bytes": 93455,
+      "sha256": "ddf24977be60b417be28841acdac1dd4bf265129631fb446c42c43c3eed586ef"
+    },
+    {
+      "path": "tools/work/eden-perf49/repro/events.txt",
+      "bytes": 225857,
+      "sha256": "60777c35183bad9042b1416a1dbb498631b0c00279a484871e24b44fed0bd275"
+    },
+    {
+      "path": "tools/work/eden-perf49/repro/exit-info.txt",
+      "bytes": 6438,
+      "sha256": "8cc6cc1ffeab7b2b455fbb23fa656aefea7534044f981e61582f6775d5364eb3"
+    },
+    {
+      "path": "tools/work/eden-perf49/repro/latest-tombstone.txt",
+      "bytes": 1410964,
+      "sha256": "d384a1cef9558c104344d2fb1ffda5c115bbc452e55ff0e9915666b4f040c08d"
+    }
+  ]
+}
