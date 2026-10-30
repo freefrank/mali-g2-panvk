@@ -451,18 +451,12 @@ panvk_GetSwapchainGrallocUsage2ANDROID(VkDevice device, VkFormat format,
 }
 #endif
 
-/*
- * The compositor hands the buffer over with a sync fd that signals once the display is done
- * reading it. vk_common imports it into the semaphore as a DRM syncobj, and kbase answers the
- * syncobj ioctls with success without doing anything, so the wait would be dropped and the GPU
- * could draw into a buffer still on screen. Every kbase submission already blocks until the GPU
- * is done, so waiting for the fd here, on the CPU, is the whole of the ordering.
- */
 VKAPI_ATTR VkResult VKAPI_CALL
 panvk_AcquireImageANDROID(VkDevice device, VkImage image, int nativeFenceFd,
                           VkSemaphore semaphore, VkFence fence)
 {
-   if (nativeFenceFd >= 0 && panvk_android_is_kbase(device)) {
+   if (nativeFenceFd >= 0 && panvk_android_is_kbase(device) &&
+       semaphore == VK_NULL_HANDLE && fence == VK_NULL_HANDLE) {
       struct pollfd pfd = {.fd = nativeFenceFd, .events = POLLIN};
       int ret;
       do {
