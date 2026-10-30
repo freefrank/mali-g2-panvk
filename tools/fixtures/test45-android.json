@@ -1,0 +1,52 @@
+{
+  "driver": "/root/mali-g2-project/tools/work/eden-test45/libvulkan_panfrost.so",
+  "results": [
+    {
+      "case": "import",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "triangle-native",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "texture-native",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "texture-ahb",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "texture-offscreen",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vertex-store",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fragcoord",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fragcoord-clockwise",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "drawid",
+      "returncode": 0,
+      "passed": true
+    }
+  ],
+  "policy_marker": "biblioklept",
+  "driver_sha256": "7d407064272ac63efa11d8958273da6d8e8cffc327b7bdf6cf8ff5efc827450e"
+}

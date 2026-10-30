@@ -1,0 +1,25 @@
+{
+  "policy_marker": "biblioklept",
+  "passed": true,
+  "probe": "Stripped candidate in existing native-fence correctness helper: 4096 copies, 1KB each, 1ms idle between iterations. Native-root read-only debugfs snapshot filtered to exact helper PID. User saved/exited and no game GPU threads before runtime tests.",
+  "groups": [
+    {
+      "GroupID": "0",
+      "CSG NR": "0",
+      "CSG Prio": "9",
+      "Run State": "1",
+      "Priority": "2",
+      "C_EP(Alloc/Req)": "0/ 16",
+      "F_EP(Alloc/Req)": "0/ 16",
+      "T_EP(Alloc/Req)": "0/  0",
+      "N_EP(Alloc/Req)": "0/  0",
+      "C_EP PRI Threshold": "4",
+      "C_EP PRI Ratio": "3",
+      "F_EP Task Limit": "0",
+      "Exclusive": "0",
+      "Idle": "Y"
+    }
+  ],
+  "global_priority_unchanged": true,
+  "initial_attempt": "Device/AHB helper holding idle did not have an on-slot group; per-context dump confirmed suspended queues but exposes no arbitration fields there. Excluded from parameter-readback proof."
+}

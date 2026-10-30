@@ -1,14 +1,14 @@
 {
-  "objective": "Preserve the Mali-G2 PanVK port, diagnostics, evidence and releases in one repository",
+  "objective": "Fix persistent Eden frame pacing and Android UI stutter while preserving confirmed rendering fixes.",
   "project_root": "/root/mali-g2-project",
   "driver_repo": "/root/mali-g2-project/driver",
   "backend_tools": "/root/mali-g2-project/tools",
   "eden_reference": "/root/mali-g2-project/references/eden",
-  "driver_head": "68bf8b6",
-  "latest_package": "/storage/emulated/0/Download/panvk-mali-g2-test10-3b3577e-4067a972.zip",
-  "current_status": "Test8b (68bf8b6, relinked without libc++.so) raises CSF vertex attributes/bindings to 32; the 32-input repro and regression tests pass on the G2. Awaiting Eden game-launch test.",
-  "build_note": "Old Meson and Ninja caches were intentionally not migrated because they contain obsolete absolute paths. Recreate driver/build-host and driver/build-android-arm before building.",
-  "git_policy": "Keep frequent local commits. Driver subtree policy requires Generated-by: LLM and biblioklept markers. Do not post upstream.",
+  "driver_head": "24e32e8b86164c9375aebab92a037b487f8ed872",
+  "latest_package": "/storage/emulated/0/Download/panvk-mali-g2-test45-perf-24e32e8-7d407064.zip",
+  "current_status": "test45 arbitration candidate built from committed source and delivered; 31 runtime cases passed, kernel reads 4/3 with Priority 2 unchanged. User game comparison pending. test44 still stutters; prior native tracing identified long waits for SurfaceFlinger GPU fences. Blur-off user feedback: still stutters. All temporary settings restored.",
+  "build_note": "Existing driver/build-host and driver/build-android-arm support incremental builds. Read tools/docs/BUILD_AND_TEST.md. test45 symbols and artifact hashes are in tools/artifacts/test45/build.json.",
+  "git_policy": "Commit and push each milestone to origin/main; user explicitly requested frequent commit/push. Generated-by: LLM and biblioklept markers required. Do not post upstream or rewrite pushed history.",
   "remaining_capabilities": [
     "fillModeNonSolid",
     "shaderClipDistance",
@@ -17,5 +17,14 @@
     "tessellationShader",
     "multiViewport",
     "geometry streams and transform feedback on CSF"
-  ]
+  ],
+  "policy_marker": "biblioklept",
+  "settings": {
+    "resolution": "1x",
+    "async_gpu": false,
+    "diagnostics": false,
+    "presentation": "Mailbox"
+  },
+  "next_step": "User imports test45, restarts Eden, compares movement and notification shade in the same scene. Do not run synthetic GPU tests while game/system UI stutter is active.",
+  "remaining_capabilities_note": "Historical test8-era list below has not been revalidated in this phase; consult STATUS.md for current capabilities."
 }

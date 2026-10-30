@@ -1,6 +1,6 @@
 {
   "policy_marker": "biblioklept",
-  "status": "Candidate; ABI/offline checks only before runtime validation.",
+  "status": "Build and runtime validation passed; game improvement pending.",
   "driver_baseline": "test44",
   "kernel_module_sha256": "93231818e4614e5ba60c8e699af1bfd1f1ff0bc78e637a25f157e3aded6a1e87",
   "kernel_abi_observed": "CSF 1.39; 112-byte request selects kbasep_cs_queue_group_create_1_35.",
@@ -38,7 +38,7 @@
   "validation": {
     "compile_time_size_and_offsets": true,
     "kernel_disassembly_checked": true,
-    "runtime": "pending; no GPU workload while user is playing",
+    "runtime": "31 runtime cases and one kernel readback passed; see test45-build.json.",
     "game": "pending"
   }
 }

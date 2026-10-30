@@ -1,4 +1,4 @@
-# 交接文档（2026-10-30，test44 仍卡；已捕获系统合成与 HWC 显示等待链）
+# 交接文档（2026-10-30，test45 仲裁参数候选已交付；游戏流畅度待实测）
 
 接手前先读完本文件，再读 `STATUS.md`（历史结论）和 `BUILD_AND_TEST.md`（构建细节）。
 Policy marker: biblioklept
@@ -20,7 +20,17 @@ Policy marker: biblioklept
 
 源码提交、driver 子树、原包库/ZIP/补丁哈希的机器可读映射在 `tools/fixtures/test44-source-checkpoints.json`。原包构建发生在这些提交之前，包名中的 bfcc5d7 与历史 manifest 不改写；其 driver 源码已逐字节对应到表中提交。旧记录中的“无提交或推送”描述当时状态，已由本节补充。构建产物、符号、原始设备日志和私有配置未加入 Git。
 
-## 当前排查：通知栏、SurfaceFlinger 与 HWC 同一时间线
+## 当前交付：test45，G2 计算/片元仲裁候选
+
+- 用户反馈关闭窗口模糊后仍「卡」，并要求继续。此前模糊开关已经自动恢复；不把补采空闲窗口当作性能 A/B 证据。test44 及前述系统卡慢结论仍成立。
+- test45 源码先提交并推送到 `24e32e8b86164c9375aebab92a037b487f8ed872`，再构建；包内 MESA_GIT_SHA1 与之对应。相对 test44 只改 kbase_kmod.c：给已有 112 字节兼容请求中的计算仲裁字段命名，并为架构 15 设置 threshold=min(max_compute,4)、ratio=3。其他架构保留全零。全局队列优先级、核心掩码/数量、缓存清理、fence 等待和所有渲染修复均未改动，诊断默认仍关闭。
+- 原厂队列此前实测为 4/3，PanVK 为 0/0；这只是候选依据，不能声称差异就是卡顿根因。已核对实际设备 mali_kbase.ko 的 `kbasep_cs_queue_group_create_1_35` 转换：输入偏移 48/49 到当前请求偏移 56/57；编译断言保持总长 112。公开 dijun r49 头文件存在不同 ABI，不能直接照搬。证据 `fixtures/test45-abi-contract.json`，实际内核二进制仅保留本地。
+- 用户已存档并完全退出 Eden，native-root 确认没有游戏 GPU 线程后才执行 GPU 回归。最终 stripped 包库通过 31 项运行回归：Android 图形/AHB 9、提交与 native fence/导入/MSAA/颜色/压缩纹理/深度 20、默认/显式关闭诊断审计 2。20 项中包括 4096 次独立 native fence 提交，校验复制结果，FD 9→9。独立回归中的计时不是游戏 FPS 证明。
+- 另有 1 项原生内核读回：短提交运行期间对准确测试 PID 读取只读 debugfs，确认 C_EP PRI Threshold=4、Ratio=3，Priority=2 未变。最初空闲设备快照没有驻留组，随后上下文快照仅能确认挂起队列，均不计作参数读回成功；最终活动队列快照才作为证据。再加 ELF 全部 27 个 SHF_ALLOC 节一致、ZIP CRC/库 SHA、Download 副本 SHA 等 3 项文件检查，共 35 项。
+- 包：`/storage/emulated/0/Download/panvk-mali-g2-test45-perf-24e32e8-7d407064.zip`。库 SHA `7d407064272ac63efa11d8958273da6d8e8cffc327b7bdf6cf8ff5efc827450e`；ZIP SHA `d029530c19deb0e1c2a9f9a7bec9fa49f0128a1746c4b16d2b06d92bab11b60e`。构建、报告及符号哈希在 `fixtures/test45-build.json` 和本地 `artifacts/test45/build.json`；符号 `artifacts/symbols/test45-unstripped.so.zst`。原包 test44 保留。
+- 已确认测试进程结束、私有 debugfs 挂载移除；调度 tick=100，窗口模糊设置=null/启用，两侧诊断关闭。没有改动 Eden 私有配置或强行覆盖运行中的驱动。下一步由用户导入 test45 并重启 Eden，在同一位置比较移动、FPS 和下拉通知栏。保持 1×、异步 GPU 关闭、Mailbox 当前值；游戏改善尚未验证，不标记为已解决。
+
+## test44 排查：通知栏、SurfaceFlinger 与 HWC 同一时间线
 
 - 本轮通过运行中 map_files 校验，当前实际库为 test44 `e5c4f675...`。没有新驱动改动或 test45 发布；旧 test43 映射仍可见，不能只按第一条映射判断当前版本。
 - 用户配合反复下拉、收起通知栏。首次 7.975 秒观察性采样记录 36,209 样本；确认配合操作后的联合 7.978 秒采样记录 30,373 样本，两次均零丢失。联合覆盖游戏、SystemUI、SurfaceFlinger 和厂商 HWC 所有线程，调用链错误约 4.29%。没有并行合成 GPU 负载，也没有修改驱动、Eden 配置或调度参数。
@@ -29,10 +39,10 @@ Policy marker: biblioklept
 - 线程离 CPU 区间含阻塞和就绪调度延迟，不是纯 GPU 时间；累计多线程百分比不能当作单帧占比。gfxinfo 是最多 120 帧滚动窗口，按新 IntendedVsync 去重，不用 Flags=0 过滤通知栏帧。TimeStats 只取前后增量，其 fence 延迟回填也不能当作精确 8 秒 FPS。
 - 用户再次配合后补采 8.148 秒内核显示与 dma_fence 事件：6,916 样本、零丢失。按 TID/context/seqno 配对 wait start/end，保留开始时的驱动/时间线（结束时 fence 可能已 detached）：显示提交线程等待 SF GPU 时间线 170 段、总 4965.04ms，p50 24.86ms、p95 75.42ms、最大 99.90ms；等待游戏 GPU 时间线 32 段、总 424.78ms，p95 30.09ms、最大 52.37ms。因此该操作窗口的主要迟到信号来自 SurfaceFlinger GPU，而不应直接归为游戏 present fence；仍需区分 SF 自己的 GPU 工作、其依赖和 GPU 调度。没有提前修改 fence 等待或序列化游戏呈现。
 - 已核对 SF 实际加载原厂 vulkan.mali.so/libGLES_mali.so。其他常驻低优先级 GPU 上下文属于 Termux UI；快照中的端点分配不是合成 GPU 测试仍运行的证据。补充只读 debugfs 快照结束后挂载已移除，没有改优先级或 tick。
-- 做过有自动恢复的窗口模糊对照：10:04:39Z 将 global disable_window_blurs 从 null 临时设为 1，系统查询 Blur enabled=false；10:07:41Z 自动删除该临时项，读回 null 且 Blur enabled=true。用户体感反馈仍待回复。关闭时补采 8.152 秒、11,350 样本、零丢失，但没有新增 SystemUI 帧，不能拿这段空闲窗口与操作通知栏的窗口比较并宣称模糊开关有效或无效。游戏、驱动和频率设置未变；不要把这次对照写成永久关闭模糊或已解决卡顿。
+- 做过有自动恢复的窗口模糊对照：10:04:39Z 将 global disable_window_blurs 从 null 临时设为 1，系统查询 Blur enabled=false；10:07:41Z 自动删除该临时项，读回 null 且 Blur enabled=true。用户后续反馈仍「卡」。关闭时补采 8.152 秒、11,350 样本、零丢失，但没有新增 SystemUI 帧，不能拿这段空闲窗口与操作通知栏的窗口比较并宣称模糊开关有效或无效。游戏、驱动和频率设置未变；不要把这次对照写成永久关闭模糊或已解决卡顿。
 - 摘要与本地原始数据哈希在 `tools/fixtures/test44-system-composition-profile.json`；完整原始记录、分析脚本与厂商库反汇编留在忽略目录 `tools/work/eden-perf45/`。单独的 HWC 记录和后续内核栈快照没有覆盖相同操作时段，不能用空闲比例否定联合记录中的等待。下一步核对系统合成效果与依赖/调度，确认后再决定驱动改动。
 
-## 当前交付：test44，用户确认卡顿依旧，整机卡慢继续定位
+## test44 历史交付：用户确认卡顿依旧
 
 - 最新用户反馈优先：test44「卡顿依旧」。用户进一步观察到系统界面卡慢随游戏 FPS 变化：游戏 60 FPS 时系统不卡，游戏低帧时系统更卡；下拉状态栏会拉低游戏 FPS，随之整个 Android 界面都卡慢。此前 test43、Mailbox 和 10ms 调度 tick 均无改善；本地 GPU 回归结束后系统仍慢。下一步应区分 GPU 资源争用与系统合成等待，不能据此直接宣布某一根因，也不能继续把 test44 标为待用户验证或已修复。
 - 上一轮运行中的库 SHA 校验为 test43 `c1e421b0...`；本轮已经确认 test44，见上节。首个 TimeStats 窗口因错误地用 dump 是否为空判断 enabled 而没有实际启用，混入旧统计，已排除其呈现间隔。正确启用后的新窗口按前后增量解析，同一 SurfaceView 60 Hz 分组新增 724 帧：16ms×421、33ms×281、50ms×22；该新图层累计平均 42.317 FPS。这是实际呈现统计，不等于游戏内部 FPS。解析器 `tools/work/eden-perf44/analyze_intervals.py`，已核对相同文件差分为零和 724 帧直方图。

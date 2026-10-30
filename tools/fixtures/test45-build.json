@@ -1,0 +1,78 @@
+{
+  "policy_marker": "biblioklept",
+  "tag": "test45-perf",
+  "status": "Candidate delivered; 31 runtime cases passed, one kernel readback and three file integrity checks passed; same-scene game performance pending.",
+  "source_commit": "24e32e8b86164c9375aebab92a037b487f8ed872",
+  "source_uncommitted": false,
+  "driver_tree": "3d08e631dac846d944bfc6ac914a764ee94939ca",
+  "source_patch_sha256": "2de316536a0e70bedb1cd7d09c30622b2ad7cd2bc44dfa7eb6a9520ef6d2b866",
+  "library_sha256": "7d407064272ac63efa11d8958273da6d8e8cffc327b7bdf6cf8ff5efc827450e",
+  "unstripped_library_sha256": "f819555603eee1e49ee61563c221a122fc6c41e21047e3db57d42847d454a22a",
+  "zip_name": "panvk-mali-g2-test45-perf-24e32e8-7d407064.zip",
+  "zip_sha256": "d029530c19deb0e1c2a9f9a7bec9fa49f0128a1746c4b16d2b06d92bab11b60e",
+  "package": {
+    "schemaVersion": 1,
+    "name": "PanVK Mali-G2-test45-perf-24e32e8-7d407064 (Mesa 27.0.0-devel)",
+    "description": "PanVK for Mali Bifrost and Valhall GPUs on the stock Arm kbase kernel driver, based on Mesa 27.0.0-devel.",
+    "author": "JimVulkan",
+    "packageVersion": "71.90614",
+    "vendor": "Mesa",
+    "driverVersion": "Vulkan 1.3.363",
+    "minApi": 31,
+    "libraryName": "libvulkan_panfrost.so"
+  },
+  "change": "G2 compute-priority threshold min(max_compute,4), ratio 3; request size 112 and byte offsets 48/49 preserved.",
+  "diagnostics_default": false,
+  "global_priority_changed": false,
+  "core_count_changed": false,
+  "settings_changed": false,
+  "baseline_test44": "e5c4f67565560404b37a50c334680046ea94341db4f1d62f3dd0f16208206fec",
+  "tests": {
+    "build_passed": true,
+    "elf_allocated_sections_identical": 27,
+    "zip_crc_and_contained_library_sha": true,
+    "runtime": "31 cases passed",
+    "game": "pending",
+    "kernel_readback": "4/3; Priority 2 unchanged",
+    "diagnostics": "Default-off and explicit-off: zero diagnostic sockets, signal handlers, UDP datagrams and trace bytes."
+  },
+  "download_path": "/storage/emulated/0/Download/panvk-mali-g2-test45-perf-24e32e8-7d407064.zip",
+  "symbol_archive": "tools/artifacts/symbols/test45-unstripped.so.zst",
+  "symbol_archive_sha256": "614b41992105017546b2062742e3bdac2e34b9a30100151d408d0afc9cb2e8f1",
+  "reports": {
+    "android": {
+      "path": "tools/fixtures/test45-android.json",
+      "cases": 9,
+      "sha256": "ac774e269c1480f844f63ff8209fead79bd7fdb3e99fe08bf48ac0890f79aa50",
+      "passed": true
+    },
+    "runtime": {
+      "path": "tools/fixtures/test45-runtime.json",
+      "cases": 20,
+      "sha256": "7e8aa0c1b1b83eee0658ef3caa6afb0cfe3d9bb585e403902c740721abaed215",
+      "passed": true
+    },
+    "diagnostics": {
+      "path": "tools/fixtures/test45-diagnostics.json",
+      "cases": 2,
+      "sha256": "0c692bfc5f6ffb2b08677d026f42f85b9b329a8d9dd5699bae6cfe07c08425c2",
+      "passed": true
+    },
+    "kernel-readback": {
+      "path": "tools/fixtures/test45-kernel-readback.json",
+      "cases": 1,
+      "sha256": "916f6be6d3a5aac1fff022fda3f8ed2f63335ad29bb00f55c9fd86aabfe9d3a8",
+      "passed": true
+    },
+    "packaged-integrity": {
+      "path": "tools/fixtures/test45-packaged-integrity.json",
+      "cases": 3,
+      "sha256": "d767a84591230ac8444b507d65fd319a0b5fb984e8215d74b149c693bf69a9d8",
+      "passed": true
+    }
+  },
+  "runtime_cases_total": 31,
+  "checks_total": 35,
+  "game_validation": "Pending import/restart and same-scene movement plus notification-shade comparison; no game FPS or root-cause fix claim.",
+  "runpath": "Unchanged from test44; no libc++.so dependency."
+}

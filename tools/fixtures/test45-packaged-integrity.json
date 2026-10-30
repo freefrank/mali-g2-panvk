@@ -1,0 +1,21 @@
+{
+  "policy_marker": "biblioklept",
+  "results": [
+    {
+      "case": "stripped-ELF-allocated-sections",
+      "passed": true,
+      "sections": 27
+    },
+    {
+      "case": "ZIP-CRC-contained-library-SHA",
+      "passed": true
+    },
+    {
+      "case": "Download-copy-SHA",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "library_sha256": "7d407064272ac63efa11d8958273da6d8e8cffc327b7bdf6cf8ff5efc827450e",
+  "zip_sha256": "d029530c19deb0e1c2a9f9a7bec9fa49f0128a1746c4b16d2b06d92bab11b60e"
+}

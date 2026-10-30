@@ -1,0 +1,129 @@
+{
+  "policy_marker": "biblioklept",
+  "driver_sha256": "7d407064272ac63efa11d8958273da6d8e8cffc327b7bdf6cf8ff5efc827450e",
+  "method": "All runtime cases use the stripped library from the candidate ZIP. User saved/exited; native-root game-thread guard was zero before testing. GPU timings are not game FPS evidence.",
+  "results": [
+    {
+      "case": "submit-1",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "submit-16",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "submit-128",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "completion-1",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "completion-128",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "acquire-semaphore",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.792,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 1
+    },
+    {
+      "case": "acquire-fence",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.033,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "acquire-both",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.069,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 1
+    },
+    {
+      "case": "acquire-none",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 486.14,
+      "native_pending_after_return": 0,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "acquire-signaled",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.167,
+      "native_pending_after_return": 0,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "acquire-minusone",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.01,
+      "native_pending_after_return": 0,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "msaa-37-layer0",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "msaa-37-layer1",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "msaa-97-layer0",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "msaa-97-layer1",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "render-color",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "render-compressed-copy",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "render-depth126",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "render-depth129",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "completion-4096-kernel-readback",
+      "passed": true,
+      "returncode": 0,
+      "iterations": 4096,
+      "fd_start": 9,
+      "fd_end": 9
+    }
+  ],
+  "passed": true
+}
