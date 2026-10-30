@@ -3500,7 +3500,7 @@ panvk_cmd_draw(struct panvk_cmd_buffer *cmdbuf, struct panvk_draw_info draw)
       return;
 
 #if PAN_ARCH >= 15
-   {
+   if (panvk_g2_diagnostics) {
       const struct panvk_shader_variant *g2fs =
          cmdbuf->state.gfx.fs.shader ? panvk_shader_only_variant(cmdbuf->state.gfx.fs.shader) : NULL;
       uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
@@ -3546,7 +3546,7 @@ panvk_cmd_draw(struct panvk_cmd_buffer *cmdbuf, struct panvk_draw_info draw)
       return;
 
 #if PAN_ARCH >= 15
-   {
+   if (panvk_g2_diagnostics) {
       uint64_t *e = cmdbuf->g2_draws.entries[(cmdbuf->g2_draws.count - 1) % PANVK_G2_DRAW_LOG];
       e[4] = cmdbuf->state.gfx.vs.desc.res_table;
       e[5] = cmdbuf->state.gfx.fs.desc.res_table;
@@ -4646,7 +4646,7 @@ issue_fragment_jobs(struct panvk_cmd_buffer *cmdbuf)
    }
 
 #if PAN_ARCH >= 15
-   {
+   if (panvk_g2_diagnostics) {
       struct panvk_rendering_state *render = &cmdbuf->state.gfx.render;
       uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
       uint64_t *e = cmdbuf->g2_draws.entries[n];

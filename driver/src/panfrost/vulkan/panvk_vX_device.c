@@ -592,7 +592,7 @@ panvk_per_arch(create_device)(struct panvk_physical_device *physical_device,
                               const VkAllocationCallbacks *pAllocator,
                               VkDevice *pDevice)
 {
-   if (PAN_ARCH == 15)
+   if (PAN_ARCH == 15 && panvk_g2_diagnostics)
       panvk_g2_trace("device begin build=%s queues=%u threads_core=%u threads_wg=%u regs=%u "
                      "tasks=%u tls=%u", MESA_GIT_SHA1, pCreateInfo->queueCreateInfoCount,
                      physical_device->kmod.dev->props.max_threads_per_core,
@@ -871,7 +871,7 @@ panvk_per_arch(create_device)(struct panvk_physical_device *physical_device,
 #endif
 
    *pDevice = panvk_device_to_handle(device);
-   if (PAN_ARCH == 15)
+   if (PAN_ARCH == 15 && panvk_g2_diagnostics)
       panvk_g2_check_install(), panvk_g2_trace("device ready");
    return VK_SUCCESS;
 

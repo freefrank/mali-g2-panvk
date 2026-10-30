@@ -1521,11 +1521,12 @@ panvk_kbase_csf_done(void *data, bool ok)
    struct panvk_kbase_csf_done *d = data;
    struct panvk_device *dev = to_panvk_device(d->queue->vk.base.device);
 
-   if (PAN_ARCH == 15 && (panvk_g2_trace_submission(d->trace_id) || !ok))
+   if (PAN_ARCH == 15 && panvk_g2_diagnostics &&
+       (panvk_g2_trace_submission(d->trace_id) || !ok))
       panvk_g2_trace("gpu complete id=%u ok=%u", d->trace_id, ok);
 
    if (!ok) {
-      if (PAN_ARCH == 15 && !d->queue->kbase_lost)
+      if (PAN_ARCH == 15 && panvk_g2_diagnostics && !d->queue->kbase_lost)
          pan_kmod_kbase_dump_freed(panvk_g2_trace, 4096);
       d->queue->kbase_lost = true;
    }
@@ -1759,7 +1760,8 @@ panvk_per_arch(gpu_queue_submit)(struct vk_queue *vk_queue, struct vk_queue_subm
    struct panvk_gpu_queue *gpu_queue = container_of(vk_queue, struct panvk_gpu_queue, vk);
    if (gpu_queue->kbase_group) {
       static uint32_t trace_count;
-      uint32_t trace_id = PAN_ARCH == 15 ? p_atomic_inc_return(&trace_count) : 0;
+      uint32_t trace_id = PAN_ARCH == 15 && panvk_g2_diagnostics ?
+         p_atomic_inc_return(&trace_count) : 0;
       bool trace = PAN_ARCH == 15 && panvk_g2_trace_submission(trace_id);
       if (trace && PANVK_DEBUG(SYNC))
          panvk_g2_trace_eden_log();

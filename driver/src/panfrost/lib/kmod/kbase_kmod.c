@@ -53,6 +53,8 @@
 
 extern const struct pan_kmod_ops kbase_kmod_ops;
 
+DEBUG_GET_ONCE_BOOL_OPTION(kbase_g2_diagnostics, "PANVK_G2_DIAGNOSTICS", false)
+
 /* ---- kbase UAPI, recovered by measurement ------------------------------------------------- */
 
 #define KBASE_IOCTL_TYPE 0x80
@@ -559,6 +561,8 @@ static simple_mtx_t kbase_live_lock = SIMPLE_MTX_INITIALIZER;
 static void
 kbase_live_add(uint64_t va, uint64_t size)
 {
+   if (!debug_get_option_kbase_g2_diagnostics())
+      return;
    simple_mtx_lock(&kbase_live_lock);
    if (kbase_live_count < KBASE_LIVE_MAX) {
       kbase_live[kbase_live_count].va = va;
@@ -571,6 +575,8 @@ kbase_live_add(uint64_t va, uint64_t size)
 static void
 kbase_live_remove(uint64_t va)
 {
+   if (!debug_get_option_kbase_g2_diagnostics())
+      return;
    simple_mtx_lock(&kbase_live_lock);
    for (unsigned i = 0; i < kbase_live_count; i++) {
       if (kbase_live[i].va == va) {
@@ -584,6 +590,10 @@ kbase_live_remove(uint64_t va)
 bool
 pan_kmod_kbase_va_live(uint64_t va, uint64_t size, uint64_t *bo_va, uint64_t *bo_size)
 {
+   if (!debug_get_option_kbase_g2_diagnostics()) {
+      *bo_va = *bo_size = 0;
+      return false;
+   }
    bool found = false;
    simple_mtx_lock(&kbase_live_lock);
    for (unsigned i = 0; i < kbase_live_count; i++) {
@@ -699,6 +709,8 @@ kbase_now_ns(void)
 void
 pan_kmod_kbase_dump_freed(void (*report)(const char *fmt, ...), unsigned count)
 {
+   if (!debug_get_option_kbase_g2_diagnostics())
+      return;
    const uint64_t now = kbase_now_ns();
    for (unsigned i = 0; i < MIN2(count, KBASE_FREED_RING); i++) {
       unsigned idx = (kbase_freed_next + KBASE_FREED_RING - i) % KBASE_FREED_RING;
@@ -715,7 +727,7 @@ static void
 kbase_kmod_bo_free(struct pan_kmod_bo *bo)
 {
    struct kbase_kmod_bo *kbase_bo = container_of(bo, struct kbase_kmod_bo, base);
-   {
+   if (debug_get_option_kbase_g2_diagnostics()) {
       unsigned idx = p_atomic_inc_return(&kbase_freed_next) % KBASE_FREED_RING;
       kbase_freed[idx].size = bo->size;
       kbase_freed[idx].flags = bo->flags;
@@ -2372,7 +2384,8 @@ kbase_csf_thread(void *arg)
    struct kbase_kmod_dev *kdev = arg;
    struct kbase_csf_dev *c = kdev->csfq;
    /* KBASE_CSF_DEBUG=1: the state of every ring about once a second while work is pending. */
-   const bool dbg = debug_get_bool_option("KBASE_CSF_DEBUG", false);
+   const bool dbg = debug_get_option_kbase_g2_diagnostics() &&
+      debug_get_bool_option("KBASE_CSF_DEBUG", false);
    unsigned polls = 0;
 
    for (;;) {
@@ -2871,7 +2884,7 @@ pan_kmod_kbase_csf_fence_fd(struct pan_kmod_kbase_csf_group *g, uint64_t seq)
    const uint8_t kcpu_id = c->kcpu_id;
    pthread_mutex_unlock(&c->lock);
    if (!nr_objs) {
-      if (getenv("KBASE_FENCE_DEBUG"))
+      if (debug_get_option_kbase_g2_diagnostics() && getenv("KBASE_FENCE_DEBUG"))
          mesa_logi("kbase fence: seq %" PRIu64 " done already", seq);
       return -1; /* done already */
    }
@@ -2891,7 +2904,7 @@ pan_kmod_kbase_csf_fence_fd(struct pan_kmod_kbase_csf_group *g, uint64_t seq)
          return -1;
       }
    }
-   if (getenv("KBASE_FENCE_DEBUG"))
+   if (debug_get_option_kbase_g2_diagnostics() && getenv("KBASE_FENCE_DEBUG"))
       mesa_logi("kbase fence: seq %" PRIu64 " objs %u fd %d", seq, nr_objs, fence.basep.fd);
    return fence.basep.fd;
 }

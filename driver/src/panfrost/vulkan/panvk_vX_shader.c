@@ -1333,7 +1333,7 @@ panvk_compile_nir(struct panvk_device *dev, nir_shader *nir,
    input.fau.promote_immediates = true;
 
    struct util_dynarray binary = UTIL_DYNARRAY_INIT;
-   if (PAN_ARCH == 15) {
+   if (PAN_ARCH == 15 && panvk_g2_diagnostics) {
       panvk_g2_trace("backend begin id=%u stage=%u", trace_compile_id,
                      nir->info.stage);
       panvk_g2_trace_shader(trace_compile_id, 1, nir, &input, &shader->info);
@@ -1345,7 +1345,7 @@ panvk_compile_nir(struct panvk_device *dev, nir_shader *nir,
    /* FAU consts are pushed as 32bit values, but total_count is for 64bit
     * ones. */
    shader->fau.total_count = DIV_ROUND_UP(shader->info.fau.count, 2);
-   if (PAN_ARCH == 15)
+   if (PAN_ARCH == 15 && panvk_g2_diagnostics)
       panvk_g2_trace("shader ready stage=%u regs=%u tls=%u fau=%u bytes=%u",
                      nir->info.stage, shader->info.work_reg_count,
                      shader->info.tls_size, shader->info.fau.count, binary.size);
@@ -2592,7 +2592,7 @@ panvk_compile_shaders(struct vk_device *vk_dev, uint32_t shader_count,
 {
    static uint32_t trace_count;
    uint32_t trace_id = 0;
-   if (PAN_ARCH == 15) {
+   if (PAN_ARCH == 15 && panvk_g2_diagnostics) {
       trace_id = p_atomic_inc_return(&trace_count);
       uint32_t stages = 0;
       for (uint32_t i = 0; i < shader_count; i++)
@@ -2611,7 +2611,7 @@ panvk_compile_shaders(struct vk_device *vk_dev, uint32_t shader_count,
 
    panvk_per_arch(compiler_unlock)();
 
-   if (PAN_ARCH == 15) {
+   if (PAN_ARCH == 15 && panvk_g2_diagnostics) {
       panvk_g2_trace("compile end id=%u result=%d", trace_id, result);
       trace_compile_id = 0;
    }

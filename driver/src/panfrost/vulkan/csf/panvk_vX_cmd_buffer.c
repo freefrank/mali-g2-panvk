@@ -23,6 +23,7 @@
 #include "panvk_cmd_ts.h"
 #include "panvk_device.h"
 #include "panvk_entrypoints.h"
+#include "panvk_g2_trace.h"
 #include "panvk_instance.h"
 #include "panvk_instr.h"
 #include "panvk_meta.h"
@@ -875,7 +876,7 @@ panvk_reset_cmdbuf(struct vk_command_buffer *vk_cmdbuf,
 
    vk_command_buffer_reset(&cmdbuf->vk);
    cmdbuf->g2_draws.count = 0;
-   {
+   if (panvk_g2_diagnostics) {
       static uint32_t g2_serial;
       cmdbuf->g2_draws.serial = p_atomic_inc_return(&g2_serial);
    }

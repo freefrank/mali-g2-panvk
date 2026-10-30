@@ -8,6 +8,8 @@ struct nir_shader;
 struct pan_compile_inputs;
 struct pan_shader_info;
 
+extern bool panvk_g2_diagnostics;
+
 void panvk_g2_trace(const char *format, ...);
 void panvk_g2_check_range(uint64_t addr, uint64_t size, const char *kind, uint32_t binding,
                           uint32_t elem);
@@ -31,7 +33,7 @@ void panvk_g2_trace_shader(uint32_t id, uint32_t point,
 static inline bool
 panvk_g2_trace_submission(uint32_t id)
 {
-   return id <= 32 || id % 128 == 0;
+   return panvk_g2_diagnostics && id && (id <= 32 || id % 128 == 0);
 }
 
 #endif

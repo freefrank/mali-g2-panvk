@@ -348,7 +348,7 @@ cmd_dispatch(struct panvk_cmd_buffer *cmdbuf, struct panvk_dispatch_info *info)
    const struct panvk_shader_variant *cs =
       panvk_shader_only_variant(cmdbuf->state.compute.shader);
 #if PAN_ARCH >= 15
-   {
+   if (panvk_g2_diagnostics) {
       uint32_t n = cmdbuf->g2_draws.count++ % PANVK_G2_DRAW_LOG;
       cmdbuf->g2_draws.entries[n][0] = 2;
       cmdbuf->g2_draws.entries[n][1] = cs ? cs->g2_trace_id : 0;
@@ -412,7 +412,7 @@ cmd_dispatch(struct panvk_cmd_buffer *cmdbuf, struct panvk_dispatch_info *info)
    }
 
 #if PAN_ARCH >= 15
-   {
+   if (panvk_g2_diagnostics) {
       uint64_t *e = cmdbuf->g2_draws.entries[(cmdbuf->g2_draws.count - 1) % PANVK_G2_DRAW_LOG];
       e[4] = cs_desc_state->res_table;
       e[5] = push_uniforms.gpu;

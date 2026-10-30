@@ -396,7 +396,7 @@ panvk_per_arch(CmdCopyMemoryKHR)(VkCommandBuffer commandBuffer,
    struct panvk_cmd_meta_compute_save_ctx save = {0};
 
 #if PAN_ARCH >= 15
-   for (uint32_t r = 0; r < pCopyMemoryInfo->regionCount; r++) {
+   for (uint32_t r = 0; panvk_g2_diagnostics && r < pCopyMemoryInfo->regionCount; r++) {
       const VkDeviceMemoryCopyKHR *reg = &pCopyMemoryInfo->pRegions[r];
       panvk_g2_check_range(reg->srcRange.address, reg->srcRange.size, "copy_src", r,
                            pCopyMemoryInfo->regionCount);

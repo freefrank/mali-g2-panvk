@@ -34,10 +34,13 @@ static int trace_file_fd = -1;
 static atomic_size_t trace_file_bytes;
 static unsigned capture_first, capture_last;
 static bool capture_pipeline;
+bool panvk_g2_diagnostics;
 
 void
 panvk_g2_trace_eden_log(void)
 {
+   if (!panvk_g2_diagnostics)
+      return;
    static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
    static time_t last_check;
    static off_t offsets[2];
@@ -234,7 +237,7 @@ install_crash_handler(void)
 static void
 init_trace(void)
 {
-   if (!debug_get_bool_option("PANVK_G2_TRACE", true))
+   if (!panvk_g2_diagnostics || !debug_get_bool_option("PANVK_G2_TRACE", true))
       return;
 
    if (debug_get_bool_option("PANVK_G2_CRASH_HANDLER", true))
@@ -265,6 +268,8 @@ init_trace(void)
 void
 panvk_g2_trace(const char *format, ...)
 {
+   if (!panvk_g2_diagnostics)
+      return;
    int saved_errno = errno;
    pthread_once(&trace_once, init_trace);
    if (trace_fd < 0 && trace_file_fd < 0)
@@ -317,6 +322,8 @@ panvk_g2_trace_shader(uint32_t id, uint32_t point, const nir_shader *nir,
                       const struct pan_compile_inputs *inputs,
                       const struct pan_shader_info *info)
 {
+   if (!panvk_g2_diagnostics)
+      return;
    int saved_errno = errno;
    pthread_once(&trace_once, init_trace);
    if (trace_fd < 0 || id < capture_first || id > capture_last ||
@@ -425,6 +432,8 @@ void
 panvk_g2_check_range(uint64_t addr, uint64_t size, const char *kind, uint32_t binding,
                      uint32_t elem)
 {
+   if (!panvk_g2_diagnostics)
+      return;
    uint64_t bo_va, bo_size;
    if (!addr || pan_kmod_kbase_va_live(addr, size ? size : 1, &bo_va, &bo_size))
       return;
@@ -448,7 +457,8 @@ extern void (*pan_g2_check_texture_plane)(uint64_t addr, uint64_t size, const ch
 void
 panvk_g2_check_install(void)
 {
-   pan_g2_check_texture_plane = check_texture_plane;
+   if (panvk_g2_diagnostics)
+      pan_g2_check_texture_plane = check_texture_plane;
 }
 
 #include <sys/uio.h>
@@ -473,6 +483,8 @@ fault_read(uint64_t addr, void *dst, size_t size)
 void
 panvk_g2_fault_words(uint32_t work, const char *tag, uint64_t addr, uint32_t words)
 {
+   if (!panvk_g2_diagnostics)
+      return;
    uint32_t w[32];
    words = MIN2(words, ARRAY_SIZE(w));
    if (!fault_read(addr, w, words * 4)) {
@@ -503,6 +515,8 @@ fault_check(uint32_t work, const char *tag, uint32_t r, uint32_t d, const char *
 void
 panvk_g2_fault_res_table(uint32_t work, const char *tag, uint64_t res_table)
 {
+   if (!panvk_g2_diagnostics)
+      return;
    uint64_t table = res_table & ~63ull;
    uint32_t count = res_table & 63;
    if (!table)

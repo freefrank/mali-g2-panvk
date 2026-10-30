@@ -28,6 +28,7 @@
 #include "pan_trace.h"
 
 #include "panvk_entrypoints.h"
+#include "panvk_g2_trace.h"
 #include "panvk_instance.h"
 #include "panvk_macros.h"
 #include "panvk_physical_device.h"
@@ -68,6 +69,10 @@ uint64_t panvk_debug;
 static void
 panvk_debug_init_once(void)
 {
+   panvk_g2_diagnostics = debug_get_bool_option("PANVK_G2_DIAGNOSTICS", false);
+   if (!panvk_g2_diagnostics)
+      return;
+
    const char *debug = os_get_option("PANVK_DEBUG");
    char file_debug[256] = "";
    if (debug && !getenv("PANDECODE_DUMP_FILE") && !access("/storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files", W_OK))
@@ -278,7 +283,8 @@ panvk_CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
    assert(pCreateInfo->sType == VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO);
 
    panvk_debug_init();
-   pan_trace_init();
+   if (panvk_g2_diagnostics)
+      pan_trace_init();
 
    const struct build_id_note *note =
       build_id_find_nhdr_for_addr(panvk_CreateInstance);
