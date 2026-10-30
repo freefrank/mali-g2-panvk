@@ -192,7 +192,8 @@ panvk_image_can_use_mod(struct panvk_image *image,
    if (drm_is_afbc(mod)) {
       /* AFBC explicitly disabled. */
       if (PANVK_DEBUG(NO_AFBC) ||
-          (arch >= 15 && vk_format_is_depth_or_stencil(image->vk.format)))
+          (arch >= 15 && vk_format_is_depth_or_stencil(image->vk.format) &&
+           (image->vk.mip_levels > 1 || image->vk.array_layers > 1)))
          return false;
 
       /* The application asked for an uncompressed image. */
