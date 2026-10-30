@@ -7,9 +7,11 @@
 #include "util/u_debug.h"
 
 #include <arpa/inet.h>
+#include <dirent.h>
 #include <dlfcn.h>
 #include <errno.h>
 #include <inttypes.h>
+#include <limits.h>
 #include <signal.h>
 #include <ucontext.h>
 #include <unwind.h>
@@ -32,6 +34,116 @@ static int trace_file_fd = -1;
 static atomic_size_t trace_file_bytes;
 static unsigned capture_first, capture_last;
 static bool capture_pipeline;
+
+void
+panvk_g2_trace_eden_log(void)
+{
+   static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+   static time_t last_check;
+   static off_t offsets[2];
+   static ino_t inodes[2];
+   static int errors[2];
+   static char source[2][PATH_MAX];
+   char paths[2][PATH_MAX] = {
+      "/storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/log/eden_log.txt",
+      "/storage/emulated/0/Android/data/com.miHoYo.Yuanshen.nightly/files/log/eden_log.txt.old.txt",
+   };
+
+   if (pthread_mutex_trylock(&lock))
+      return;
+
+   struct timespec now;
+   clock_gettime(CLOCK_MONOTONIC, &now);
+   if (now.tv_sec - last_check < 5) {
+      pthread_mutex_unlock(&lock);
+      return;
+   }
+   last_check = now.tv_sec;
+
+   DIR *dir = opendir("/proc/self/fd");
+   if (dir) {
+      struct dirent *entry;
+      while ((entry = readdir(dir))) {
+         char fdpath[64], target[PATH_MAX];
+         int n = snprintf(fdpath, sizeof(fdpath), "/proc/self/fd/%s", entry->d_name);
+         if (n < 0 || n >= sizeof(fdpath))
+            continue;
+         ssize_t length = readlink(fdpath, target, sizeof(target) - 1);
+         if (length < 0)
+            continue;
+         target[length] = 0;
+         const char *name = strrchr(target, '/');
+         if (!name)
+            continue;
+         name++;
+         unsigned i;
+         if (!strcmp(name, "eden_log.txt") || !strcmp(name, "yuzu_log.txt"))
+            i = 0;
+         else if (!strcmp(name, "eden_log.txt.old.txt") ||
+                  !strcmp(name, "yuzu_log.txt.old.txt"))
+            i = 1;
+         else
+            continue;
+         snprintf(paths[i], sizeof(paths[i]), "%s", target);
+         if (strcmp(source[i], target)) {
+            snprintf(source[i], sizeof(source[i]), "%s", target);
+            panvk_g2_trace("eden log=%u source=%s", i, target);
+         }
+         if (i == 0 && strlen(target) + sizeof(".old.txt") <= sizeof(paths[1]))
+            snprintf(paths[1], sizeof(paths[1]), "%s.old.txt", target);
+      }
+      closedir(dir);
+   }
+
+   for (unsigned i = 0; i < ARRAY_SIZE(paths); i++) {
+      int fd = syscall(SYS_openat, AT_FDCWD, paths[i], O_RDONLY | O_CLOEXEC, 0);
+      FILE *f = fd >= 0 ? fdopen(fd, "r") : NULL;
+      if (!f) {
+         int error = errno;
+         if (fd >= 0)
+            close(fd);
+         if (errors[i] != error) {
+            errors[i] = error;
+            panvk_g2_trace("eden log=%u unavailable errno=%d", i, errors[i]);
+         }
+         continue;
+      }
+
+      struct stat st;
+      if (fstat(fileno(f), &st) || !S_ISREG(st.st_mode)) {
+         fclose(f);
+         continue;
+      }
+      errors[i] = 0;
+      if (inodes[i] != st.st_ino || offsets[i] > st.st_size) {
+         inodes[i] = st.st_ino;
+         offsets[i] = i && st.st_size > 262144 ? st.st_size - 262144 : 0;
+      }
+      if (fseeko(f, offsets[i], SEEK_SET)) {
+         fclose(f);
+         continue;
+      }
+
+      off_t end = offsets[i] + 262144;
+      char line[2048];
+      while (ftello(f) < end && fgets(line, sizeof(line), f)) {
+         line[strcspn(line, "\r\n")] = 0;
+         if (strstr(line, "Render.") || strstr(line, "Shader") ||
+             strstr(line, "NVDEC") || strstr(line, "Nvdec") ||
+             strstr(line, "nvdec") || strstr(line, "Renderer.") ||
+             strstr(line, "Codec") || strstr(line, "Video") ||
+             strstr(line, "<Error>") || strstr(line, "<Warning>") ||
+             strstr(line, "<Critical>"))
+            panvk_g2_trace("eden log=%u %s", i, line);
+      }
+      off_t pos = ftello(f);
+      if (pos >= 0)
+         offsets[i] = pos;
+      fclose(f);
+   }
+
+   pthread_mutex_unlock(&lock);
+}
 
 static const int crash_signals[] = {SIGSEGV, SIGBUS, SIGILL, SIGFPE, SIGABRT};
 static struct sigaction crash_prev[ARRAY_SIZE(crash_signals)];

@@ -1761,6 +1761,8 @@ panvk_per_arch(gpu_queue_submit)(struct vk_queue *vk_queue, struct vk_queue_subm
       static uint32_t trace_count;
       uint32_t trace_id = PAN_ARCH == 15 ? p_atomic_inc_return(&trace_count) : 0;
       bool trace = PAN_ARCH == 15 && panvk_g2_trace_submission(trace_id);
+      if (trace && PANVK_DEBUG(SYNC))
+         panvk_g2_trace_eden_log();
       if (trace)
          panvk_g2_trace("submit begin id=%u cmds=%u waits=%u signals=%u", trace_id,
                         vk_submit->command_buffer_count, vk_submit->wait_count,

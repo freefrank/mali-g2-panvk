@@ -253,7 +253,7 @@ get_frame_shader(struct panvk_device *dev,
       cfg.register_allocation =
          pan_register_allocation(shader->info.work_reg_count);
       cfg.binary = panvk_priv_mem_dev_addr(shader->code_mem);
-      cfg.preload.r48_r63 = shader->info.preload >> 48;
+      cfg.preload.r48_r63 = shader->info.preload >> (PAN_ARCH >= 15 ? 0 : 48);
    }
 #endif
 

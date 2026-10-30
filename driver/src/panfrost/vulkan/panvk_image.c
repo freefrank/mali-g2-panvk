@@ -176,7 +176,10 @@ panvk_image_can_use_mod(struct panvk_image *image,
    unsigned arch = pan_arch(phys_dev->kmod.dev->props.gpu_id);
    const bool forced_linear = PANVK_DEBUG(LINEAR) ||
                               image->vk.tiling == VK_IMAGE_TILING_LINEAR ||
-                              image->vk.image_type == VK_IMAGE_TYPE_1D;
+                              image->vk.image_type == VK_IMAGE_TYPE_1D ||
+                              (arch >= 15 &&
+                               image->vk.tiling == VK_IMAGE_TILING_OPTIMAL &&
+                               vk_format_is_compressed(image->vk.format));
 
    /* If the image is meant to be linear, don't bother testing the
     * other cases. */
@@ -188,7 +191,7 @@ panvk_image_can_use_mod(struct panvk_image *image,
 
    if (drm_is_afbc(mod)) {
       /* AFBC explicitly disabled. */
-      if (PANVK_DEBUG(NO_AFBC))
+      if (PANVK_DEBUG(NO_AFBC) || arch >= 15)
          return false;
 
       /* The application asked for an uncompressed image. */
@@ -207,11 +210,6 @@ panvk_image_can_use_mod(struct panvk_image *image,
 
       /* Disable AFBC on YUV-planar for now. */
       if (vk_format_get_plane_count(image->vk.format) > 1)
-         return false;
-
-      /* On the Mali-G2, a copy through the R8G8B8 view of an AFBC Z24 plane decodes its headers
-       * into body offsets far outside the image and faults the GPU, so keep ZS uncompressed. */
-      if (arch >= 15 && vk_format_is_depth_or_stencil(image->vk.format))
          return false;
 
       /* We can't have separate depth/stencil layout transitions with
