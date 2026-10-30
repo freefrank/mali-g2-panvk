@@ -195,6 +195,15 @@ GENX(pan_texture_get_payload_alignment)(const struct pan_image_view *iview)
    return alignment;
 }
 
+static bool
+raw_block_view_is_linear(const struct pan_image_view *iview,
+                         const struct pan_image_props *props)
+{
+   return PAN_ARCH >= 15 && util_format_is_compressed(props->format) &&
+          !util_format_is_compressed(iview->format) &&
+          props->modifier == DRM_FORMAT_MOD_ARM_16X16_BLOCK_U_INTERLEAVED;
+}
+
 #if PAN_ARCH >= 9
 
 /* clang-format off */
@@ -458,15 +467,25 @@ emit_generic_plane(const struct pan_image_view *iview, int plane_idx,
                                      &slice_stride, &plane_size);
    G2_CHECK_PLANE(plane_addr, plane_size, "linear_or_u_tiled");
 
+   const bool raw_linear = raw_block_view_is_linear(iview, props);
+   unsigned width = u_minify(props->extent_px.width, mip_level);
+   unsigned height = u_minify(props->extent_px.height, mip_level);
+   if (raw_linear) {
+      width = DIV_ROUND_UP(width, util_format_get_blockwidth(props->format));
+      height = DIV_ROUND_UP(height, util_format_get_blockheight(props->format));
+      width = DIV_ROUND_UP(width, 4) * 16;
+      height = DIV_ROUND_UP(height, 4);
+   }
+
    pan_cast_and_pack(payload, GENERIC_PLANE, cfg) {
-      cfg.clump_ordering = modifier_clump_ordering(props->modifier);
+      cfg.clump_ordering = raw_linear ? MALI_CLUMP_ORDERING_LINEAR :
+                                       modifier_clump_ordering(props->modifier);
       cfg.clump_format = pan_clump_format(iview->format);
       PLANE_SET_SIZE(cfg, plane_size);
       cfg.pointer = plane_addr;
       cfg.row_stride = row_stride;
       PLANE_SET_SLICE_STRIDE(cfg, slice_stride);
-      PLANE_SET_EXTENT(cfg, u_minify(props->extent_px.width, mip_level),
-                       u_minify(props->extent_px.height, mip_level));
+      PLANE_SET_EXTENT(cfg, width, height);
    }
 }
 
@@ -1268,6 +1287,10 @@ pan_texture_get_extent(const struct pan_image_view *iview,
       assert(util_format_get_blockheight(iview->format) == 1);
       assert(util_format_get_blockheight(iview->format) == 1);
       assert(iview->last_level == iview->first_level);
+      if (raw_block_view_is_linear(iview, iprops)) {
+         extent_px.width = DIV_ROUND_UP(extent_px.width, 4) * 16;
+         extent_px.height = DIV_ROUND_UP(extent_px.height, 4);
+      }
    }
 
    return extent_px;
@@ -1335,7 +1358,8 @@ GENX(pan_sampled_texture_emit)(const struct pan_image_view *iview,
          cfg.sample_count = props->nr_samples;
       cfg.swizzle = pan_translate_swizzle_4(iview->swizzle);
 #if PAN_ARCH >= 9
-      cfg.texel_interleave = (props->modifier != DRM_FORMAT_MOD_LINEAR) ||
+      cfg.texel_interleave = (props->modifier != DRM_FORMAT_MOD_LINEAR &&
+                             !raw_block_view_is_linear(iview, props)) ||
                              util_format_is_compressed(iview->format);
 #else
       cfg.texel_ordering = pan_modifier_to_layout(props->modifier);
@@ -1397,7 +1421,8 @@ GENX(pan_storage_texture_emit)(const struct pan_image_view *iview,
          cfg.depth = pan_image_view_3d_slice_count(iview);
       else
          cfg.sample_count = props->nr_samples;
-      cfg.texel_interleave = (props->modifier != DRM_FORMAT_MOD_LINEAR) ||
+      cfg.texel_interleave = (props->modifier != DRM_FORMAT_MOD_LINEAR &&
+                             !raw_block_view_is_linear(iview, props)) ||
                              util_format_is_compressed(iview->format);
       cfg.levels = iview->last_level - iview->first_level + 1;
       cfg.array_size = array_size;

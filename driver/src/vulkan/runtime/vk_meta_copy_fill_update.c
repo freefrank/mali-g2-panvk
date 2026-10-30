@@ -49,6 +49,7 @@ struct vk_meta_copy_buffer_key {
 
 struct vk_meta_copy_image_view {
    VkImageViewType type;
+   bool block_tiled_4x4;
 
    union {
       struct {
@@ -936,12 +937,34 @@ write_frag(nir_builder *b, const struct vk_meta_copy_image_view *view,
    nir_store_var(b, frag_var, frag_val, comp_mask);
 }
 
+static nir_def *
+copy_img_coords(nir_builder *b, const struct vk_meta_copy_image_view *view,
+                nir_def *coords)
+{
+   if (!view->block_tiled_4x4)
+      return coords;
+
+   nir_def *x = nir_channel(b, coords, 0);
+   nir_def *y = nir_channel(b, coords, 1);
+   nir_def *t = nir_ixor(b, x, y);
+   nir_def *u = nir_ishl_imm(b, nir_ushr_imm(b, x, 2), 4);
+   u = nir_ior(b, u, nir_iand_imm(b, t, 1));
+   u = nir_ior(b, u, nir_ishl_imm(b, nir_iand_imm(b, y, 1), 1));
+   u = nir_ior(b, u, nir_ishl_imm(b, nir_iand_imm(b, t, 2), 1));
+   u = nir_ior(b, u, nir_ishl_imm(b, nir_iand_imm(b, y, 2), 2));
+   nir_def *components[4] = {u, nir_ushr_imm(b, y, 2)};
+   for (unsigned i = 2; i < coords->num_components; i++)
+      components[i] = nir_channel(b, coords, i);
+   return nir_vec(b, components, coords->num_components);
+}
+
 static void
 write_img(nir_builder *b, const struct vk_meta_copy_image_view *view,
           VkImageAspectFlags aspect, VkSampleCountFlagBits samples,
           nir_deref_instr *img_deref, nir_def *coords, nir_def *sample_id,
           nir_def *val)
 {
+   coords = copy_img_coords(b, view, coords);
    VkFormat fmt = copy_img_view_format_for_aspect(view, aspect);
    enum pipe_format pfmt = vk_format_to_pipe_format(fmt);
    enum glsl_base_type base_type =
@@ -1052,6 +1075,7 @@ build_image_to_buffer_shader(const struct vk_meta_device *meta,
       copy_img_view_format_for_aspect(&key->img.view, key->img.aspect);
    nir_deref_instr *tex =
       tex_deref(b, &key->img.view, key->img.aspect, VK_SAMPLE_COUNT_1_BIT, 0);
+   img_coords = copy_img_coords(b, &key->img.view, img_coords);
    nir_def *texel = nir_txf(b, img_coords, .texture_deref = tex);
 
    texel = convert_texel(b, iview_fmt, buf_fmt, texel);
@@ -1392,6 +1416,7 @@ img_copy_view_info(VkImageViewType view_type, VkImageAspectFlags aspects,
 {
    struct vk_meta_copy_image_view view = {
       .type = view_type,
+      .block_tiled_4x4 = img_props->block_tiled_4x4,
    };
 
    assert(aspects &
@@ -1835,6 +1860,7 @@ build_copy_image_fs(const struct vk_meta_device *meta, const void *key_data)
 
    src_coords = trim_img_coords(b, key->src.view.type,
                                 nir_iadd(b, src_coords, src_offset));
+   src_coords = copy_img_coords(b, &key->src.view, src_coords);
 
    nir_def *sample_id =
       key->samples != VK_SAMPLE_COUNT_1_BIT ? nir_load_sample_id(b) : NULL;
@@ -1933,6 +1959,7 @@ build_copy_image_cs(const struct vk_meta_device *meta, const void *key_data)
    nir_def *dst_coords = trim_img_coords(b, key->dst.view.type,
                                          nir_iadd(b, copy_id, dst_offset));
 
+   src_coords = copy_img_coords(b, &key->src.view, src_coords);
    dst_coords = nir_pad_vector_imm_int(b, dst_coords, 0, 4);
 
    uint32_t binding = 0;

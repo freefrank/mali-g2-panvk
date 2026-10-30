@@ -91,6 +91,7 @@ struct vk_meta_copy_image_properties {
 
    /* Size of the image tile. Used to select the optimal workgroup size. */
    VkExtent3D tile_size;
+   bool block_tiled_4x4;
 };
 
 enum vk_meta_buffer_chunk_size_id {

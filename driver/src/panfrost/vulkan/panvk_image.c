@@ -167,6 +167,19 @@ select_plane_pfmt(struct panvk_image *image, uint64_t mod, unsigned plane)
 }
 
 static bool
+panvk_image_supports_tiled_block_copies(struct panvk_image *image)
+{
+   struct panvk_physical_device *phys_dev =
+      to_panvk_physical_device(image->vk.base.device->physical);
+   return pan_arch(phys_dev->kmod.dev->props.gpu_id) >= 15 &&
+          image->vk.image_type == VK_IMAGE_TYPE_2D &&
+          vk_format_is_compressed(image->vk.format) &&
+          vk_format_get_blockwidth(image->vk.format) == 4 &&
+          vk_format_get_blockheight(image->vk.format) == 4 &&
+          !panvk_bc_emu_format(phys_dev, image->vk.format);
+}
+
+static bool
 panvk_image_can_use_mod(struct panvk_image *image,
                         const struct pan_image_usage *iusage, uint64_t mod,
                         bool optimal_only)
@@ -174,17 +187,25 @@ panvk_image_can_use_mod(struct panvk_image *image,
    struct panvk_physical_device *phys_dev =
       to_panvk_physical_device(image->vk.base.device->physical);
    unsigned arch = pan_arch(phys_dev->kmod.dev->props.gpu_id);
+   const bool g2_compressed = arch >= 15 &&
+      image->vk.tiling == VK_IMAGE_TILING_OPTIMAL &&
+      vk_format_is_compressed(image->vk.format);
+   const bool tiled_block_copies =
+      panvk_image_supports_tiled_block_copies(image) &&
+      !(image->vk.create_flags & VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT);
    const bool forced_linear = PANVK_DEBUG(LINEAR) ||
                               image->vk.tiling == VK_IMAGE_TILING_LINEAR ||
                               image->vk.image_type == VK_IMAGE_TYPE_1D ||
-                              (arch >= 15 &&
-                               image->vk.tiling == VK_IMAGE_TILING_OPTIMAL &&
-                               vk_format_is_compressed(image->vk.format));
+                              (g2_compressed && !tiled_block_copies);
 
    /* If the image is meant to be linear, don't bother testing the
     * other cases. */
    if (forced_linear)
       return mod == DRM_FORMAT_MOD_LINEAR;
+
+   if (g2_compressed && mod != DRM_FORMAT_MOD_LINEAR &&
+       mod != DRM_FORMAT_MOD_ARM_16X16_BLOCK_U_INTERLEAVED)
+      return false;
 
    assert(image->vk.tiling == VK_IMAGE_TILING_OPTIMAL ||
           image->vk.tiling == VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT);
@@ -595,8 +616,9 @@ panvk_image_pre_mod_select_meta_adjustments(struct panvk_image *image)
        * See https://gitlab.freedesktop.org/panfrost/mesa/-/issues/271 for
        * details.
        */
-      image->vk.create_flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT |
-                                VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT;
+      image->vk.create_flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
+      if (!panvk_image_supports_tiled_block_copies(image))
+         image->vk.create_flags |= VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT;
    }
 }
 

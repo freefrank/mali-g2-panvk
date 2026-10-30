@@ -54,6 +54,9 @@ panvk_meta_copy_get_image_properties(struct panvk_image *img,
    enum pipe_format pfmt = vk_format_to_pipe_format(img->vk.format);
    struct vk_meta_copy_image_properties props;
    memset(&props, 0, sizeof(props));
+   props.block_tiled_4x4 = PAN_ARCH >= 15 &&
+      vk_format_is_compressed(img->vk.format) &&
+      mod == DRM_FORMAT_MOD_ARM_16X16_BLOCK_U_INTERLEAVED;
    const struct vk_format_ycbcr_info *ycbcr_info =
       vk_format_get_ycbcr_info(img->vk.format);
    const bool is_afbc = drm_is_afbc(img->vk.drm_format_mod);
