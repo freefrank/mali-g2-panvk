@@ -1,0 +1,140 @@
+{
+  "policy_marker": "biblioklept",
+  "build_base_commit": "bfcc5d76326e10304613c08fe1a13f3bc091f54e",
+  "source_snapshots": [
+    {
+      "test": "test36",
+      "source_commit": "665d426ac688d9f7d22debd9df20a0c842c26bf2",
+      "driver_tree": "0c1db0825bad42c3fe99390bc68fbf56b997ee54",
+      "source_patch_sha256": "633b2dc50e7270802265f0a0141df93eb20ea38ea6ba9f7b190525b96819e36d",
+      "library_sha256": "b3bee661f976f406763af09782cc0948ed1bbec0e0c1bf2a4fba2b5a03a43996",
+      "zip_sha256": "b6c2e84bc9e1e7769f0f9cca8ec5b5e3a4c050b437c43cf89f9326b9e03f6b64"
+    },
+    {
+      "test": "test37",
+      "source_commit": "959fcb03620fc780d4882805b797fc1ddd868756",
+      "driver_tree": "0bfcb312e785446fea34af6a9e657b479054e35d",
+      "source_patch_sha256": "bcb1cfadc771609525c06ca97749096fbb69f7eb0c452af69744320c9c7dcbfc",
+      "library_sha256": "bfc90b6f9c6e9c4e7857fd29036ff42a8e8bc579d30641f083dfbef80ba3359e",
+      "zip_sha256": "697b7046659ad51b3a1e507cd486631d431e98debd0c2f5a46f8cc1fd6707d58"
+    },
+    {
+      "test": "test38",
+      "source_commit": "2698a0e78f7199a57d0d6d90a566821551ea4fd5",
+      "driver_tree": "6165fcc270dd5fb46d531d3943a1c38ce52f5c17",
+      "source_patch_sha256": "78e32a957f0c4b0fb7c0084ade8ec34f5459de9e59519c0a4315668feffffe41",
+      "library_sha256": "6f8106792266821957124801c8f69c7d357e864922bb99316273c9ebd4043a90",
+      "zip_sha256": "927cd6585198b6e9abd735f04b3c637ca0a8dd1ec03e9299706ab8c7011ffa8c"
+    },
+    {
+      "test": "test39",
+      "source_commit": "c64494042fd4c7ab324174b53e9e6986352e3a74",
+      "driver_tree": "e6f4c6e26b7402357182d5c1716d1c68778e64b6",
+      "source_patch_sha256": "8d54c4b73dff405e30cffd29422bd9a71b2ae1e361c4702ff914f60dc5b94d0f",
+      "library_sha256": "527fb2e61332a1b7ad1dcb99c74bb0138755d6645c990bcf383b791406096fb6",
+      "zip_sha256": "5d6a37ce811f7a2514133426792a3243e4a57d30da02cbad6599281670526a9f"
+    },
+    {
+      "test": "test41",
+      "source_commit": "3c4b27dac353880c69c47b3937d5bdb23c85ef09",
+      "driver_tree": "3799144f994beef097e7d1c9629001b34df45d4d",
+      "source_patch_sha256": "da9801d10f384faab3ee15e2003a557fd8a7dbbbfa9f291bde50eb400cd8e7b6",
+      "library_sha256": "a0fbf1ea818e854ead1c86b4abc2030326407587a18bfa6943ed7cb9846394c1",
+      "zip_sha256": "92de31131b17a89e3d32f83728fccdc46dd655e8b0133c256d38e6d06e0b8d8d"
+    },
+    {
+      "test": "test42",
+      "source_commit": "2b1a3e91f9e447b2aa2c4ca7f9edcd0693e119ea",
+      "driver_tree": "878fc51ff48a8ea51dbf586249328a97e1257612",
+      "source_patch_sha256": "1a4a1a860435f1df2224867aa51c03b0f9507b3e85d95daaf24a5dce52042e4f",
+      "library_sha256": "3ae37ef3cfa68dda59358f73be6b78afa2658c546f7a72550d8595d29dadab19",
+      "zip_sha256": "6494bdff1d872e268fb9a1c482cc5f54cc82bc713733f76dae7d7c54808a7ac1"
+    },
+    {
+      "test": "test43",
+      "source_commit": "2f9eee9da902df4c0c9626cb00ab1feb64671795",
+      "driver_tree": "0b5dbc037840d3eb89851e9ca911a0584bf6be91",
+      "source_patch_sha256": "c17bfc15d269218440184bd2b61b238c4c06340e57ad1fc68593ed1a68ff9dd7",
+      "library_sha256": "c1e421b06abd80c609894056d9644076a731489af6ab5ed76d76d85b2ded8b45",
+      "zip_sha256": "b041dc9b393dd532fce06e227e7585ea6fb06c100803dc03a45ad949514714f8"
+    },
+    {
+      "test": "test44",
+      "source_commit": "692b8bb913aab05ee3acf8dbad477243643fbb8d",
+      "driver_tree": "4b905803adae280be07eaee82d4d640da9a36ec9",
+      "source_patch_sha256": "8237e3a133c0859e6fcde44ec24c2e141dbdcf24ca17fb28b2b7dcf25279a7e0",
+      "library_sha256": "e5c4f67565560404b37a50c334680046ea94341db4f1d62f3dd0f16208206fec",
+      "zip_sha256": "02985a9c42a0aa70a5b1024f8707b75c435f38e5a800ce0a933b07e738dedd71"
+    }
+  ],
+  "build_provenance": "Packages were built before these checkpoint commits, using bfcc5d7 plus the archived patches. Original package names and hashes remain unchanged. driver_tree identifies the committed source corresponding to each binary.",
+  "latest_game_result": "test44 still stutters. System lag correlates with game FPS; pulling notification shade lowers game FPS and Android UI slows. Root cause unresolved.",
+  "tests": {
+    "cache-clean-scan": {
+      "report": "tools/fixtures/test44-cache-clean-scan.json",
+      "cases": 4,
+      "sha256": "b32d962c807ededcabb4bdf769be41f28ce524763fa5badc2e42fd3ec5866e3b",
+      "passed": true
+    },
+    "submit-timing": {
+      "report": "tools/fixtures/test44-submit-timing.json",
+      "cases": 16,
+      "sha256": "f16086cadbbeba9a86a31fe0d0161b16b672cf0783ce6fb5fc2dcda2fe017fdf",
+      "passed": true
+    },
+    "completion-burst": {
+      "report": "tools/fixtures/test44-completion-burst.json",
+      "cases": 10,
+      "sha256": "d2540941056b6530e58dd4dc07bf6908ff70e90f50dc5dc74380055fdf10f1c9",
+      "passed": true
+    },
+    "acquire": {
+      "report": "tools/fixtures/test44-acquire.json",
+      "cases": 12,
+      "sha256": "7c6753720e33661b1baa61a9b58942798205c5334f18947e0bf39f1b5f8e2a99",
+      "passed": true
+    },
+    "android": {
+      "report": "tools/fixtures/test44-android.json",
+      "cases": 9,
+      "sha256": "e102c2ad0c73fb89d0924cf1c8c42f400222be6c8044fb9831fc4c259bcf52af",
+      "passed": true
+    },
+    "eden": {
+      "report": "tools/fixtures/test44-eden.json",
+      "cases": 9,
+      "sha256": "de0bfccf2f770cdb03a46679e233ae9f7b617c3d2980f4fe13160fc725c5f391",
+      "passed": true
+    },
+    "diagnostics": {
+      "report": "tools/fixtures/test44-diagnostics.json",
+      "cases": 4,
+      "sha256": "b70790c2d85c977b0c039ed6f9fb82b3dd847ee6b013416019edba199f08bcc7",
+      "passed": true
+    },
+    "textures": {
+      "report": "tools/fixtures/test44-textures.json",
+      "cases": 32,
+      "sha256": "35825ad4b83917ceec87acc939012c907c41d8ec445260cc2870284bbf777926",
+      "passed": true
+    },
+    "msaa": {
+      "report": "tools/fixtures/test44-msaa.json",
+      "cases": 48,
+      "sha256": "60a5da2aa59d14a8e3bfda9501a4ce098143ac832d09857e9fe8d7fd8a8ce2e8",
+      "passed": true
+    },
+    "depth-extended": {
+      "report": "tools/fixtures/test44-depth-extended.json",
+      "cases": 26,
+      "sha256": "7891198e01e41833e30846c7f754576e7989375cc779d1d07c1d900aa830a599",
+      "passed": true
+    },
+    "packaged-integrity": {
+      "report": "tools/fixtures/test44-packaged-integrity.json",
+      "cases": 3,
+      "sha256": "d7d3ee979de280c043ad4b352bc64578b8e14ee5d7520be70559fdcd8fbfdb5c",
+      "passed": true
+    }
+  }
+}

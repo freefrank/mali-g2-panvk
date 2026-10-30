@@ -1,0 +1,24 @@
+{
+  "purpose": "R11 float blend: strict 8-bit oracle fails on vendor and baseline too; compare complete raw image outputs across all 4 frames instead",
+  "results": [
+    {
+      "case": "baseline",
+      "oracle_returncode": 1,
+      "sha256": "337a9c81fd64cae232f0e0bf903ac0f1c631d93dd180ba49304de715810459cd",
+      "bytes": 530448
+    },
+    {
+      "case": "candidate",
+      "oracle_returncode": 1,
+      "sha256": "337a9c81fd64cae232f0e0bf903ac0f1c631d93dd180ba49304de715810459cd",
+      "bytes": 530448
+    },
+    {
+      "case": "vendor",
+      "oracle_returncode": 1,
+      "sha256": "337a9c81fd64cae232f0e0bf903ac0f1c631d93dd180ba49304de715810459cd",
+      "bytes": 530448
+    }
+  ],
+  "passed": true
+}

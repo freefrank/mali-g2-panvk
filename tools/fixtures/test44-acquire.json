@@ -1,0 +1,102 @@
+{
+  "results": [
+    {
+      "case": "test43-semaphore",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.027,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 1
+    },
+    {
+      "case": "test43-fence",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.025,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "test43-both",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.036,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 1
+    },
+    {
+      "case": "test43-none",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 386.855,
+      "native_pending_after_return": 0,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "test43-signaled",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.623,
+      "native_pending_after_return": 0,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "test43-minusone",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.021,
+      "native_pending_after_return": 0,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "candidate-semaphore",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.026,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 1
+    },
+    {
+      "case": "candidate-fence",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.028,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "candidate-both",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.075,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 1
+    },
+    {
+      "case": "candidate-none",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 386.367,
+      "native_pending_after_return": 0,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "candidate-signaled",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.382,
+      "native_pending_after_return": 0,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "candidate-minusone",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.02,
+      "native_pending_after_return": 0,
+      "semaphore_pending_observed": 0
+    }
+  ],
+  "passed": true,
+  "method": "Two logical devices, real GPU-produced SYNC_FD, independent consumer queue; imported semaphore is exported as a native fence to verify it remains pending, then restored before consumer use. Source shader result, imported fence completion and consumer output are checked. Artificial GPU delay is not a game stutter measurement."
+}

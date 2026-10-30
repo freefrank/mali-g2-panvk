@@ -1,0 +1,167 @@
+{
+  "policy_marker": "biblioklept",
+  "results": [
+    {
+      "case": "submit-1-0-candidate",
+      "commands": 1,
+      "driver": "candidate",
+      "passed": true,
+      "median_us": 404.8,
+      "p95_us": 964.288,
+      "gpu_median_us": 81.344,
+      "gpu_p95_us": 321.12
+    },
+    {
+      "case": "submit-1-1-test43",
+      "commands": 1,
+      "driver": "test43",
+      "passed": true,
+      "median_us": 403.488,
+      "p95_us": 3639.008,
+      "gpu_median_us": 84.576,
+      "gpu_p95_us": 392.224
+    },
+    {
+      "case": "submit-1-2-test43",
+      "commands": 1,
+      "driver": "test43",
+      "passed": true,
+      "median_us": 366.24,
+      "p95_us": 776.64,
+      "gpu_median_us": 76.48,
+      "gpu_p95_us": 135.328
+    },
+    {
+      "case": "submit-1-3-candidate",
+      "commands": 1,
+      "driver": "candidate",
+      "passed": true,
+      "median_us": 476.16,
+      "p95_us": 1250.976,
+      "gpu_median_us": 89.856,
+      "gpu_p95_us": 510.08
+    },
+    {
+      "case": "submit-2-0-candidate",
+      "commands": 2,
+      "driver": "candidate",
+      "passed": true,
+      "median_us": 621.6,
+      "p95_us": 3673.504,
+      "gpu_median_us": 131.36,
+      "gpu_p95_us": 709.696
+    },
+    {
+      "case": "submit-2-1-test43",
+      "commands": 2,
+      "driver": "test43",
+      "passed": true,
+      "median_us": 1096.896,
+      "p95_us": 2242.432,
+      "gpu_median_us": 493.6,
+      "gpu_p95_us": 1387.04
+    },
+    {
+      "case": "submit-2-2-test43",
+      "commands": 2,
+      "driver": "test43",
+      "passed": true,
+      "median_us": 414.976,
+      "p95_us": 940.736,
+      "gpu_median_us": 121.216,
+      "gpu_p95_us": 338.304
+    },
+    {
+      "case": "submit-2-3-candidate",
+      "commands": 2,
+      "driver": "candidate",
+      "passed": true,
+      "median_us": 444.928,
+      "p95_us": 1196.544,
+      "gpu_median_us": 128.288,
+      "gpu_p95_us": 604.16
+    },
+    {
+      "case": "submit-8-0-candidate",
+      "commands": 8,
+      "driver": "candidate",
+      "passed": true,
+      "median_us": 739.2,
+      "p95_us": 1515.392,
+      "gpu_median_us": 282.912,
+      "gpu_p95_us": 932.896
+    },
+    {
+      "case": "submit-8-1-test43",
+      "commands": 8,
+      "driver": "test43",
+      "passed": true,
+      "median_us": 1195.328,
+      "p95_us": 5151.904,
+      "gpu_median_us": 489.792,
+      "gpu_p95_us": 2632.64
+    },
+    {
+      "case": "submit-8-2-test43",
+      "commands": 8,
+      "driver": "test43",
+      "passed": true,
+      "median_us": 808.48,
+      "p95_us": 1653.472,
+      "gpu_median_us": 281.312,
+      "gpu_p95_us": 1001.888
+    },
+    {
+      "case": "submit-8-3-candidate",
+      "commands": 8,
+      "driver": "candidate",
+      "passed": true,
+      "median_us": 867.904,
+      "p95_us": 5004.928,
+      "gpu_median_us": 314.048,
+      "gpu_p95_us": 3290.368
+    },
+    {
+      "case": "submit-32-0-candidate",
+      "commands": 32,
+      "driver": "candidate",
+      "passed": true,
+      "median_us": 1782.336,
+      "p95_us": 6074.944,
+      "gpu_median_us": 918.56,
+      "gpu_p95_us": 3078.048
+    },
+    {
+      "case": "submit-32-1-test43",
+      "commands": 32,
+      "driver": "test43",
+      "passed": true,
+      "median_us": 3103.424,
+      "p95_us": 8707.904,
+      "gpu_median_us": 1947.2,
+      "gpu_p95_us": 4652.832
+    },
+    {
+      "case": "submit-32-2-test43",
+      "commands": 32,
+      "driver": "test43",
+      "passed": true,
+      "median_us": 2091.936,
+      "p95_us": 9264.48,
+      "gpu_median_us": 1114.464,
+      "gpu_p95_us": 8595.488
+    },
+    {
+      "case": "submit-32-3-candidate",
+      "commands": 32,
+      "driver": "candidate",
+      "passed": true,
+      "median_us": 2142.88,
+      "p95_us": 7999.424,
+      "gpu_median_us": 1453.024,
+      "gpu_p95_us": 4754.464
+    }
+  ],
+  "passed": true,
+  "method": "ABBA; changing CPU input and per-segment readback. CPU submit-to-fence includes final cache cleaning. GPU timestamps cover command body, not final ring cleaning. Concurrent Eden, not game timing."
+}

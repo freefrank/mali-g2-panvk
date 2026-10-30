@@ -1,0 +1,22 @@
+#version 450
+#ifndef IMAGE_FORMAT
+#define IMAGE_FORMAT rgba8
+#endif
+#ifdef ARRAY_IMAGE
+layout(IMAGE_FORMAT, binding=0) writeonly uniform image2DMSArray img;
+#define COORD(p) ivec3(p, pc.layer)
+#else
+layout(IMAGE_FORMAT, binding=0) writeonly uniform image2DMS img;
+#define COORD(p) ivec2(p)
+#endif
+layout(local_size_x=8, local_size_y=8) in;
+layout(push_constant) uniform P { uint w, h, samples, layer, seed; } pc;
+void main() {
+    uvec2 p = gl_GlobalInvocationID.xy;
+    if (p.x >= pc.w || p.y >= pc.h) return;
+    for (uint s=0; s<pc.samples; s++) {
+        vec4 v = vec4((p.x + pc.seed) & 7u, (p.y + pc.seed) & 7u, s & 7u, (s + pc.seed) & 3u);
+        v /= vec4(8, 8, 8, 4);
+        imageStore(img, COORD(p), int(s), v);
+    }
+}

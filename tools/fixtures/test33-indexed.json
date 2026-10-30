@@ -1,0 +1,65 @@
+{
+  "purpose": "Indexed draw with nonzero firstIndex, negative vertexOffset and loaded depth",
+  "results": [
+    {
+      "case": "indexed-vendor-16-offset0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "indexed-vendor-16-offset-1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "indexed-vendor-16-offset-30000",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "indexed-vendor-32-offset0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "indexed-vendor-32-offset-1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "indexed-vendor-32-offset-30000",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "indexed-test33-16-offset0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "indexed-test33-16-offset-1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "indexed-test33-16-offset-30000",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "indexed-test33-32-offset0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "indexed-test33-32-offset-1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "indexed-test33-32-offset-30000",
+      "returncode": 0,
+      "passed": true
+    }
+  ]
+}

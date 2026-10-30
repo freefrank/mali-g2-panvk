@@ -1,0 +1,39 @@
+{
+  "policy_marker": "biblioklept",
+  "results": [
+    {
+      "case": "cache-scan-test43-diag0",
+      "driver": "test43",
+      "diagnostics": false,
+      "rings": 3,
+      "flushes": 250,
+      "passed": true
+    },
+    {
+      "case": "cache-scan-candidate-diag0",
+      "driver": "candidate",
+      "diagnostics": false,
+      "rings": 3,
+      "flushes": 130,
+      "passed": true
+    },
+    {
+      "case": "cache-scan-test43-diag1",
+      "driver": "test43",
+      "diagnostics": true,
+      "rings": 3,
+      "flushes": 250,
+      "passed": true
+    },
+    {
+      "case": "cache-scan-candidate-diag1",
+      "driver": "candidate",
+      "diagnostics": true,
+      "rings": 3,
+      "flushes": 250,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "method": "Own mapped ring readback before device cleanup, exact repeated submission-end signature, nonwrapping short test; diagnostics-on conservatively retains original end flushes."
+}

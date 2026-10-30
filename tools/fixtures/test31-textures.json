@@ -1,0 +1,300 @@
+{
+  "driver": "test31",
+  "frames_per_case": 8,
+  "bc_formats": [
+    131,
+    137,
+    145
+  ],
+  "astc_formats": [
+    157
+  ],
+  "baseline_results": [
+    {
+      "case": "compressed-vendor-257x129-fmt131",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "compressed-vendor-257x129-fmt137",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "compressed-vendor-257x129-fmt145",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "compressed-vendor-257x129-fmt157",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "compressed-test30-257x129-fmt131",
+      "returncode": 1,
+      "passed": false
+    },
+    {
+      "case": "compressed-test30-257x129-fmt137",
+      "returncode": 1,
+      "passed": false
+    },
+    {
+      "case": "compressed-test30-257x129-fmt145",
+      "returncode": 1,
+      "passed": false
+    },
+    {
+      "case": "compressed-test30-257x129-fmt157",
+      "returncode": 1,
+      "passed": false
+    }
+  ],
+  "fixed_results": [
+    {
+      "case": "fixed-vendor-257x129-fmt131-mip2-layer2",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-vendor-257x129-fmt137-mip2-layer2",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-vendor-257x129-fmt145-mip2-layer2",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-vendor-257x129-fmt157-mip2-layer2",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-257x129-fmt131-mip0-layer0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-1280x720-fmt131-mip0-layer0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-257x129-fmt131-mip2-layer2",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-257x129-fmt137-mip0-layer0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-1280x720-fmt137-mip0-layer0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-257x129-fmt137-mip2-layer2",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-257x129-fmt145-mip0-layer0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-1280x720-fmt145-mip0-layer0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-257x129-fmt145-mip2-layer2",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-257x129-fmt157-mip0-layer0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-1280x720-fmt157-mip0-layer0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "fixed-test31-257x129-fmt157-mip2-layer2",
+      "returncode": 0,
+      "passed": true
+    }
+  ],
+  "graphics_control": [
+    {
+      "case": "vendor-257x129-fmt37-blend0-scissor0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-1280x720-fmt37-blend0-scissor0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-257x129-fmt37-blend1-scissor0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-1280x720-fmt37-blend1-scissor0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-257x129-fmt37-blend0-scissor1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-1280x720-fmt37-blend1-scissor1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-257x129-fmt44-blend1-scissor1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-257x129-fmt6-blend1-scissor1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-257x129-fmt37-blend0-scissor0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-1280x720-fmt37-blend0-scissor0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-257x129-fmt37-blend1-scissor0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-1280x720-fmt37-blend1-scissor0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-257x129-fmt37-blend0-scissor1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-1280x720-fmt37-blend1-scissor1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-257x129-fmt44-blend1-scissor1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-257x129-fmt6-blend1-scissor1",
+      "returncode": 0,
+      "passed": true
+    }
+  ],
+  "load_control": [
+    {
+      "case": "load-vendor-257x129-fmt37-alpha0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-vendor-2560x1440-fmt37-alpha0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-vendor-257x129-fmt9-alpha1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-vendor-1280x720-fmt9-alpha1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-vendor-257x129-fmt16-alpha0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-vendor-257x129-fmt4-alpha0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-vendor-257x129-fmt8-alpha0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-vendor-257x129-fmt6-alpha0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-test30-257x129-fmt37-alpha0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-test30-2560x1440-fmt37-alpha0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-test30-257x129-fmt9-alpha1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-test30-1280x720-fmt9-alpha1",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-test30-257x129-fmt16-alpha0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-test30-257x129-fmt4-alpha0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-test30-257x129-fmt8-alpha0",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "load-test30-257x129-fmt6-alpha0",
+      "returncode": 0,
+      "passed": true
+    }
+  ]
+}

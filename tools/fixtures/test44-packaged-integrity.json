@@ -1,0 +1,20 @@
+{
+  "policy_marker": "biblioklept",
+  "results": [
+    {
+      "case": "allocated-ELF-sections-identical",
+      "passed": true,
+      "sections": 27
+    },
+    {
+      "case": "ZIP-CRC-and-library-SHA",
+      "passed": true
+    },
+    {
+      "case": "Download-copy-SHA",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "limitation": "No extra GPU smoke after user reported system-wide lag. Runtime regression suites completed on the unstripped candidate; no GPU helper was active at the cessation check. All 27 allocated ELF sections match after stripping."
+}

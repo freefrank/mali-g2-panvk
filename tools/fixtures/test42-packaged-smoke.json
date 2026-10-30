@@ -1,0 +1,52 @@
+{
+  "library_sha256": "3ae37ef3cfa68dda59358f73be6b78afa2658c546f7a72550d8595d29dadab19",
+  "extracted_from_zip": "tools/artifacts/test42/panvk-mali-g2-test42-perf-bfcc5d7-3ae37ef3.zip",
+  "zip_crc": "passed",
+  "results": [
+    {
+      "case": "acquire-semaphore",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.032,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 1
+    },
+    {
+      "case": "acquire-fence",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.027,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 0
+    },
+    {
+      "case": "acquire-both",
+      "passed": true,
+      "returncode": 0,
+      "acquire_ms": 0.069,
+      "native_pending_after_return": 1,
+      "semaphore_pending_observed": 1
+    },
+    {
+      "case": "texture-131",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "texture-137",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "texture-145",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "texture-157",
+      "passed": true,
+      "returncode": 0
+    }
+  ],
+  "passed": true
+}

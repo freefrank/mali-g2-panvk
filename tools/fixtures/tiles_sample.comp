@@ -1,0 +1,13 @@
+#version 450
+#ifndef TEX_BINDING
+#define TEX_BINDING 0
+#endif
+layout(local_size_x = 8, local_size_y = 8) in;
+layout(binding = TEX_BINDING) uniform sampler2D tex;
+layout(std430, binding = TEX_BINDING + 1) writeonly buffer Out { uint v[]; } dst;
+layout(push_constant) uniform P { uint w, h; } pc;
+void main() {
+   uvec2 p = gl_GlobalInvocationID.xy;
+   if (p.x >= pc.w || p.y >= pc.h) return;
+   dst.v[p.y * pc.w + p.x] = packUnorm4x8(texelFetch(tex, ivec2(p), 0));
+}

@@ -1,0 +1,102 @@
+{
+  "frames_per_case": 8,
+  "formats": {
+    "37": "RGBA8",
+    "44": "BGRA8",
+    "6": "R5G5B5A1"
+  },
+  "results": [
+    {
+      "case": "vendor-257x129-fmt37",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-1280x720-fmt37",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-2560x1440-fmt37",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-257x129-fmt44",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-257x129-fmt6",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "vendor-1280x720-fmt6",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test29-257x129-fmt37",
+      "returncode": 1,
+      "passed": false
+    },
+    {
+      "case": "test29-1280x720-fmt37",
+      "returncode": 1,
+      "passed": false
+    },
+    {
+      "case": "test29-2560x1440-fmt37",
+      "returncode": 1,
+      "passed": false
+    },
+    {
+      "case": "test29-257x129-fmt44",
+      "returncode": 1,
+      "passed": false
+    },
+    {
+      "case": "test29-257x129-fmt6",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test29-1280x720-fmt6",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-257x129-fmt37",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-1280x720-fmt37",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-2560x1440-fmt37",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-257x129-fmt44",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-257x129-fmt6",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "case": "test30-1280x720-fmt6",
+      "returncode": 0,
+      "passed": true
+    }
+  ],
+  "expected_baseline_device_losses": 4,
+  "new_driver_passes": 6
+}

@@ -1,0 +1,385 @@
+{
+  "driver": "/root/mali-g2-project/driver/build-android-arm/src/panfrost/vulkan/libvulkan_panfrost.so",
+  "purpose": "Valid MSAA clear, per-sample texture read and resolve across formats, sample counts and distinct array layers",
+  "results": [
+    {
+      "case": "vendor-fmt37-samples2-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt37-samples2-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt37-samples4-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt37-samples4-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt37-samples8-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt37-samples8-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt37-samples16-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt37-samples16-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt97-samples2-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt97-samples2-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt97-samples4-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt97-samples4-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt97-samples8-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt97-samples8-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt97-samples16-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt97-samples16-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt122-samples2-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt122-samples2-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt122-samples4-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt122-samples4-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt122-samples8-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt122-samples8-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt122-samples16-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "vendor-fmt122-samples16-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt37-samples2-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt37-samples2-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt37-samples4-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt37-samples4-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt37-samples8-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt37-samples8-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt37-samples16-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt37-samples16-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt97-samples2-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt97-samples2-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt97-samples4-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt97-samples4-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt97-samples8-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt97-samples8-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt97-samples16-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt97-samples16-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt122-samples2-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt122-samples2-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt122-samples4-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt122-samples4-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt122-samples8-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt122-samples8-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt122-samples16-layer0",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "current-fmt122-samples16-layer2",
+      "returncode": 0,
+      "passed": true,
+      "expected_failure": false,
+      "expected_result": true
+    },
+    {
+      "case": "baseline-fmt37-samples4-layer0",
+      "returncode": 1,
+      "passed": false,
+      "expected_failure": true,
+      "expected_result": true
+    },
+    {
+      "case": "baseline-fmt37-samples4-layer2",
+      "returncode": 1,
+      "passed": false,
+      "expected_failure": true,
+      "expected_result": true
+    },
+    {
+      "case": "baseline-fmt97-samples4-layer0",
+      "returncode": 1,
+      "passed": false,
+      "expected_failure": true,
+      "expected_result": true
+    },
+    {
+      "case": "baseline-fmt97-samples4-layer2",
+      "returncode": 1,
+      "passed": false,
+      "expected_failure": true,
+      "expected_result": true
+    },
+    {
+      "case": "baseline-fmt122-samples4-layer0",
+      "returncode": 1,
+      "passed": false,
+      "expected_failure": true,
+      "expected_result": true
+    },
+    {
+      "case": "baseline-fmt122-samples4-layer2",
+      "returncode": 1,
+      "passed": false,
+      "expected_failure": true,
+      "expected_result": true
+    }
+  ],
+  "passed": true
+}

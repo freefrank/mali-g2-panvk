@@ -2,7 +2,7 @@
 
 这是单仓库 `mali-g2-project` 中的诊断与测试子目录。Mesa/PanVK 源码位于相邻的 `../driver/`；本目录保存诊断工具、可复现测试、捕获结果和发布物。
 
-当前状态：项目已停止继续修复，保留在可复现、可接手的状态。最新诊断驱动是 `test7-72569ca`，它仍会让 Eden 在游戏启动阶段退出，不能视为可用版本。
+当前状态：用户确认 test44 仍卡，系统卡慢随游戏 FPS 降低而加重，下拉状态栏也会拉低游戏 FPS。test44 消除命令缓冲已经完成清理后的重复缓存清理，保留必要同步，渲染、读回和提交压力回归已通过，用户实测仍卡顿。10 毫秒调度 tick 对照也无改善，已恢复原 100 毫秒。异步 GPU 与两侧诊断保持关闭，分辨率 1×。证据及下一步见 [交接文档](docs/HANDOFF.md)。
 
 ## 导航
 
@@ -22,6 +22,6 @@
 | `../references/eden/` | Eden 相关只读源码摘录 |
 | `../toolchain/` | 本地构建工具与依赖 |
 
-发布 ZIP 放在 Android 的 `/storage/emulated/0/Download`，当前最新文件为 `panvk-mali-g2-test7-72569ca.zip`。
+测试 ZIP 放在 Android 的 `/storage/emulated/0/Download`。最新试版为 `panvk-mali-g2-test44-perf-bfcc5d7-e5c4f675.zip`（消除重复缓存清理，用户确认仍卡顿）；test43 为剩余卡顿未改善的对照，test42 为用户确认流畅很多但仍卡的对照。test41 为 55–58 FPS 但持续抖动，test39 为约 50 FPS，test36 为已确认成功的渲染修复基线。test40 的候选已撤回，没有发布包。这些包构建时基于 `bfcc5d7` 加未提交补丁；现已补入独立源码检查点，映射见 `fixtures/test44-source-checkpoints.json`。原包名与哈希保留，补丁和构建信息仍见本地 `artifacts/testN/source.patch`、`build.json`。
 
 Policy marker: biblioklept

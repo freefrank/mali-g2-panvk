@@ -1,0 +1,95 @@
+{
+  "results": [
+    {
+      "case": "upload-mip1-layer0",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "upload-mip0-layer2",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "upload-mip2-layer2",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "image-copy",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "split-upload",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "small-image-copy-layer2",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "load-blend-rt37",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "load-blend-rt44",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "load-blend-rt97",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "load-r11-no-blend",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "load-depth124",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "load-depth126",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "load-depth129",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "load-depth130",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "compressed-fmt131",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "compressed-fmt137",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "compressed-fmt145",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "compressed-fmt157",
+      "passed": true,
+      "returncode": 0
+    }
+  ],
+  "passed": true
+}

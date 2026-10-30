@@ -1,0 +1,49 @@
+{
+  "policy_marker": "biblioklept",
+  "library_sha256": "c1e421b06abd80c609894056d9644076a731489af6ab5ed76d76d85b2ded8b45",
+  "extracted_from_zip": "tools/artifacts/test43/panvk-mali-g2-test43-perf-bfcc5d7-c1e421b0.zip",
+  "zip_crc": "passed",
+  "results": [
+    {
+      "case": "acquire-semaphore",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "acquire-fence",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "acquire-both",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "texture-131",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "texture-137",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "texture-145",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "texture-157",
+      "passed": true,
+      "returncode": 0
+    },
+    {
+      "case": "burst-128",
+      "passed": true,
+      "returncode": 0
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,35 @@
+{
+  "driver": "/root/mali-g2-project/tools/work/eden-test35/libvulkan_panfrost.so",
+  "cases": [
+    {
+      "name": "eden_log.txt",
+      "pid": 29227,
+      "returncode": 0,
+      "checks": {
+        "draw_pass": true,
+        "fd_source_detected": true,
+        "renderer_log_captured": true,
+        "video_log_captured": true,
+        "critical_log_captured": true,
+        "unrelated_info_excluded": true
+      },
+      "passed": true
+    },
+    {
+      "name": "yuzu_log.txt",
+      "pid": 29230,
+      "returncode": 0,
+      "checks": {
+        "draw_pass": true,
+        "fd_source_detected": true,
+        "renderer_log_captured": true,
+        "video_log_captured": true,
+        "critical_log_captured": true,
+        "unrelated_info_excluded": true
+      },
+      "passed": true
+    }
+  ],
+  "fopen_hook": "/root/mali-g2-project/tools/build/bin/liblog_redirect_hook.so",
+  "passed": true
+}

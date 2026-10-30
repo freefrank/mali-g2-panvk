@@ -1,0 +1,182 @@
+{
+  "results": [
+    {
+      "case": "submit-timestamp-n1-0-baseline",
+      "commands": 1,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 740.32,
+      "p95_us": 2017.12,
+      "gpu_median_us": 300.352,
+      "gpu_p95_us": 1164.352
+    },
+    {
+      "case": "submit-timestamp-n1-1-candidate",
+      "commands": 1,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 811.328,
+      "p95_us": 1472.736,
+      "gpu_median_us": 322.784,
+      "gpu_p95_us": 892.16
+    },
+    {
+      "case": "submit-timestamp-n1-2-candidate",
+      "commands": 1,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 773.088,
+      "p95_us": 1672.96,
+      "gpu_median_us": 338.528,
+      "gpu_p95_us": 781.088
+    },
+    {
+      "case": "submit-timestamp-n1-3-baseline",
+      "commands": 1,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 463.616,
+      "p95_us": 1197.728,
+      "gpu_median_us": 92.416,
+      "gpu_p95_us": 607.68
+    },
+    {
+      "case": "submit-timestamp-n2-0-baseline",
+      "commands": 2,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 422.528,
+      "p95_us": 871.52,
+      "gpu_median_us": 121.696,
+      "gpu_p95_us": 220.096
+    },
+    {
+      "case": "submit-timestamp-n2-1-candidate",
+      "commands": 2,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 599.2,
+      "p95_us": 1413.376,
+      "gpu_median_us": 159.616,
+      "gpu_p95_us": 826.368
+    },
+    {
+      "case": "submit-timestamp-n2-2-candidate",
+      "commands": 2,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 599.136,
+      "p95_us": 1294.816,
+      "gpu_median_us": 155.808,
+      "gpu_p95_us": 734.304
+    },
+    {
+      "case": "submit-timestamp-n2-3-baseline",
+      "commands": 2,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 383.296,
+      "p95_us": 821.536,
+      "gpu_median_us": 123.328,
+      "gpu_p95_us": 353.472
+    },
+    {
+      "case": "submit-timestamp-n8-0-baseline",
+      "commands": 8,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 1265.6,
+      "p95_us": 3990.752,
+      "gpu_median_us": 739.84,
+      "gpu_p95_us": 3252.16
+    },
+    {
+      "case": "submit-timestamp-n8-1-candidate",
+      "commands": 8,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 1146.368,
+      "p95_us": 3239.072,
+      "gpu_median_us": 529.664,
+      "gpu_p95_us": 2587.168
+    },
+    {
+      "case": "submit-timestamp-n8-2-candidate",
+      "commands": 8,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 1655.744,
+      "p95_us": 4006.56,
+      "gpu_median_us": 1003.936,
+      "gpu_p95_us": 2663.04
+    },
+    {
+      "case": "submit-timestamp-n8-3-baseline",
+      "commands": 8,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 840.736,
+      "p95_us": 4275.2,
+      "gpu_median_us": 326.336,
+      "gpu_p95_us": 3311.232
+    },
+    {
+      "case": "submit-timestamp-n32-0-baseline",
+      "commands": 32,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 2816.224,
+      "p95_us": 9011.168,
+      "gpu_median_us": 2133.024,
+      "gpu_p95_us": 8253.12
+    },
+    {
+      "case": "submit-timestamp-n32-1-candidate",
+      "commands": 32,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 1749.696,
+      "p95_us": 5335.488,
+      "gpu_median_us": 1239.808,
+      "gpu_p95_us": 4113.44
+    },
+    {
+      "case": "submit-timestamp-n32-2-candidate",
+      "commands": 32,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 1991.36,
+      "p95_us": 5460.448,
+      "gpu_median_us": 1424.384,
+      "gpu_p95_us": 4836.896
+    },
+    {
+      "case": "submit-timestamp-n32-3-baseline",
+      "commands": 32,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 3339.712,
+      "p95_us": 8704.128,
+      "gpu_median_us": 2570.4,
+      "gpu_p95_us": 7364.256
+    }
+  ],
+  "passed": true,
+  "limitation": "Includes concurrent Eden GPU scheduling; GPU timestamps bracket the command buffer chain, CPU timing includes queue, event-thread and fence delivery."
+}

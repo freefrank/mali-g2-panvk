@@ -1,0 +1,38 @@
+MESA: warning: panvk v15 graphics bringup is experimental
+WARNING: panvk is not a conformant Vulkan implementation, testing use only.
+MESA: warning: Gralloc doesn't support lock_ycbcr (video buffers won't be supported)
+MESA: info: Using fallback gralloc implementation
+MESA: info: Using IMapper v5 API
+DEVICE Mali-G2-Ultra-NX MC16 subgroup=16
+MESA: info: kbase submission 4 done: subqueue syncobjs 3 4 2, errors 0 0 0
+MESA: info: kbase submission 5 done: subqueue syncobjs 5 7 3, errors 0 0 0
+MESA: info: kbase submission 6 done: subqueue syncobjs 7 10 4, errors 0 0 0
+MESA: info: kbase submission 7 done: subqueue syncobjs 9 13 5, errors 0 0 0
+MESA: info: kbase submission 8 done: subqueue syncobjs 11 16 6, errors 0 0 0
+MESA: info: kbase submission 9 done: subqueue syncobjs 13 19 7, errors 0 0 0
+MESA: info: kbase submission 10 done: subqueue syncobjs 15 22 8, errors 0 0 0
+MESA: info: kbase submission 11 done: subqueue syncobjs 17 25 9, errors 0 0 0
+MESA: info: kbase submission 12 done: subqueue syncobjs 19 28 10, errors 0 0 0
+MESA: info: kbase submission 13 done: subqueue syncobjs 21 31 11, errors 0 0 0
+MESA: info: kbase submission 14 done: subqueue syncobjs 23 34 12, errors 0 0 0
+MESA: info: kbase submission 15 done: subqueue syncobjs 25 37 13, errors 0 0 0
+MESA: info: kbase submission 16 done: subqueue syncobjs 27 40 14, errors 0 0 0
+MESA: info: kbase submission 17 done: subqueue syncobjs 29 43 15, errors 0 0 0
+MESA: info: kbase submission 18 done: subqueue syncobjs 31 46 16, errors 0 0 0
+MESA: info: kbase submission 19 done: subqueue syncobjs 33 49 17, errors 0 0 0
+MESA: info: kbase submission 20 done: subqueue syncobjs 35 52 18, errors 0 0 0
+MESA: info: kbase submission 21 done: subqueue syncobjs 37 55 19, errors 0 0 0
+MESA: info: kbase submission 22 done: subqueue syncobjs 39 58 20, errors 0 0 0
+MESA: info: kbase submission 23 done: subqueue syncobjs 41 61 21, errors 0 0 0
+MESA: info: kbase submission 24 done: subqueue syncobjs 43 64 22, errors 0 0 0
+MESA: info: kbase submission 25 done: subqueue syncobjs 45 67 23, errors 0 0 0
+MESA: info: kbase submission 26 done: subqueue syncobjs 47 70 24, errors 0 0 0
+MESA: info: kbase submission 27 done: subqueue syncobjs 49 73 25, errors 0 0 0
+MESA: info: kbase submission 28 done: subqueue syncobjs 51 76 26, errors 0 0 0
+MESA: info: kbase submission 29 done: subqueue syncobjs 53 79 27, errors 0 0 0
+MESA: info: kbase submission 30 done: subqueue syncobjs 55 82 28, errors 0 0 0
+MESA: info: kbase submission 31 done: subqueue syncobjs 57 85 29, errors 0 0 0
+MESA: info: kbase submission 32 done: subqueue syncobjs 59 88 30, errors 0 0 0
+MESA: info: kbase submission 33 done: subqueue syncobjs 61 91 31, errors 0 0 0
+VULKAN_DRAW_PASS frames=30/30 correct_pixels=256/256 center=8888ffff
+MESA: info: kbase submission 34 done: subqueue syncobjs 61 91 31, errors 0 0 0

@@ -1,0 +1,42 @@
+[
+  {
+    "case": "oracle-vendor-131",
+    "passed": true,
+    "returncode": 0
+  },
+  {
+    "case": "oracle-vendor-137",
+    "passed": true,
+    "returncode": 0
+  },
+  {
+    "case": "oracle-vendor-145",
+    "passed": true,
+    "returncode": 0
+  },
+  {
+    "case": "oracle-vendor-157",
+    "passed": true,
+    "returncode": 0
+  },
+  {
+    "case": "oracle-test39-131",
+    "passed": true,
+    "returncode": 0
+  },
+  {
+    "case": "oracle-test39-137",
+    "passed": true,
+    "returncode": 0
+  },
+  {
+    "case": "oracle-test39-145",
+    "passed": true,
+    "returncode": 0
+  },
+  {
+    "case": "oracle-test39-157",
+    "passed": true,
+    "returncode": 0
+  }
+]

@@ -1,0 +1,169 @@
+MESA: warning: panvk v15 graphics bringup is experimental
+WARNING: panvk is not a conformant Vulkan implementation, testing use only.
+MESA: warning: Gralloc doesn't support lock_ycbcr (video buffers won't be supported)
+MESA: info: Using fallback gralloc implementation
+MESA: info: Using IMapper v5 API
+DEVICE Mali-G2-Ultra-NX MC16
+CASE 0 allocate=0 usage=0x300
+HANDLE stride=0 fds=2 ints=45
+FD 10 size=3747840
+FD 11 size=16760
+H[2]=0x3141592
+H[3]=0x500
+H[4]=0x2d0
+H[5]=0x1
+H[6]=0
+H[7]=0x300
+H[8]=0
+H[9]=0x300
+H[10]=0
+H[11]=0
+H[12]=0
+H[13]=0
+H[14]=0x1
+H[15]=0xc00200
+H[16]=0
+H[17]=0x1400
+H[18]=0x500
+H[19]=0x2d0
+H[20]=0xf
+H[21]=0xf000
+H[22]=0xe10
+H[23]=0
+H[24]=0
+H[25]=0
+H[26]=0
+H[27]=0
+H[28]=0
+H[29]=0
+H[30]=0
+H[31]=0
+H[32]=0
+H[33]=0
+H[34]=0
+H[35]=0
+H[36]=0
+H[37]=0x393000
+H[38]=0x1
+H[39]=0x13df9
+H[40]=0x6a6
+H[41]=0x4178
+H[42]=0
+H[43]=0
+H[44]=0
+H[45]=0x1
+H[46]=0
+AHB_PROPERTIES result=0 size=3747840 bits=0x3 format=37
+NATIVE_IMAGE result=0
+AHB_IMAGE result=0
+AHB_MEMORY result=0
+AHB_BIND result=0
+CASE 1 allocate=0 usage=0x20000b00
+HANDLE stride=0 fds=2 ints=45
+FD 10 size=3686400
+FD 11 size=16760
+H[2]=0x3141592
+H[3]=0x500
+H[4]=0x2d0
+H[5]=0x1
+H[6]=0
+H[7]=0x20000b00
+H[8]=0
+H[9]=0x20000b00
+H[10]=0
+H[11]=0
+H[12]=0
+H[13]=0
+H[14]=0x1
+H[15]=0
+H[16]=0
+H[17]=0x1400
+H[18]=0x500
+H[19]=0x2d0
+H[20]=0
+H[21]=0
+H[22]=0x38400
+H[23]=0
+H[24]=0
+H[25]=0
+H[26]=0
+H[27]=0
+H[28]=0
+H[29]=0
+H[30]=0
+H[31]=0
+H[32]=0
+H[33]=0
+H[34]=0
+H[35]=0
+H[36]=0
+H[37]=0x384000
+H[38]=0x1
+H[39]=0x13dfa
+H[40]=0x6a6
+H[41]=0x4178
+H[42]=0
+H[43]=0
+H[44]=0
+H[45]=0x1
+H[46]=0
+AHB_PROPERTIES result=0 size=3686400 bits=0x3 format=37
+NATIVE_IMAGE result=0
+AHB_IMAGE result=0
+AHB_MEMORY result=0
+AHB_BIND result=0
+CASE 2 allocate=0 usage=0x303
+HANDLE stride=1280 fds=2 ints=45
+FD 10 size=3686400
+FD 11 size=16760
+H[2]=0x3141592
+H[3]=0x500
+H[4]=0x2d0
+H[5]=0x1
+H[6]=0
+H[7]=0x303
+H[8]=0
+H[9]=0x303
+H[10]=0
+H[11]=0
+H[12]=0x500
+H[13]=0
+H[14]=0x1
+H[15]=0
+H[16]=0
+H[17]=0x1400
+H[18]=0x500
+H[19]=0x2d0
+H[20]=0
+H[21]=0
+H[22]=0x38400
+H[23]=0
+H[24]=0
+H[25]=0
+H[26]=0
+H[27]=0
+H[28]=0
+H[29]=0
+H[30]=0
+H[31]=0
+H[32]=0
+H[33]=0
+H[34]=0
+H[35]=0
+H[36]=0
+H[37]=0x384000
+H[38]=0x1
+H[39]=0x13dfb
+H[40]=0x6a6
+H[41]=0x4178
+H[42]=0
+H[43]=0
+H[44]=0
+H[45]=0x1
+H[46]=0
+AHB_PROPERTIES result=0 size=3686400 bits=0x3 format=37
+NATIVE_IMAGE result=0
+AHB_IMAGE result=0
+AHB_MEMORY result=0
+AHB_BIND result=0
+FAILURES 0

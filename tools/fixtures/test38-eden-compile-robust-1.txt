@@ -1,0 +1,20 @@
+MESA: warning: panvk v15 graphics bringup is experimental
+WARNING: panvk is not a conformant Vulkan implementation, testing use only.
+MESA: warning: Gralloc doesn't support lock_ycbcr (video buffers won't be supported)
+MESA: info: Using fallback gralloc implementation
+MESA: info: Using IMapper v5 API
+DEVICE Mali-G2-Ultra-NX MC16
+COMPILE_BEGIN /root/mali-g2-project/tools/build/shaders/eden/astc_decoder.comp.spv bytes=125508 robust=1
+COMPILE_PASS /root/mali-g2-project/tools/build/shaders/eden/astc_decoder.comp.spv
+COMPILE_BEGIN /root/mali-g2-project/tools/build/shaders/eden/vulkan_quad_indexed.comp.spv bytes=3384 robust=1
+COMPILE_PASS /root/mali-g2-project/tools/build/shaders/eden/vulkan_quad_indexed.comp.spv
+COMPILE_BEGIN /root/mali-g2-project/tools/build/shaders/eden/vulkan_uint8.comp.spv bytes=1764 robust=1
+COMPILE_PASS /root/mali-g2-project/tools/build/shaders/eden/vulkan_uint8.comp.spv
+COMPILE_BEGIN /root/mali-g2-project/tools/build/shaders/eden/queries_prefix_scan_sum.comp.spv bytes=10176 robust=1
+COMPILE_PASS /root/mali-g2-project/tools/build/shaders/eden/queries_prefix_scan_sum.comp.spv
+COMPILE_BEGIN /root/mali-g2-project/tools/build/shaders/eden/queries_prefix_scan_sum_nosubgroups.comp.spv bytes=7300 robust=1
+COMPILE_PASS /root/mali-g2-project/tools/build/shaders/eden/queries_prefix_scan_sum_nosubgroups.comp.spv
+COMPILE_BEGIN /root/mali-g2-project/tools/build/shaders/eden/resolve_conditional_render.comp.spv bytes=1644 robust=1
+COMPILE_PASS /root/mali-g2-project/tools/build/shaders/eden/resolve_conditional_render.comp.spv
+COMPILE_BEGIN /root/mali-g2-project/tools/build/shaders/eden/block_linear_unswizzle_3d_bcn.comp.spv bytes=8204 robust=1
+COMPILE_PASS /root/mali-g2-project/tools/build/shaders/eden/block_linear_unswizzle_3d_bcn.comp.spv

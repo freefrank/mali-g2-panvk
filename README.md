@@ -13,9 +13,9 @@
 | `references/malibridge/` | Vulkan Headers 与 MaliBridge 外部参考，不纳入 Git |
 | `toolchain/` | Meson、Android 依赖和本地编译工具，不纳入 Git |
 
-当前驱动为 `test28-f5df26e`。**接手请先读 [tools/docs/HANDOFF.md](tools/docs/HANDOFF.md)**（环境、构建、读取日志、当前问题与下一步）。历史技术状态见 [tools/docs/STATUS.md](tools/docs/STATUS.md)，构建方法见 [tools/docs/BUILD_AND_TEST.md](tools/docs/BUILD_AND_TEST.md)。
+用户确认 test44 仍卡顿；系统卡慢随游戏 FPS 下降而加重，下拉状态栏也会拉低游戏 FPS。test43、Mailbox 与调度 tick 对照均未改善。test44 去除已由命令缓冲完成的重复缓存清理，保留必要清理与完成同步，渲染和内存读回回归已通过；用户实测仍卡顿，继续排查 GPU 与系统合成之间的争用或等待。调度 tick 临时从 100 改为 10 毫秒也无改善，已恢复 100。分辨率保持 1×，异步 GPU 和两侧诊断保持关闭。当前包在 Download，同场景验证和交接信息见 [HANDOFF.md](tools/docs/HANDOFF.md)，构建命令见 [BUILD_AND_TEST.md](tools/docs/BUILD_AND_TEST.md)。
 
-旧的 Meson/Ninja 构建缓存包含旧绝对路径，没有迁入。需要继续开发时应在 `driver/build-host` 和 `driver/build-android-arm` 重新配置构建。
+现有 `driver/build-host` 和 `driver/build-android-arm` 已可用于增量构建，命令见构建文档。
 
 ## 工作区约定
 

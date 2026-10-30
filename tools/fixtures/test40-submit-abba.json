@@ -1,0 +1,150 @@
+{
+  "results": [
+    {
+      "case": "submit-abba-n1-0-baseline",
+      "commands": 1,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 397.088,
+      "p95_us": 1222.176
+    },
+    {
+      "case": "submit-abba-n1-1-candidate",
+      "commands": 1,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 385.6,
+      "p95_us": 763.712
+    },
+    {
+      "case": "submit-abba-n1-2-candidate",
+      "commands": 1,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 617.408,
+      "p95_us": 1604.448
+    },
+    {
+      "case": "submit-abba-n1-3-baseline",
+      "commands": 1,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 646.048,
+      "p95_us": 1592.8
+    },
+    {
+      "case": "submit-abba-n2-0-baseline",
+      "commands": 2,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 478.144,
+      "p95_us": 863.168
+    },
+    {
+      "case": "submit-abba-n2-1-candidate",
+      "commands": 2,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 345.856,
+      "p95_us": 713.024
+    },
+    {
+      "case": "submit-abba-n2-2-candidate",
+      "commands": 2,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 357.28,
+      "p95_us": 838.624
+    },
+    {
+      "case": "submit-abba-n2-3-baseline",
+      "commands": 2,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 371.552,
+      "p95_us": 800.128
+    },
+    {
+      "case": "submit-abba-n8-0-baseline",
+      "commands": 8,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 682.72,
+      "p95_us": 3060.352
+    },
+    {
+      "case": "submit-abba-n8-1-candidate",
+      "commands": 8,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 809.376,
+      "p95_us": 2328.32
+    },
+    {
+      "case": "submit-abba-n8-2-candidate",
+      "commands": 8,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 2038.464,
+      "p95_us": 5187.328
+    },
+    {
+      "case": "submit-abba-n8-3-baseline",
+      "commands": 8,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 681.184,
+      "p95_us": 3967.776
+    },
+    {
+      "case": "submit-abba-n32-0-baseline",
+      "commands": 32,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 1735.744,
+      "p95_us": 9012.064
+    },
+    {
+      "case": "submit-abba-n32-1-candidate",
+      "commands": 32,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 3207.776,
+      "p95_us": 8419.136
+    },
+    {
+      "case": "submit-abba-n32-2-candidate",
+      "commands": 32,
+      "driver": "candidate",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 2569.952,
+      "p95_us": 7229.6
+    },
+    {
+      "case": "submit-abba-n32-3-baseline",
+      "commands": 32,
+      "driver": "baseline",
+      "passed": true,
+      "returncode": 0,
+      "median_us": 2481.856,
+      "p95_us": 11629.408
+    }
+  ],
+  "passed": true,
+  "limitation": "Microbenchmark with Eden running concurrently; timing is not game FPS and is subject to GPU scheduling interference."
+}
