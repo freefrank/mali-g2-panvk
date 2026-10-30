@@ -13,7 +13,7 @@
 | `references/malibridge/` | Vulkan Headers 与 MaliBridge 外部参考，不纳入 Git |
 | `toolchain/` | Meson、Android 依赖和本地编译工具，不纳入 Git |
 
-用户确认 test45 初期明显顺滑，但几秒后游戏与通知栏仍卡；切回前台还触发了呈现线程的 Android 表面重建异常。已保留 test45，备份后只关闭 Eden 异步呈现，等待复测。31 项驱动回归与内核 4/3 读回仍有效。分辨率 1×，异步 GPU 与两侧诊断关闭。当前包仍在 Download，最新日志结论和配置对照见 [HANDOFF.md](tools/docs/HANDOFF.md)。
+用户确认 test45 初期明显顺滑，但几秒后游戏与通知栏仍卡。早先切回崩溃位于 Android 表面重建路径，现已关闭异步呈现。最新退到列表时进程和游戏线程仍在，发现重复列表页盖住原游戏页；已在用户存档退出后修正桌面任务入口，实际游戏切回待复测。adb 已配对并取得本机 root shell。31 项驱动回归与内核 4/3 读回仍有效，保持 test45、1×、Mailbox、异步 GPU 与两侧诊断关闭。当前包仍在 Download，证据见 [HANDOFF.md](tools/docs/HANDOFF.md)。
 
 现有 `driver/build-host` 和 `driver/build-android-arm` 已可用于增量构建，命令见构建文档。
 

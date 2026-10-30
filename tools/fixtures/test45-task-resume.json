@@ -1,0 +1,233 @@
+{
+  "policy_marker": "biblioklept",
+  "driver": "test45",
+  "driver_sha256": "7d407064272ac63efa11d8958273da6d8e8cffc327b7bdf6cf8ff5efc827450e",
+  "user_report": "切回游戏又消失了",
+  "user_destination": "Eden 的游戏列表",
+  "status": "Duplicate launcher activity identified and stale task replaced with a standard launcher task; game resume validation pending.",
+  "process": {
+    "pid_before": 30424,
+    "new_process_exit_in_latest_report": false,
+    "latest_native_exit_utc": "2026-10-30T11:47:43.917Z",
+    "latest_native_exit_thread": "VulkanPresent",
+    "latest_exit_utc": "2026-10-30T11:53:29.878Z",
+    "latest_exit_reason": "Prior intentional force stop for config update"
+  },
+  "before": {
+    "activity_stack_top_to_bottom": [
+      {
+        "token": "244750343",
+        "activity": "org.yuzu.yuzu_emu.ui.main.MainActivity",
+        "task_id": 507,
+        "intent": "act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10600000 xflg=0x4 cmp=com.miHoYo.Yuanshen.nightly/org.yuzu.yuzu_emu.ui.main.MainActivity (has extras)",
+        "state": "STOPPED",
+        "finishing": false,
+        "root_of_task": false
+      },
+      {
+        "token": "102355950",
+        "activity": "org.yuzu.yuzu_emu.activities.EmulationActivity",
+        "task_id": 507,
+        "intent": "flg=0x20000000 xflg=0x4 cmp=com.miHoYo.Yuanshen.nightly/org.yuzu.yuzu_emu.activities.EmulationActivity (has extras)",
+        "state": "STOPPED",
+        "finishing": false,
+        "root_of_task": false
+      },
+      {
+        "token": "172624462",
+        "activity": "org.yuzu.yuzu_emu.ui.main.MainActivity",
+        "task_id": 507,
+        "intent": "flg=0x10000000 xflg=0x4 cmp=com.miHoYo.Yuanshen.nightly/org.yuzu.yuzu_emu.ui.main.MainActivity",
+        "state": "STOPPED",
+        "finishing": false,
+        "root_of_task": true
+      }
+    ],
+    "paused_emulation_activity_finishing": false,
+    "guest_threads_still_present": [
+      "NativeEmulation",
+      "GPU",
+      "VulkanWorker",
+      "GPUFencingThrea",
+      "CPUCore_0",
+      "CPUCore_1",
+      "CPUCore_2",
+      "CPUCore_3"
+    ],
+    "thread_name_source": "/proc/PID/task/TID/comm; ps -o NAME reports process name on this Android build"
+  },
+  "events": [
+    {
+      "utc": "2026-10-30T11:57:13.319Z",
+      "type": "create_emulation_activity",
+      "token": "102355950"
+    },
+    {
+      "utc": "2026-10-30T11:58:20.302Z",
+      "type": "pause_emulation_activity",
+      "token": "102355950"
+    },
+    {
+      "utc": "2026-10-30T11:58:20.363Z",
+      "type": "stop_emulation_activity",
+      "token": "102355950"
+    },
+    {
+      "utc": "2026-10-30T11:58:21.981Z",
+      "type": "launcher_creates_second_main_activity",
+      "token": "244750343"
+    }
+  ],
+  "interpretation": {
+    "observed": "A new launcher MainActivity covered the stopped, non-finishing EmulationActivity; process and guest threads survived.",
+    "likely_contributor": "Prior direct activity launch omitted ACTION_MAIN and CATEGORY_LAUNCHER in task root intent.",
+    "limitations": [
+      "No new native crash in this event; this does not resolve or invalidate the earlier surface recreation exception.",
+      "Repeated main activity launch checks task reuse only. Background/resume with a running game still requires user testing.",
+      "No performance improvement has been established by this task repair."
+    ]
+  },
+  "initial_attempt": {
+    "result": "aborted before force-stop",
+    "exit_code": 84,
+    "guard": "NativeEmulation thread found"
+  },
+  "android_access": {
+    "tool": "adb",
+    "installed_package": "android-tools 34.0.4-3",
+    "connection": "127.0.0.1:33641",
+    "protocol": "wireless debugging with user-supplied pairing",
+    "shell_uid": 0,
+    "model": "M367FC",
+    "reference": "https://developer.android.com/tools/adb"
+  },
+  "repair": {
+    "user_confirmed_save_and_exit": true,
+    "no_eden_pid_immediately_before": true,
+    "script_exit_code": 0,
+    "standard_launch": [
+      {
+        "token": "109708628",
+        "activity": "org.yuzu.yuzu_emu.ui.main.MainActivity",
+        "task_id": 509,
+        "intent": "act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 xflg=0x4 cmp=com.miHoYo.Yuanshen.nightly/org.yuzu.yuzu_emu.ui.main.MainActivity",
+        "state": "RESUMED",
+        "finishing": false,
+        "root_of_task": true
+      }
+    ],
+    "repeated_launch": [
+      {
+        "token": "109708628",
+        "activity": "org.yuzu.yuzu_emu.ui.main.MainActivity",
+        "task_id": 509,
+        "intent": "act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 xflg=0x4 cmp=com.miHoYo.Yuanshen.nightly/org.yuzu.yuzu_emu.ui.main.MainActivity",
+        "state": "RESUMED",
+        "finishing": false,
+        "root_of_task": true
+      }
+    ],
+    "same_activity_token_and_task": true,
+    "repeat_result": "Intent delivered to currently running top-most instance.",
+    "global_and_game_configs_unchanged": true,
+    "global_config_sha256": "ec31a943ee0c96ed3c3825a638669d1f9ed697050a3998bbb93a822f9def97ee",
+    "game_config_sha256": "476e688202b4fc297853a829dd0551d5ad4e7206ab9489a052a9f183d28ae686",
+    "driver_sha256_unchanged": true
+  },
+  "settings": {
+    "resolution": "1x",
+    "presentation": "Mailbox",
+    "async_gpu": false,
+    "async_presentation": false,
+    "driver_and_eden_diagnostics": false
+  },
+  "source_changes": false,
+  "synthetic_gpu_tests_run": false,
+  "raw_evidence": [
+    {
+      "path": "tools/work/eden-perf47/initial-exit/exit-info.txt",
+      "bytes": 6386,
+      "sha256": "9f4ef6b38a012a994dac3e035734570664e283b80278a4954d1f7c1396d5fb17"
+    },
+    {
+      "path": "tools/work/eden-perf47/initial-exit/eden-current.txt",
+      "bytes": 49194,
+      "sha256": "ba4efbacacf30d58b7d2bf1aa263849d4e346f4f3889bd83a42466cd556a2e73"
+    },
+    {
+      "path": "tools/work/eden-perf47/initial-lifecycle/events.txt",
+      "bytes": 155657,
+      "sha256": "d6f3ca274864ff7525672459a3c26b6f2adb2e9e5e2b7292c69850d8382f1460"
+    },
+    {
+      "path": "tools/work/eden-perf47/initial-lifecycle/activities.txt",
+      "bytes": 160471,
+      "sha256": "bc4800a35e5cad36dcd37e81ad0b42ddc6a450db3c5f9873db2a8345cbdb47a5"
+    },
+    {
+      "path": "tools/work/eden-perf47/adb-connected/activities.txt",
+      "bytes": 190906,
+      "sha256": "0046e9b60c13234bbf28977db72f6c08a23d3ff6ab942ef6fbafd2c01a4059cb"
+    },
+    {
+      "path": "tools/work/eden-perf47/adb-connected/exit-info.txt",
+      "bytes": 6386,
+      "sha256": "9f4ef6b38a012a994dac3e035734570664e283b80278a4954d1f7c1396d5fb17"
+    },
+    {
+      "path": "tools/work/eden-perf47/adb-connected/thread-comms.txt",
+      "bytes": 3367,
+      "sha256": "7c0594bc857f998429a12310c1d9c960ea94f8425a24c5bbc7195550344c0522"
+    },
+    {
+      "path": "tools/work/eden-perf47/adb-connected/pre-repair-state.txt",
+      "bytes": 9,
+      "sha256": "b465b02fd4e72422cb46f4e2a3eabe110fd28ab0b834bef247f13462332e45e0"
+    },
+    {
+      "path": "tools/work/eden-perf47/adb-eden-current.txt",
+      "bytes": 49194,
+      "sha256": "ba4efbacacf30d58b7d2bf1aa263849d4e346f4f3889bd83a42466cd556a2e73"
+    },
+    {
+      "path": "tools/work/eden-perf47/launch-repair/access.txt",
+      "bytes": 10,
+      "sha256": "5e9a7d8add88b105af83bdd6a59a34465b3259df66ffb251d70b0ad795a051a9"
+    },
+    {
+      "path": "tools/work/eden-perf47/launch-repair/start-standard.txt",
+      "bytes": 321,
+      "sha256": "c52c665d14918514609acae4f350da6a20ca0db007b2f11f8afd346d1dd8eeec"
+    },
+    {
+      "path": "tools/work/eden-perf47/launch-repair/start-repeat.txt",
+      "bytes": 421,
+      "sha256": "ce53dd6be219fea64c192c6c1f56aa3025320473c5c42aef69b600fdb8723497"
+    },
+    {
+      "path": "tools/work/eden-perf47/launch-repair/activities-standard.txt",
+      "bytes": 179034,
+      "sha256": "dd95a289eac94cfa30c1bf6fc225266d958fcf9e88344a8505e1ac2c7a771afc"
+    },
+    {
+      "path": "tools/work/eden-perf47/launch-repair/activities-repeat.txt",
+      "bytes": 178684,
+      "sha256": "2feef5c99ad977c6b6d59e8089298318d0c5ea305d3f08ec8a7ac150db3e2880"
+    },
+    {
+      "path": "tools/work/eden-perf47/launch-repair/config-before-sha.txt",
+      "bytes": 319,
+      "sha256": "ea7143fc3f2e15ec916b33cef8208f8d1a8feeeff1c5b8c50b1da0d20c8cf4a9"
+    },
+    {
+      "path": "tools/work/eden-perf47/launch-repair/config-after-sha.txt",
+      "bytes": 319,
+      "sha256": "ea7143fc3f2e15ec916b33cef8208f8d1a8feeeff1c5b8c50b1da0d20c8cf4a9"
+    },
+    {
+      "path": "tools/work/eden-perf47/launch-repair/driver-file-sha.txt",
+      "bytes": 144,
+      "sha256": "0be1db71966251e4f226e026e1fa7b965365a9c0fca4cd48f8c6b170896e07da"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# 交接文档（2026-10-30，test45 初期显著改善后仍卡；切回崩溃已定位呈现表面路径，关闭异步呈现待复测）
+# 交接文档（2026-10-30，test45 初期改善后仍卡；adb 已连接，重复列表任务已清理，游戏切回待复测）
 
 接手前先读完本文件，再读 `STATUS.md`（历史结论）和 `BUILD_AND_TEST.md`（构建细节）。
 Policy marker: biblioklept
@@ -20,7 +20,17 @@ Policy marker: biblioklept
 
 源码提交、driver 子树、原包库/ZIP/补丁哈希的机器可读映射在 `tools/fixtures/test44-source-checkpoints.json`。原包构建发生在这些提交之前，包名中的 bfcc5d7 与历史 manifest 不改写；其 driver 源码已逐字节对应到表中提交。旧记录中的“无提交或推送”描述当时状态，已由本节补充。构建产物、符号、原始设备日志和私有配置未加入 Git。
 
-## 当前状态：test45 改善已确认，异步呈现关闭待复测
+## 当前状态：adb 已连接，异常桌面任务已清理
+
+- 用户澄清最新「切回游戏又消失了」是回到 Eden 游戏列表。本轮没有新进程崩溃：PID 30424 仍在，exit-info 最新 native crash 仍为 11:47:43Z，最新退出为此前修改配置时的 11:53:29Z 主动 force-stop。运行日志确认 async_presentation=false、异步 GPU=false 已生效。
+- task 507 底层 MainActivity 172624462 的根 intent 仅有 component 和 0x10000000，没有 ACTION_MAIN/CATEGORY_LAUNCHER，这是上轮直接启动应用时留下的入口。19:57:13 本地时间创建 EmulationActivity 102355950；19:58:20 进入 STOPPED，finishing=false；19:58:21.981 桌面新建 MainActivity 244750343，盖在原游戏页上。此事件应与此前 VulkanPresent 原生崩溃分开。
+- adb 直接读取 /proc/30424/task/*/comm，确认 NativeEmulation、VulkanWorker、GPU、GPUFencingThrea 和 CPUCore_0–3 仍在。注意本机 ps -T -o NAME 输出的是进程名，不能据此断定没有游戏线程。最初任务修复脚本检测到 NativeEmulation 后以 84 退出，未关闭运行中的游戏。
+- 按用户建议安装 android-tools 34.0.4-3，并用用户提供的临时配对信息完成无线调试配对；adb connect 127.0.0.1:33641 成功，adb shell id 为 uid=0。Shizuku 服务也在，但本轮使用 adb。配对码、密钥和原始设备日志不提交。连接端口可能随无线调试重启变化，后续先查 adb devices -l；标准命令见 [Android adb 文档](https://developer.android.com/tools/adb)。现有 TermuxService 原生 root 通道仍可备用。
+- 用户确认「已存档并完全退出 Eden」后，adb 再次核对 pidof 为空，才清理旧任务并用 ACTION_MAIN + CATEGORY_LAUNCHER + 0x10200000 标准入口打开。新 task 509 只有 MainActivity 109708628；第二次同样启动复用同一 token/task，提示 intent delivered to currently running top-most instance，没有新建列表页。
+- 前后全局与游戏配置 SHA 完全一致，驱动库仍为 test45 7d407064...；保留 1×、Mailbox、异步 GPU=false、async_presentation=false、两侧诊断关闭。没有驱动源码改动、新驱动包或合成 GPU 回归。此次只核对了列表页重复启动，不能声称实际游戏切回和持续卡顿已修复。
+- 证据见 fixtures/test45-task-resume.json；原始任务栈、日志及配置哈希保留在忽略目录 work/eden-perf47/。已请用户正常进入游戏，存档后回桌面再点 Eden 图标返回；根据结果再采任务栈/本轮日志。先确认切回行为，再继续持续卡顿的性能定位。
+
+## 前一阶段：test45 改善已确认，关闭异步呈现对照
 
 - 用户最新反馈：「好了很多！！但是过几秒又开始卡了」，游戏与通知栏都会卡。询问回桌面再切回能否短暂恢复后，用户报告切回闪退。保留 test45 的 4/3 仲裁参数，不再把游戏效果标为完全未知，也不能标为已经持续顺滑。
 - 本轮原生映射 SHA 确认为 test45 `7d407064...`。20.118 秒 kernel fence 观察记录 31,180 样本、零丢失；资源另采 21 点，GPU 基本 1.248GHz（一次 1.392GHz），利用率 91–99%，即时 GPU 温度 45–46.875°C，前后 Thermal Status=0。没有捕获经确认的“顺滑转卡顿”边界，不能用该窗口全面排除频率策略。其后 120Hz/278.53MHz 的短记录实际是 Termux 前台，排除出游戏性能比较；两次等待采集均未启动有效 CPU/counter 窗口，第二次在恢复渲染前超时。没有合成 GPU 回归。

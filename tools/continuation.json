@@ -6,7 +6,7 @@
   "eden_reference": "/root/mali-g2-project/references/eden",
   "driver_head": "24e32e8b86164c9375aebab92a037b487f8ed872",
   "latest_package": "/storage/emulated/0/Download/panvk-mali-g2-test45-perf-24e32e8-7d407064.zip",
-  "current_status": "test45 much better initially, stutter returns after seconds; both game and Android UI. Foreground resume crashed at VulkanPresent CopyToSwapchain rethrow after Android surface initialization failure. Preserved test45; backed up and disabled async_presentation only, after confirming no game and main activity. Reopened Eden main; two-line change and custom-config identity verified. User validation pending.",
+  "current_status": "test45 initial performance improvement remains; sustained stutter unresolved. Earlier true resume crash was VulkanPresent surface initialization failure; async_presentation is now false and runtime log confirms it. Latest return-to-library preserved PID and guest threads, with a second MainActivity above stopped EmulationActivity. After user saved/exited and no PID remained, rebuilt task via ACTION_MAIN+CATEGORY_LAUNCHER+0x10200000. Repeated launch reuses one MainActivity/task; configs and driver SHA unchanged. Awaiting game background/resume validation.",
   "build_note": "Existing driver/build-host and driver/build-android-arm support incremental builds. Read tools/docs/BUILD_AND_TEST.md. test45 symbols and artifact hashes are in tools/artifacts/test45/build.json.",
   "git_policy": "Commit and push each milestone to origin/main; user explicitly requested frequent commit/push. Generated-by: LLM and biblioklept markers required. Do not post upstream or rewrite pushed history.",
   "remaining_capabilities": [
@@ -26,6 +26,14 @@
     "presentation": "Mailbox",
     "async_presentation": false
   },
-  "next_step": "User opens game, tests movement; save before resume testing. Verify setting in real render session and absence of VulkanPresent before further driver changes. No test46 package or driver changes this phase. Continue performance diagnosis after resume stability.",
-  "remaining_capabilities_note": "Historical test8-era list below has not been revalidated in this phase; consult STATUS.md for current capabilities."
+  "next_step": "User opens game, saves, then tests home/launcher return. Capture task stack and current logs over adb if still returns to list/crashes. Standard launcher root task fixed, but actual game resume remains unverified. Preserve test45/1x/Mailbox/async GPU=false/async presentation=false/diagnostics off; continue stutter diagnosis after resume stability. No test46 or test47 driver package.",
+  "remaining_capabilities_note": "Historical test8-era list below has not been revalidated in this phase; consult STATUS.md for current capabilities.",
+  "android_access": {
+    "preferred": "adb",
+    "serial": "127.0.0.1:33641",
+    "shell_uid": 0,
+    "paired": true,
+    "package": "android-tools 34.0.4-3",
+    "note": "Wireless port may change; inspect adb devices first. Pairing was authorized interactively; do not commit keys/codes. Existing TermuxService native-root bridge remains a fallback. Read /proc/PID/task/TID/comm for thread names; ps NAME is the process name here."
+  }
 }
