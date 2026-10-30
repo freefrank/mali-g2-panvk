@@ -30,6 +30,7 @@
 #include <assert.h>
 #include <poll.h>
 #include <sys/ioctl.h>
+#include <sys/eventfd.h>
 #include <sys/mman.h>
 #include <unistd.h>
 
@@ -2158,6 +2159,7 @@ struct kbase_csf_ring {
 struct kbase_csf_sub {
    uint64_t seq;
    uint32_t mask;
+   int fence_fd;
    uint64_t target[PAN_KMOD_KBASE_CSF_MAX_QUEUES];
    pan_kmod_kbase_done_cb done;
    void *data;
@@ -2182,6 +2184,7 @@ struct pan_kmod_kbase_csf_group {
 struct kbase_csf_dev {
    pthread_mutex_t lock;
    pthread_cond_t cond;
+   int wake_fd;
    struct list_head groups;
    pthread_t thread;
    bool thread_started, stop;
@@ -2189,6 +2192,16 @@ struct kbase_csf_dev {
    bool kcpu_created;
    uint8_t kcpu_id;
 };
+
+static void
+kbase_csf_wake(struct kbase_csf_dev *c)
+{
+   const uint64_t value = 1;
+   ssize_t ret;
+   do {
+      ret = write(c->wake_fd, &value, sizeof(value));
+   } while (ret < 0 && errno == EINTR);
+}
 
 /* KCPU queues (UAPI 1.x): the kernel runs their commands in order, so a CQS wait on the seqno
  * objects our rings signal, followed by a fence signal, gives a sync file that signals when the
@@ -2297,6 +2310,11 @@ kbase_csf_dev_init(struct kbase_kmod_dev *kdev)
    struct kbase_csf_dev *c = calloc(1, sizeof(*c));
    if (!c)
       return false;
+   c->wake_fd = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
+   if (c->wake_fd < 0) {
+      free(c);
+      return false;
+   }
    pthread_mutex_init(&c->lock, NULL);
    pthread_condattr_t attr;
    pthread_condattr_init(&attr);
@@ -2319,6 +2337,7 @@ kbase_csf_dev_finish(struct kbase_kmod_dev *kdev)
    c->stop = true;
    const bool started = c->thread_started;
    pthread_mutex_unlock(&c->lock);
+   kbase_csf_wake(c);
    if (started)
       pthread_join(c->thread, NULL);
    if (c->kcpu_created) {
@@ -2327,6 +2346,7 @@ kbase_csf_dev_finish(struct kbase_kmod_dev *kdev)
    }
    pthread_cond_destroy(&c->cond);
    pthread_mutex_destroy(&c->lock);
+   close(c->wake_fd);
    free(c);
    kdev->csfq = NULL;
 }
@@ -2389,10 +2409,24 @@ kbase_csf_thread(void *arg)
    unsigned polls = 0;
 
    for (;;) {
+      struct pollfd pfds[18] = {
+         {.fd = kdev->base.fd, .events = POLLIN},
+         {.fd = c->wake_fd, .events = POLLIN},
+      };
+      unsigned nr_fds = 2;
       pthread_mutex_lock(&c->lock);
       bool busy = false;
-      list_for_each_entry(struct pan_kmod_kbase_csf_group, g, &c->groups, link)
+      list_for_each_entry(struct pan_kmod_kbase_csf_group, g, &c->groups, link) {
          busy |= g->nr_subs != 0;
+         if (!g->nr_subs || nr_fds == ARRAY_SIZE(pfds))
+            continue;
+         const int fd = g->subs[g->first_sub].fence_fd;
+         if (fd >= 0) {
+            const int copy = dup(fd);
+            if (copy >= 0)
+               pfds[nr_fds++] = (struct pollfd){.fd = copy, .events = POLLIN};
+         }
+      }
       const bool stop = c->stop && !busy;
       pthread_mutex_unlock(&c->lock);
       if (stop)
@@ -2400,8 +2434,17 @@ kbase_csf_thread(void *arg)
 
       /* The event is a wakeup, not the completion record: the seqnos are. A short timeout
        * covers an update whose event was consumed before its submission was recorded. */
-      struct pollfd pfd = {.fd = kdev->base.fd, .events = POLLIN};
-      if (poll(&pfd, 1, busy ? 2 : 50) > 0 && (pfd.revents & POLLIN)) {
+      const int ret = poll(pfds, nr_fds, busy ? 2 : 50);
+      for (unsigned i = 2; i < nr_fds; i++)
+         close(pfds[i].fd);
+      if (ret > 0 && (pfds[1].revents & POLLIN)) {
+         uint64_t value;
+         ssize_t got;
+         do {
+            got = read(c->wake_fd, &value, sizeof(value));
+         } while (got < 0 && errno == EINTR);
+      }
+      if (ret > 0 && (pfds[0].revents & POLLIN)) {
          uint8_t notes[KBASE_CSF_NOTIFICATION_SIZE * 8];
          const ssize_t got = read(kdev->base.fd, notes, sizeof(notes));
          for (ssize_t o = 0; o + KBASE_CSF_NOTIFICATION_SIZE <= got;
@@ -2471,6 +2514,8 @@ kbase_csf_thread(void *arg)
       pthread_mutex_unlock(&c->lock);
 
       for (unsigned i = 0; i < n; i++) {
+         if (fin[i].fence_fd >= 0)
+            close(fin[i].fence_fd);
          if (fin[i].done)
             fin[i].done(fin[i].data, fin_ok[i]);
       }
@@ -2771,7 +2816,7 @@ pan_kmod_kbase_csf_submit(struct pan_kmod_kbase_csf_group *g,
       kbase_csf_emit(r, cs_ins(CS_OP_CALL, (A << 40) | (V << 32)));
    }
 
-   struct kbase_csf_sub sub = {.mask = mask, .done = done, .data = data};
+   struct kbase_csf_sub sub = {.mask = mask, .fence_fd = -1, .done = done, .data = data};
    u_foreach_bit(q, mask) {
       struct kbase_csf_ring *r = &g->ring[q];
       /* After a fault the firmware skips everything up to the next ERROR_BARRIER, so a signal
@@ -2815,6 +2860,7 @@ pan_kmod_kbase_csf_submit(struct pan_kmod_kbase_csf_group *g,
       if (pan_kmod_ioctl(kdev->base.fd, KBASE_IOCTL_CS_QUEUE_KICK, &k))
          mesa_loge("kbase: CS_QUEUE_KICK of queue %u failed (err=%d)", q, errno);
    }
+   kbase_csf_wake(c);
    return sub.seq;
 }
 
@@ -2906,6 +2952,21 @@ pan_kmod_kbase_csf_fence_fd(struct pan_kmod_kbase_csf_group *g, uint64_t seq)
    }
    if (debug_get_option_kbase_g2_diagnostics() && getenv("KBASE_FENCE_DEBUG"))
       mesa_logi("kbase fence: seq %" PRIu64 " objs %u fd %d", seq, nr_objs, fence.basep.fd);
+   bool attached = false;
+   if (fence.basep.fd >= 0) {
+      pthread_mutex_lock(&c->lock);
+      for (unsigned i = 0; i < g->nr_subs; i++) {
+         struct kbase_csf_sub *s = &g->subs[(g->first_sub + i) % KBASE_CSF_MAX_SUBS];
+         if (s->seq == seq && s->fence_fd < 0) {
+            s->fence_fd = dup(fence.basep.fd);
+            attached = s->fence_fd >= 0;
+            break;
+         }
+      }
+      pthread_mutex_unlock(&c->lock);
+   }
+   if (attached)
+      kbase_csf_wake(c);
    return fence.basep.fd;
 }
 
