@@ -153,6 +153,7 @@ struct pan_kmod_kbase_cs_call {
    uint32_t queue;
    uint32_t size;
    uint64_t addr;
+   bool cache_clean;
 };
 
 /* Writes the calls into the rings in order, then a completion signal on every queue that has a
