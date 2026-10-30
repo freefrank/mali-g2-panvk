@@ -1,0 +1,44 @@
+{
+  "policy_marker": "biblioklept",
+  "status": "Candidate; ABI/offline checks only before runtime validation.",
+  "driver_baseline": "test44",
+  "kernel_module_sha256": "93231818e4614e5ba60c8e699af1bfd1f1ff0bc78e637a25f157e3aded6a1e87",
+  "kernel_abi_observed": "CSF 1.39; 112-byte request selects kbasep_cs_queue_group_create_1_35.",
+  "contract": {
+    "ioctl_size": 112,
+    "neural_mask_offset": 40,
+    "comp_pri_threshold_offset": 48,
+    "comp_pri_ratio_offset": 49,
+    "remaining_padding_offset": 50
+  },
+  "binary_cross_check": {
+    "compat_entry": "0x8c44",
+    "threshold_load": "0x8ca0: ldrb w8,[x1,#0x30]",
+    "threshold_store": "0x8ca8: strb w8,[sp,#0x40]",
+    "ratio_load": "0x8cac: ldrb w8,[x1,#0x31]",
+    "ratio_store": "0x8cb8: strb w8,[sp,#0x41]",
+    "current_request_base": "sp+8; current thresholds therefore offsets 0x38/0x39",
+    "current_entry": "0x391fc; reads 0x38/0x39 and accepts nonzero only with architecture >13",
+    "passed": true
+  },
+  "candidate": {
+    "architecture": 15,
+    "compute_priority_threshold": "min(max_compute,4)",
+    "compute_priority_ratio": 3,
+    "other_architectures": "zero bytes preserved",
+    "global_priority_changed": false,
+    "core_masks_changed": false,
+    "fence_or_cache_waits_changed": false
+  },
+  "evidence": {
+    "stock_queue_parameters": "Observed native debugfs queues use 4/3; PanVK queue uses 0/0.",
+    "field_meaning_source": "https://android.googlesource.com/kernel/google-modules/gpu/+/refs/heads/android-gs-akita-android16/mali_kbase/csf/mali_kbase_csf_defs.h",
+    "caution": "Xiaomi dijun r49 public headers contain a different ABI. Actual device module compatibility conversion, not those headers, defines this candidate payload. Parameter mismatch is a hypothesis, not proof of stutter cause."
+  },
+  "validation": {
+    "compile_time_size_and_offsets": true,
+    "kernel_disassembly_checked": true,
+    "runtime": "pending; no GPU workload while user is playing",
+    "game": "pending"
+  }
+}

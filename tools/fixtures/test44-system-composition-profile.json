@@ -490,7 +490,7 @@
   },
   "conclusion": "Notification gesture capture: the display commit worker spends much more time waiting for SurfaceFlinger GPU fences than game GPU fences. This identifies the downstream late signal; it does not establish whether SurfaceFlinger GPU work itself or its dependencies/scheduling cause the delay. No driver fix yet.",
   "blur_control": {
-    "status": "Completed and automatically restored; user feedback pending. Not a validated performance A/B.",
+    "status": "User reports stutter persists. Setting was automatically restored; no frame-matched performance A/B.",
     "setting": "global disable_window_blurs",
     "original": "null",
     "applied": "1",
@@ -502,7 +502,8 @@
     "source": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-16.0.0_r2/core/java/android/provider/Settings.java",
     "observation": "Read-only fence trace during blur-off had no new SystemUI frame records; cannot compare its aggregate wait totals to active notification gestures.",
     "game_settings_changed": false,
-    "driver_changed": false
+    "driver_changed": false,
+    "user_feedback": "\u5361"
   },
   "gpu_context_check": {
     "surfaceflinger_driver": "Stock vendor /vendor/lib64/hw/vulkan.mali.so and libGLES_mali.so are loaded.",

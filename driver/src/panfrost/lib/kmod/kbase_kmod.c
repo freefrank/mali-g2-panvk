@@ -2055,7 +2055,10 @@ union kbase_ioctl_cs_queue_group_create {
       uint8_t csi_handlers;
       uint16_t reserved;
       uint64_t dvs_buf;
-      uint64_t padding[9];
+      uint64_t neural_mask;
+      uint8_t comp_pri_threshold;
+      uint8_t comp_pri_ratio;
+      uint8_t padding[62];
    } in;
    struct {
       uint8_t group_handle;
@@ -2063,6 +2066,13 @@ union kbase_ioctl_cs_queue_group_create {
       uint32_t group_uid;
    } out;
 };
+
+static_assert(sizeof(union kbase_ioctl_cs_queue_group_create) == 112,
+              "kbase_ioctl_cs_queue_group_create");
+static_assert(offsetof(union kbase_ioctl_cs_queue_group_create,
+                       in.comp_pri_threshold) == 48, "comp_pri_threshold");
+static_assert(offsetof(union kbase_ioctl_cs_queue_group_create,
+                       in.comp_pri_ratio) == 49, "comp_pri_ratio");
 
 struct kbase_ioctl_cs_queue_group_term {
    uint8_t group_handle;
@@ -2569,6 +2579,10 @@ pan_kmod_kbase_csf_group_create(struct pan_kmod_dev *dev, unsigned nr_queues,
          .compute_max = max_compute,
       },
    };
+   if (PAN_ARCH_MAJOR(dev->props.gpu_id) == 15) {
+      gc.in.comp_pri_threshold = MIN2(max_compute, 4);
+      gc.in.comp_pri_ratio = 3;
+   }
    if (pan_kmod_ioctl(dev->fd, KBASE_IOCTL_CS_QUEUE_GROUP_CREATE, &gc)) {
       mesa_loge("kbase: CS_QUEUE_GROUP_CREATE failed (err=%d)", errno);
       goto err_free_seq;
