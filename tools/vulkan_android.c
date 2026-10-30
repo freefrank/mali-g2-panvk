@@ -10,11 +10,74 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 #define CHECK(call) do { VkResult r = (call); if (r != VK_SUCCESS) { \
     fprintf(stderr, "%s: %d\n", #call, r); return 1; } } while (0)
 #define LOAD(name) PFN_##name name = (PFN_##name)get(instance, #name); \
     if (!name) { fprintf(stderr, "%s missing\n", #name); return 1; }
+
+static int
+retire_pending(PFN_vkGetInstanceProcAddr get, VkInstance instance,
+               VkDevice device, VkImage image)
+{
+    LOAD(vkGetDeviceQueue);
+    LOAD(vkCreateCommandPool); LOAD(vkDestroyCommandPool);
+    LOAD(vkAllocateCommandBuffers); LOAD(vkBeginCommandBuffer); LOAD(vkEndCommandBuffer);
+    LOAD(vkCmdPipelineBarrier); LOAD(vkCmdClearColorImage);
+    LOAD(vkCreateFence); LOAD(vkDestroyFence); LOAD(vkGetFenceStatus);
+    LOAD(vkQueueSubmit); LOAD(vkWaitForFences); LOAD(vkDestroyImage);
+    VkQueue queue;
+    vkGetDeviceQueue(device, 0, 0, &queue);
+    VkCommandPoolCreateInfo pci = {.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+        .queueFamilyIndex = 0};
+    VkCommandPool pool;
+    CHECK(vkCreateCommandPool(device, &pci, NULL, &pool));
+    VkCommandBufferAllocateInfo cai = {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .commandPool = pool, .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .commandBufferCount = 1};
+    VkCommandBuffer command;
+    CHECK(vkAllocateCommandBuffers(device, &cai, &command));
+    VkCommandBufferBeginInfo cbi = {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+    CHECK(vkBeginCommandBuffer(command, &cbi));
+    VkImageSubresourceRange range = {.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+        .levelCount = 1, .layerCount = 1};
+    VkImageMemoryBarrier barrier = {.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+        .dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
+        .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED, .newLayout = VK_IMAGE_LAYOUT_GENERAL,
+        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .image = image, .subresourceRange = range};
+    vkCmdPipelineBarrier(command, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+        VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, &barrier);
+    barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+    barrier.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
+    for (unsigned i = 0; i < 1024; i++) {
+        VkClearColorValue color = {.float32 = {(float)(i & 1), 0.25f, 0.5f, 1.0f}};
+        vkCmdClearColorImage(command, image, VK_IMAGE_LAYOUT_GENERAL, &color, 1, &range);
+        vkCmdPipelineBarrier(command, VK_PIPELINE_STAGE_TRANSFER_BIT,
+            VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, &barrier);
+    }
+    CHECK(vkEndCommandBuffer(command));
+    VkFenceCreateInfo fci = {.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
+    VkFence fence;
+    CHECK(vkCreateFence(device, &fci, NULL, &fence));
+    VkSubmitInfo submit = {.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .commandBufferCount = 1, .pCommandBuffers = &command};
+    CHECK(vkQueueSubmit(queue, 1, &submit, fence));
+    VkResult before = vkGetFenceStatus(device, fence);
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+    vkDestroyImage(device, image, NULL);
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    VkResult after = vkGetFenceStatus(device, fence);
+    double ms = (end.tv_sec - start.tv_sec) * 1000.0 +
+        (end.tv_nsec - start.tv_nsec) / 1000000.0;
+    printf("ANB_RETIRE_PENDING before=%d after=%d destroy_ms=%.3f\n", before, after, ms);
+    CHECK(vkWaitForFences(device, 1, &fence, VK_TRUE, 5000000000ull));
+    vkDestroyFence(device, fence, NULL);
+    vkDestroyCommandPool(device, pool, NULL);
+    return before == VK_NOT_READY && after == VK_SUCCESS ? 0 : 1;
+}
 
 int main(int argc, char **argv)
 {
@@ -95,7 +158,9 @@ int main(int argc, char **argv)
             AHARDWAREBUFFER_USAGE_CPU_READ_OFTEN,
     };
     int failures = 0;
+    const int pending = getenv("MALI_G2_ANB_RETIRE_PENDING") != NULL;
     for (unsigned i = 0; i < sizeof(usages) / sizeof(usages[0]); i++) {
+        if (pending && i != 1) continue;
         AHardwareBuffer_Desc desc = {.width = 1280, .height = 720, .layers = 1,
             .format = AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, .usage = usages[i]};
         AHardwareBuffer *ahb = NULL;
@@ -133,6 +198,7 @@ int main(int argc, char **argv)
         result = create_image(device, &image_info, NULL, &image);
         printf("NATIVE_IMAGE result=%d\n", result);
         if (result) failures++;
+        else if (pending) failures += retire_pending(get, instance, device, image);
         else destroy_image(device, image, NULL);
         VkExternalMemoryImageCreateInfo external = {
             .sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO,

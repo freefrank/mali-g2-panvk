@@ -2915,6 +2915,23 @@ pan_kmod_kbase_csf_wait(struct pan_kmod_kbase_csf_group *g, uint64_t seq, int64_
    return done;
 }
 
+void
+pan_kmod_kbase_csf_wait_idle(struct pan_kmod_dev *dev)
+{
+   struct kbase_kmod_dev *kdev = container_of(dev, struct kbase_kmod_dev, base);
+   struct kbase_csf_dev *c = kdev->csfq;
+   if (!c)
+      return;
+
+   pthread_mutex_lock(&c->lock);
+   list_for_each_entry(struct pan_kmod_kbase_csf_group, g, &c->groups, link) {
+      const uint64_t seq = g->next_seq - 1;
+      while (g->done_seq < seq)
+         pthread_cond_wait(&c->cond, &c->lock);
+   }
+   pthread_mutex_unlock(&c->lock);
+}
+
 int
 pan_kmod_kbase_csf_fence_fd(struct pan_kmod_kbase_csf_group *g, uint64_t seq)
 {

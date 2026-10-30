@@ -1,4 +1,4 @@
-# 交接文档（2026-10-30，test45 初期改善后仍卡；adb 已连接，重复列表任务已清理，游戏切回待复测）
+# 交接文档（2026-10-30，切回已复现 GPU 页错误；ANB 内存提前释放证据已取得，test46 候选构建中）
 
 接手前先读完本文件，再读 `STATUS.md`（历史结论）和 `BUILD_AND_TEST.md`（构建细节）。
 Policy marker: biblioklept
@@ -20,7 +20,16 @@ Policy marker: biblioklept
 
 源码提交、driver 子树、原包库/ZIP/补丁哈希的机器可读映射在 `tools/fixtures/test44-source-checkpoints.json`。原包构建发生在这些提交之前，包名中的 bfcc5d7 与历史 manifest 不改写；其 driver 源码已逐字节对应到表中提交。旧记录中的“无提交或推送”描述当时状态，已由本节补充。构建产物、符号、原始设备日志和私有配置未加入 Git。
 
-## 当前状态：adb 已连接，异常桌面任务已清理
+## 当前状态：切回崩溃已复现，ANB 退休等待候选构建中
+
+- 用户最新反馈「游戏又退出回到游戏列表了」。标准启动入口下，本轮确有新的 native crash：PID 2335，12:11:28.958630144Z，GPUFencingThrea，SIGABRT，未捕获 VK_ERROR_DEVICE_LOST；Eden 最后日志为 ReportLoss。内核同窗是 AS4/2335_7973 的 GPU WRITE 页错误，VA 0x723409f880、TRANSLATION_FAULT level 2，已不在映射表。此时 async_presentation=false 与异步 GPU=false 均由运行日志确认。此前入口清理不能解决这次 GPU 故障。
+- 保持原库及所有配置，以内核 uprobe 记录准确 test45 文件偏移上的 ANB 导入/释放与 acquire/release；使用 DWARF 核对 gpu_va=56、size=8、flags=20 偏移，没有打开驱动诊断或 Eden 验证，也没有合成 GPU 负载。用户再次复现，PID 4234 于 12:17:53.250Z native crash。
+- 3,639 条事件、零丢失/溢出：439420.313805 导入 ANB BO 0x722bc00000，大小 0x1d8a000；439423.784341 DestroyImage，.784356 FreeMemory，.784365 释放该 imported BO；439427.90058 左右 GPU WRITE 到 0x722cc7e7c0，落在该已释放范围内，偏移 0x107e7c0。六个交换链图像都在同一销毁批次释放。记录在进程退出时自动结束，独立 trace instance 和全部 uprobe 已移除。
+- test46 候选仅对 G2/kbase 的 image->vk.anb_memory 销毁等待已提交 CSF 组完成，再释放隐式 ANB 内存；等待现有完成序号/回调，不向命令环插入新的提交。普通图像、外部 AHB 显式分配与正常每帧呈现路径不增加等待。保留 test45 的 4/3、1×、Mailbox、两种异步关闭及诊断关闭。正在构建，未发布或应用候选。
+- vulkan_android 增加 MALI_G2_ANB_RETIRE_PENDING 兼容性回归：让 GPU 清除批次处于 pending 时提前销毁 ANB 图像，检查返回前 fence 已完成。这是提前销毁的容错回归，故意偏离标准生命周期，不能作为 Vulkan 合规性证明。[Vulkan 要求](https://docs.vulkan.org/refpages/latest/refpages/source/vkDestroySwapchainKHR.html)销毁交换链前其图像操作已经完成；当前证据尚未完整归因上层同步责任。
+- 证据及原始文件哈希见 fixtures/test45-resume-device-loss.json，完整资料仅在忽略目录 work/eden-perf48/。下一步先验证 pending retirement 与既有 Android/fence/渲染回归，再交付 test46 供游戏切回复测；持续卡顿还未解决。
+
+## 前一阶段：adb 已连接，异常桌面任务已清理
 
 - 用户澄清最新「切回游戏又消失了」是回到 Eden 游戏列表。本轮没有新进程崩溃：PID 30424 仍在，exit-info 最新 native crash 仍为 11:47:43Z，最新退出为此前修改配置时的 11:53:29Z 主动 force-stop。运行日志确认 async_presentation=false、异步 GPU=false 已生效。
 - task 507 底层 MainActivity 172624462 的根 intent 仅有 component 和 0x10000000，没有 ACTION_MAIN/CATEGORY_LAUNCHER，这是上轮直接启动应用时留下的入口。19:57:13 本地时间创建 EmulationActivity 102355950；19:58:20 进入 STOPPED，finishing=false；19:58:21.981 桌面新建 MainActivity 244750343，盖在原游戏页上。此事件应与此前 VulkanPresent 原生崩溃分开。

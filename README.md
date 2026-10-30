@@ -13,7 +13,7 @@
 | `references/malibridge/` | Vulkan Headers 与 MaliBridge 外部参考，不纳入 Git |
 | `toolchain/` | Meson、Android 依赖和本地编译工具，不纳入 Git |
 
-用户确认 test45 初期明显顺滑，但几秒后游戏与通知栏仍卡。早先切回崩溃位于 Android 表面重建路径，现已关闭异步呈现。最新退到列表时进程和游戏线程仍在，发现重复列表页盖住原游戏页；已在用户存档退出后修正桌面任务入口，实际游戏切回待复测。adb 已配对并取得本机 root shell。31 项驱动回归与内核 4/3 读回仍有效，保持 test45、1×、Mailbox、异步 GPU 与两侧诊断关闭。当前包仍在 Download，证据见 [HANDOFF.md](tools/docs/HANDOFF.md)。
+test45 初期明显顺滑，但游戏与通知栏仍会持续卡顿。标准入口下已再次复现切回原生崩溃；adb 日志与内核记录确认 GPU 写入了提前释放的 Android 交换链缓冲区，3,639 条生命周期事件零丢失。test46 候选为 G2/kbase 的 ANB 图像销毁增加完成等待，正在构建，尚未发布。保留 1×、Mailbox、两种异步关闭与两侧诊断关闭；证据与验证状态见 [HANDOFF.md](tools/docs/HANDOFF.md)。
 
 现有 `driver/build-host` 和 `driver/build-android-arm` 已可用于增量构建，命令见构建文档。
 

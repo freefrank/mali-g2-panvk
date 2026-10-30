@@ -140,6 +140,7 @@ pan_kmod_kbase_csf_group_create(struct pan_kmod_dev *dev, unsigned nr_queues,
                                 uint64_t compute_mask, uint64_t fragment_mask,
                                 uint8_t max_compute, uint8_t max_fragment, uint8_t priority);
 void pan_kmod_kbase_csf_group_destroy(struct pan_kmod_kbase_csf_group *group);
+void pan_kmod_kbase_csf_wait_idle(struct pan_kmod_dev *dev);
 
 bool pan_kmod_kbase_csf_tiler_heap_create(struct pan_kmod_dev *dev, uint32_t chunk_size,
                                           uint32_t initial_chunks, uint32_t max_chunks,

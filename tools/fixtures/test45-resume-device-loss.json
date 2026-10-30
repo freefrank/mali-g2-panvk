@@ -1,0 +1,273 @@
+{
+  "policy_marker": "biblioklept",
+  "driver": "test45",
+  "driver_sha256": "7d407064272ac63efa11d8958273da6d8e8cffc327b7bdf6cf8ff5efc827450e",
+  "user_report": "游戏又退出回到游戏列表了",
+  "status": "Reproduced native device loss; ANB backing BO was freed before GPU page-fault write to the same VA range. Candidate retirement guard building; game validation pending.",
+  "initial_crash": {
+    "utc": "2026-10-30T12:11:28.958630144Z",
+    "pid": 2335,
+    "thread": "GPUFencingThrea",
+    "signal": "SIGABRT",
+    "abort": "uncaught Vulkan::vk::Exception: VK_ERROR_DEVICE_LOST",
+    "eden_last_error": "vulkan_device.cpp:898:ReportLoss: Device loss occurred!",
+    "frames": [
+      "Vulkan::MasterSemaphore::Wait+496",
+      "FenceManager::ReleaseThreadFunc+660"
+    ],
+    "fault_va": "0x723409f880",
+    "fault_access": "WRITE",
+    "fault_type": "TRANSLATION_FAULT level 2",
+    "fault_context": "2335_7973",
+    "settings": {
+      "async_gpu": false,
+      "async_presentation": false
+    }
+  },
+  "reproduction": {
+    "pid": 4234,
+    "native_crash_exit_utc": "2026-10-30T12:17:53.250Z",
+    "fault_timestamp_boot_s": 439427.900551,
+    "fault_va": "0x722cc7e7c0",
+    "fault_access": "WRITE",
+    "fault_type": "TRANSLATION_FAULT level 2",
+    "fault_context": "4234_7985",
+    "matching_bo_events": [
+      {
+        "timestamp_boot_s": 439411.398123,
+        "event": "bo_free",
+        "bo": "0xb4000075fe4b37b0",
+        "va": "0x7229800000",
+        "size_bytes": 67108864,
+        "flags": "0x0"
+      },
+      {
+        "timestamp_boot_s": 439420.313514,
+        "event": "bo_import",
+        "bo": "0xb4000075fe49fdd0",
+        "va": "0x722bc00000",
+        "size_bytes": 30973952,
+        "flags": "0x10"
+      },
+      {
+        "timestamp_boot_s": 439420.313519,
+        "event": "bo_free",
+        "bo": "0xb4000075fe49fdd0",
+        "va": "0x722bc00000",
+        "size_bytes": 30973952,
+        "flags": "0x10"
+      },
+      {
+        "timestamp_boot_s": 439420.313805,
+        "event": "bo_import",
+        "bo": "0xb4000075fe49fdd0",
+        "va": "0x722bc00000",
+        "size_bytes": 30973952,
+        "flags": "0x10"
+      },
+      {
+        "timestamp_boot_s": 439423.784365,
+        "event": "bo_free",
+        "bo": "0xb4000075fe49fdd0",
+        "va": "0x722bc00000",
+        "size_bytes": 30973952,
+        "flags": "0x10"
+      }
+    ],
+    "last_matching_free_to_fault_seconds": 4.116186,
+    "fault_offset_in_freed_bo": "0x107e7c0",
+    "last_image_destroy_to_free_chain": [
+      "image 0xb40000767e65f4e0 destroyed at 439423.784341",
+      "owned memory freed at 439423.784356",
+      "imported backing BO unmapped at 439423.784365"
+    ],
+    "six_anb_images_destroyed": true
+  },
+  "capture": {
+    "method": "Kernel uprobes on exact test45 file offsets and DWARF member offsets; no driver binary, diagnostic switch, application config or GPU scheduling change.",
+    "events_recorded": 3639,
+    "events_written": 3639,
+    "overruns": 0,
+    "dropped_events": 0,
+    "auto_stopped_when_pid_exited": true,
+    "instance_and_probes_removed": true,
+    "probed_symbols": [
+      "kbase_kmod_bo_import return",
+      "kbase_kmod_bo_free",
+      "panvk_DestroyImage",
+      "panvk_FreeMemory",
+      "vk_common_AcquireImageANDROID",
+      "vk_common_QueueSignalReleaseImageANDROID"
+    ],
+    "source": "https://www.kernel.org/doc/html/v6.2/trace/uprobetracer.html"
+  },
+  "interpretation": {
+    "confirmed": "GPU attempted to write into an ANB-owned imported BO VA after that BO was destroyed; the previously identified launcher overlay does not explain these native crashes.",
+    "scope": "Retirement of already submitted GPU work must precede release of the ANB mapping. Attribution of all higher-level synchronization responsibility is not complete.",
+    "spec_reference": "https://docs.vulkan.org/refpages/latest/refpages/source/vkDestroySwapchainKHR.html",
+    "candidate": "On architecture 15 kbase, wait for existing CSF group completion callbacks before destroying an Android native-buffer image with owned ANB memory. The wait only reads completion state; normal present/submit paths are unchanged.",
+    "test": "Optional ANB_RETIRE_PENDING compatibility regression deliberately retires an ANB image while a fenced GPU clear batch is pending. This is a robustness test for premature swapchain retirement, not a Vulkan conformance claim."
+  },
+  "raw_evidence": [
+    {
+      "path": "tools/work/eden-perf48/initial/activities.txt",
+      "bytes": 178562,
+      "sha256": "84706fd7b63f81e48be79a413c069b26037c1299fa897a6a775e8ef1df12a87c"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/dmesg.txt",
+      "bytes": 1075462,
+      "sha256": "7160b8f38b2813996c725c0c06600f9de9964eb94590c7fa63f3c93c98675c6a"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/eden-current.txt",
+      "bytes": 2592,
+      "sha256": "d5a36d2ee002c57a850dfcfe13d0a9cc243f87e94e0a544d654b8b8a7d5afb2c"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/eden-old.txt",
+      "bytes": 49118,
+      "sha256": "20420a1558ad8e54a4b63f8499fbc300429ee7af2bb822818cf33bfd24785260"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/events.txt",
+      "bytes": 305072,
+      "sha256": "eff0601cbb314dd4f35795db69f5e7fc8627fd2c93ebcfb44b0f8456cff97e18"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/exit-info.txt",
+      "bytes": 6383,
+      "sha256": "0bf9800e42623a260461fbd4919bb15b7bbb0f17db8abbf5cffc307b8ef4021f"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/faults.txt",
+      "bytes": 5424,
+      "sha256": "b219b322aae88bce8709d10a8e307266f1ddd59777c0e0a21d1af8e94fe132d9"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/logcat-app.txt",
+      "bytes": 113673,
+      "sha256": "3e0dae38bdc416ec65092273bddf321c678b30bb7044e7704bf1b6067fbef9bc"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/logcat-crash.txt",
+      "bytes": 242929,
+      "sha256": "a47b7b5cf7c06ba5b1a0d98d349fe1b3effc3e8515d2feada31c78fb4ebb2aa8"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/props-before.txt",
+      "bytes": 13,
+      "sha256": "ecf4652769794ab9d558e06b9fe138818bddf046630d2f4fcf5a987712d3780b"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/threads.txt",
+      "bytes": 2022,
+      "sha256": "86fb6f2a494824a59e73f9320538811f5be03187ff3322038b7ff51d77c86e9c"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/tombstone_05.txt",
+      "bytes": 1322307,
+      "sha256": "512500940b2b6229e43500fbfd2adc20800dccb8709a2b0dd0de4f43fd0708e6"
+    },
+    {
+      "path": "tools/work/eden-perf48/initial/tracing-capabilities.txt",
+      "bytes": 166,
+      "sha256": "327b23792306331c3db9f9e4683adab73411bb6af5b16e2b5fbce55456e42593"
+    },
+    {
+      "path": "tools/work/eden-perf48/repro/dmesg.txt",
+      "bytes": 1074229,
+      "sha256": "c925d33bbef4ac5cab3ccd23f126cf274f69950c65ba6840532878418b6c376e"
+    },
+    {
+      "path": "tools/work/eden-perf48/repro/eden-old.txt",
+      "bytes": 49381,
+      "sha256": "55417ebe27ca6e96db48e230bf9704aacd3118f331463eb587f528d824af4e2c"
+    },
+    {
+      "path": "tools/work/eden-perf48/repro/exit-info.txt",
+      "bytes": 6382,
+      "sha256": "418cb5249bdbd79e113424295007ae1e2b1607a81d8583f5637d0c9e6174896e"
+    },
+    {
+      "path": "tools/work/eden-perf48/repro/post-capture.txt",
+      "bytes": 37,
+      "sha256": "ed8e0e6ae946f16cc4349cf5ce951f37aeeef715ec025a3c4bbb4d330859b115"
+    },
+    {
+      "path": "tools/work/eden-perf48/repro/status.txt",
+      "bytes": 294,
+      "sha256": "5802c3cab3653dfff30639705831f71d02b639bc9fb8cf0ff33da75954305c48"
+    },
+    {
+      "path": "tools/work/eden-perf48/repro/tombstone_06.txt",
+      "bytes": 1331478,
+      "sha256": "b0f1878ee17fc0baf0aaaca4ec78031b51ce175c3792ed31c2c73f9514c440e0"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/access.txt",
+      "bytes": 41,
+      "sha256": "9c83666f63489a5190d7026e91369f776342438a343c77f17ba0769b0f38c076"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/acquire-format.txt",
+      "bytes": 523,
+      "sha256": "fc4c254f887b3ef4df807cc2655314132beac815598d861ed9a50057ed57d17c"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/app-pid.txt",
+      "bytes": 5,
+      "sha256": "19be7c35f7bfd74d2de5f4faa57e85fd4b06e9742499b7deb2a7d03ae0be196d"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/bo_free-format.txt",
+      "bytes": 640,
+      "sha256": "28a7189c2b580111f5ab459e1024ec612c8d375a64d4096989bb0d387c401906"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/bo_import-format.txt",
+      "bytes": 740,
+      "sha256": "47ce635e733d318bb8ccc3ebbbfaf8d125fe949a56625647440dece9228abe9d"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/image_destroy-format.txt",
+      "bytes": 455,
+      "sha256": "1637416b4dbc22ea66a0f7476a964bb122cc5d3f3d54281d973aa93387e7dcc3"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/maps-before.txt",
+      "bytes": 407199,
+      "sha256": "b4220825c7c07a0cda8dc5e1231a4578bb5d7e3a6f1ddff49ea378273a28826e"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/memory_free-format.txt",
+      "bytes": 456,
+      "sha256": "c06725db8d67dacdeb2633d97be5488a2d011e9ea1dcae400d9237bf6bbfebfa"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/ready.txt",
+      "bytes": 26,
+      "sha256": "e13ba485ffe11423a2186c5ceb3c6482ac78bcee84bc12c874822c99a380e5a0"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/release-format.txt",
+      "bytes": 517,
+      "sha256": "1753b710aede87145f87ea5dd6a495976278b86a88eccbb8381d8da949b8ce96"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/stats.txt",
+      "bytes": 2044,
+      "sha256": "016aa6dbd459bc2ec0047ab37fe7c838a3737866e36d23bb878f78995dc28fc5"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/stopped.txt",
+      "bytes": 26,
+      "sha256": "29d4dbb296cd0e268baca214bffd0ef97f69cad5acca7aacbc71805d0f8375df"
+    },
+    {
+      "path": "tools/work/eden-perf48/lifetime/trace.txt",
+      "bytes": 410595,
+      "sha256": "6679d189ad11be86f81dad70e3721727ac03539e42c5a85751eb393dfc1aa8d6"
+    }
+  ]
+}

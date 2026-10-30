@@ -14,6 +14,7 @@
 
 #include "pan_afbc.h"
 #include "pan_props.h"
+#include "kmod/kbase_kmod.h"
 
 #include "panvk_android.h"
 #include "panvk_bc_emu.h"
@@ -929,6 +930,13 @@ panvk_DestroyImage(VkDevice _device, VkImage _image,
 
    if (!image)
       return;
+
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+   if (image->vk.anb_memory &&
+       pan_kmod_dev_is_kbase(device->kmod.dev) &&
+       pan_arch(device->kmod.dev->props.gpu_id) == 15)
+      pan_kmod_kbase_csf_wait_idle(device->kmod.dev);
+#endif
 
    panvk_bc_emu_untrack_image(device, image);
 
