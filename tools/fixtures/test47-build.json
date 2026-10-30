@@ -1,0 +1,47 @@
+{
+ "policy_marker": "biblioklept",
+ "tag": "test47-regs32",
+ "source_commit": "1ef9268",
+ "driver_tree": "cab3c7cc26ceed2e5e8232ee8308fb811c013c26",
+ "source_uncommitted": false,
+ "library_sha256": "dc87e1982cff889f413f0900078299845f97453223dd4c23b335ed72f69e491a",
+ "unstripped_library_sha256": "114742892c483b888d6709073e218503332747dd39072ea57e952f974bb3e749",
+ "zip_name": "panvk-mali-g2-test47-regs32-1ef9268-dc87e198.zip",
+ "zip_sha256": "dbfb6b1480f3eaed22367300be4d92c1e3964f3db985f2439b7adef414650146",
+ "package": {
+  "schemaVersion": 1,
+  "name": "PanVK Mali-G2-test47-regs32-1ef9268-dc87e198 (Mesa 27.0.0-devel)",
+  "description": "PanVK for Mali Bifrost and Valhall GPUs on the stock Arm kbase kernel driver, based on Mesa 27.0.0-devel.",
+  "author": "JimVulkan",
+  "packageVersion": "94.92632",
+  "vendor": "Mesa",
+  "driverVersion": "Vulkan 1.3.363",
+  "minApi": 31,
+  "libraryName": "libvulkan_panfrost.so"
+ },
+ "symbol_archive": "tools/artifacts/symbols/test47-unstripped.so.zst",
+ "symbol_archive_sha256": "6ff321e607a3c292775ff26b90fe2e7beee9ed6fbaa56270d941e1d1d1897b06",
+ "diagnostics_default": false,
+ "change": "v15 compiler: preload and blend-link registers moved from r48-r63 to r16-r31 and 32-register allocation uses contiguous r0-r31, removing the forced 64-register mode (thread occupancy doubles for shaders that fit in 32). Also includes the diagnostics cleanup a2b3fc3.",
+ "baseline_test46": "0f5c62e45a6135d68c91c287e51e970276514056a29a2d7a0fb6fdbe0a0a00b2",
+ "evidence": {
+  "texture_draw_work_regs": {
+   "test46": "vs/fs/cs 64",
+   "test47": "vs/fs/cs 32"
+  },
+  "blend_shader_paths_exercised": [
+   "rt=91 R16G16B16A16_UNORM",
+   "rt=109 R32G32B32A32_SFLOAT"
+  ]
+ },
+ "tests": {
+  "android_unstripped": "9/9",
+  "android_stripped": "9/9",
+  "eden_compute": "9/9 (ASTC matches stock)",
+  "msaa": "48/48",
+  "tiles_matrix": "29/30; rt=122 load+blend fails with identical pixels on test46 and vendor driver (test expectation)",
+  "anb_retire_pending": "FAILURES 0",
+  "microbench_timing": "inconclusive, DVFS noise; trivial shaders not latency bound"
+ },
+ "game_validation": "pending"
+}
