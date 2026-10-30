@@ -23,7 +23,6 @@
 | `work/traces/` | ioctl/Vulkan 临时 trace | 忽略，按需保留 |
 | `work/research/` | 历史二进制与分析输出 | 忽略，保留但不作为发布物 |
 | `references/` | 外部源码和 Android 参考实现 | 忽略，可重新获取 |
-| `captures/` | 原始 Eden shader 捕获 | 忽略，不应删除 |
 | `artifacts/` | 每个 test 版本的驱动与元数据 | 忽略，不应覆盖 |
 
 ## 发布规则
@@ -36,10 +35,12 @@
 
 ## 保留原则
 
-同一工作区接手时保留 `artifacts/`、`work/`、`captures/`、构建目录和工具链；这些被忽略的文件不会随 Git clone 或 push 传递。包、符号、配置备份和原始设备日志是否存在，要区分“同一工作区仍在”和“远端源码中可取得”。驱动二进制、符号以及具体证据的哈希以对应 `fixtures/testN-build.json` 等 manifest 为准。
+同一工作区接手时保留 `artifacts/`、`work/`、构建目录和工具链；这些被忽略的文件不会随 Git clone 或 push 传递。包、符号、配置备份和原始设备日志是否存在，要区分“同一工作区仍在”和“远端源码中可取得”。驱动二进制、符号以及具体证据的哈希以对应 `fixtures/testN-build.json` 等 manifest 为准。
 
-整理只移动文件，不删除历史数据。`fixtures/` 中未跟踪的实验结果可能仍有研究价值；确认被稳定报告取代前，不批量清理。
+2026-10-30 按用户要求清理过期数据：
 
-本次整理把 41 个历史未跟踪 fixture 原样归档到 `work/research/fixtures/`。整理后的 `fixtures/` 含 214 个文件，全部已纳入 Git；根目录与 fixture 目录的 Git 状态均保持干净。
+- Git 中删除 test29–test44 结果（test44 合成 fence 证据保留）、eden/panvk/vi32/nir 等旧记录，以及诊断设施专用测试 `test_diagnostics.py`、`test_monitor.py`、`test_log_capture.py`、`driver_monitor.py`、`log_redirect_hook.c`；需要时从 Git 历史取回。`fixtures/` 现只保留测试输入（shader、ASTC 参考）和 test45/test46 报告。
+- 本地删除 `captures/`、`legacy/`、`work/eden-test8`–`eden-test44`、`work/eden-perf38`–`perf47`、`artifacts/test1`–`test44` 及其符号，不可恢复。保留 test45/test46 包与符号、`work/eden-test45`、`eden-test46`、`eden-perf48`、`eden-perf49`。
+- STATUS.md 与 BUILD_AND_TEST.md 中指向上述旧文件的链接只作历史说明。
 
 Policy marker: biblioklept

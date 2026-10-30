@@ -11,7 +11,6 @@
 - [构建与测试](docs/BUILD_AND_TEST.md)：环境、构建命令、独立 GPU 测试和 Eden 测试。
 - [目录与数据](docs/DATA_LAYOUT.md)：目录职责、哪些文件可重建、哪些证据必须保留。
 - `artifacts/`：各测试版本的解包驱动和元数据。
-- `captures/`：Eden 运行期间捕获的原始编译器输入。
 - `fixtures/`：版本化测试输入与结果。
 
 ## 单仓库关系

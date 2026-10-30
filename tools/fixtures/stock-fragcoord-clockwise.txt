@@ -1,7 +1,0 @@
-WARNING: linker: normalize_path - invalid input: "$/vendor/lib64/hw/../egl", the input path should be absolute
-WARNING: linker: Warning: unable to normalize "$/vendor/lib64/hw/../egl" (ignoring)
-WARNING: linker: normalize_path - invalid input: "$/vendor/lib64/hw/../egl", the input path should be absolute
-WARNING: linker: Warning: unable to normalize "$/vendor/lib64/hw/../egl" (ignoring)
-DEVICE Mali-G2-Ultra-NX MC16 subgroup=16
-[55172.101509] (vulkan_draw) [MEMPROF] Memory instrumentation via debugfs enabled
-VULKAN_DRAW_PASS frames=1/1 correct_pixels=256/256 center=8888ffff

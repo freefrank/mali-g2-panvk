@@ -1,9 +1,0 @@
-{
-  "tests": 2,
-  "passed": true,
-  "burst_datagrams": 21024,
-  "receive_sockets": 16,
-  "expected_receive_buffer_bytes": 268435456,
-  "tail_drop_detection": "SO_MEMINFO reads without a later packet",
-  "provenance": "Generated-by: LLM; biblioklept"
-}

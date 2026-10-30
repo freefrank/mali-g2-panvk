@@ -71,16 +71,9 @@ python3 test_eden_compute.py /path/to/libvulkan_panfrost.so --tag local-eden
 
 ## 性能版与诊断开关
 
-从 test37 起，`PANVK_G2_DIAGNOSTICS` 默认关闭。此时会忽略 PANVK_DEBUG（包括 Android 残留 sync 属性），不启动日志、转储、地址检查、崩溃处理器或 GPU breadcrumb。正常游戏使用默认状态；用户已明确要求仅在出问题时再开启。
+`PANVK_G2_DIAGNOSTICS` 默认关闭，此时忽略 PANVK_DEBUG（包括 Android 残留的 sync 属性）。开启后只保留事件日志：写入 `/storage/emulated/0/Download/panvk-g2-driver-events.log`（文件需预先存在，上限 8MiB）并发往本机 UDP 28643。逐 draw 记录、breadcrumb、地址/纹理平面检查、BO 存活表、shader 转储、崩溃处理器和 Eden 日志读取已在 a2b3fc3 删除，需要时从 Git 历史取回。
 
-原生诊断子进程使用 `PANVK_G2_DIAGNOSTICS=1 PANVK_DEBUG=sync`。Android 排错时，对应属性为 `debug.mesa.panvk.g2.diagnostics=1`；关闭设为 0。修改后重启模拟器。不要在常规回归或正常游戏期间遗留开启状态。
-
-```sh
-python3 test_diagnostics.py /path/to/new/libvulkan_panfrost.so \
-  --baseline work/eden-test36/libvulkan_panfrost.so --tag test37-diagnostics
-```
-
-该审计在本机 UDP 28643 端口临时接收数据，执行后自动关闭。不要同时运行 driver_monitor。测试覆盖默认关闭、显式关闭、显式开启和旧版对照，验证 socket、信号 handler、日志与实际绘制。`test_log_capture.py` 会只在自身子进程里显式开启诊断，不改变 Android 全局属性。
+Android 排错时，对应属性为 `debug.mesa.panvk.g2.diagnostics=1`；关闭设为 0。修改后重启模拟器。不要在常规回归或正常游戏期间遗留开启状态。
 
 ## ANB 提前销毁容错回归（test46）
 
@@ -98,30 +91,6 @@ python3 test_msaa.py /path/to/libvulkan_panfrost.so --tag test36-msaa \
 ```
 
 脚本会构建采样 shader。`--baseline` 可省略；指定时预期旧库只在目标解析上失败，而非设备丢失。报告包含原厂、新驱动和旧库各自结果。数组两次重叠清除之间必须保留 WAW 屏障，否则测试本身有竞争。
-
-## Eden 日志读取集成验证
-
-先运行 `driver_monitor.py`，再用 `test_log_capture.py` 检查驱动是否能从进程打开的日志中读取 renderer、视频和 Critical 记录。此测试通过原生 GPU 程序继承 write-only 日志 FD，日志名分别为 `eden_log.txt` 和 `yuzu_log.txt`，并同时验证带深度、索引和背景 LOAD 的真实绘制：
-
-```sh
-python3 test_log_capture.py /path/to/libvulkan_panfrost.so \
-  --monitor /storage/emulated/0/Download/panvk-g2-test34-driver.log --tag test34-log-fd
-```
-
-日志路径通过 `/proc/self/fd` 自动发现，避免应用更改包名或用户目录后继续使用无效的固定路径。测试报告位于 `fixtures/<tag>.json`。
-
-Eden renderer_debug 会启用 adrenotools 对驱动 fopen 的重定向。必须同时测试这一环境；仅运行上面的无 hook 用例不足以验证应用内采集：
-
-```sh
-env -u LD_LIBRARY_PATH -u LD_PRELOAD /data/data/com.termux/files/usr/bin/clang \
-  -no-canonical-prefixes -std=c11 -Wall -Wextra -Werror -O2 -shared -fPIC \
-  log_redirect_hook.c -o build/bin/liblog_redirect_hook.so -ldl
-python3 test_log_capture.py /path/to/libvulkan_panfrost.so \
-  --monitor /storage/emulated/0/Download/panvk-g2-test35-driver.log \
-  --tag test35-log-hook --fopen-hook build/bin/liblog_redirect_hook.so
-```
-
-模拟 hook 只拒绝读取两个应用日志名称，允许测试程序正常读取 SPIR-V。test34 归档库应出现采集失败、绘制仍成功；test35 应全部通过。驱动只为此诊断读取使用直接 openat 系统调用，其余文件访问保持原有实现。
 
 
 ## 深度与索引绘制回归
@@ -236,9 +205,9 @@ env -u LD_PRELOAD -u LD_LIBRARY_PATH \
 
 ## G2 调试开关
 
+- 以下都要求同时开启 `debug.mesa.panvk.g2.diagnostics=1`，否则 PANVK_DEBUG 不会被解析。
 - `su -c "/system/bin/setprop debug.mesa.panvk.debug sync"`：每次提交等待 GPU 完成，便于对齐出错提交。
 - `trace` 模式在 Eden 下会让驱动在纹理描述符写入处崩溃，暂不可用。
-- v15 驱动在描述符写入时检查缓冲区/纹理地址是否落在当前分配的 BO 内，越界会在事件日志里记 `badrange` 和调用栈。
 
 
 ## test38 颜色 AFBC 验证
