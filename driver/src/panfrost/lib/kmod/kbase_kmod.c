@@ -2713,14 +2713,9 @@ pan_kmod_kbase_csf_submit(struct pan_kmod_kbase_csf_group *g,
 
    /* The rings are only written from here, one submission at a time per group: the caller
     * (a vk_queue) serialises submissions. */
-   uint32_t flush_mask = mask;
    for (unsigned i = 0; i < nr_calls; i++) {
       if (!calls[i].size)
          continue;
-      if (calls[i].cache_clean)
-         flush_mask &= ~BITFIELD_BIT(calls[i].queue);
-      else
-         flush_mask |= BITFIELD_BIT(calls[i].queue);
       struct kbase_csf_ring *r = &g->ring[calls[i].queue];
       if (!kbase_csf_ring_reserve(g, r, 6 * 8))
          return 0;
@@ -2741,12 +2736,10 @@ pan_kmod_kbase_csf_submit(struct pan_kmod_kbase_csf_group *g,
        * CS_INSERT, the seqno one short). The barrier goes before the signal. */
       if (!kbase_csf_ring_reserve(g, r, 16 * 8))
          return 0;
-      if (flush_mask & BITFIELD_BIT(q)) {
-         kbase_csf_emit(r, cs_ins(CS_OP_MOVE32, V << 48));
-         kbase_csf_emit(r, cs_ins(CS_OP_FLUSH_CACHE2,
-                                  (V << 40) | (0xffffull << 16) | (1u << 4) | 1u));
-         kbase_csf_emit(r, cs_ins(CS_OP_WAIT, 0xffffull << 16));
-      }
+      kbase_csf_emit(r, cs_ins(CS_OP_MOVE32, V << 48));
+      kbase_csf_emit(r, cs_ins(CS_OP_FLUSH_CACHE2,
+                               (V << 40) | (0xffffull << 16) | (2u << 8) | (3u << 4) | 3u));
+      kbase_csf_emit(r, cs_ins(CS_OP_WAIT, 0xffffull << 16));
       kbase_csf_emit(r, cs_ins(CS_OP_ERROR_BARRIER, 0));
       kbase_csf_emit(r, cs_ins(CS_OP_MOVE48, (A << 48) | (g->seq_va + q * 64)));
       kbase_csf_emit(r, cs_ins(CS_OP_MOVE48, (V << 48) | 1));

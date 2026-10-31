@@ -1617,8 +1617,6 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
             .queue = j,
             .size = cs_root_chunk_size(b),
             .addr = cs_root_chunk_gpu_addr(b),
-            .cache_clean = PAN_ARCH >= 15 && !panvk_g2_diagnostics &&
-                           !u_trace_has_points(&cmdbuf->utrace.uts[j]),
          };
       }
    }
