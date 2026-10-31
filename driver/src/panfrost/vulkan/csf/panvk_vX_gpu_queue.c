@@ -1536,7 +1536,7 @@ panvk_kbase_csf_done(void *data, bool ok)
  * and a wait that only saw the signal submitted could let this submission's subqueues run
  * alongside the producer's remaining ones.
  */
-DEBUG_GET_ONCE_NUM_OPTION(kbase_max_inflight, "PANVK_KBASE_MAX_INFLIGHT", -1)
+DEBUG_GET_ONCE_NUM_OPTION(kbase_max_inflight, "PANVK_KBASE_MAX_INFLIGHT", 1)
 
 static VkResult
 panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *vk_submit)
