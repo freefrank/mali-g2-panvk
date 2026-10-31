@@ -1,0 +1,18 @@
+{
+ "policy_marker": "biblioklept",
+ "tag": "test48-cleanup",
+ "source_commit": "97ea8e3",
+ "library_sha256": "38199bb7f6ee02fcbbb6c2ff5a5c2373eec6680e595fe49a491869d7ae21d0ad",
+ "unstripped_library_sha256": "38f8fb2f4e9f045179ada54386b7cb707c8de96e42af600edc2cb0bad5366b59",
+ "zip_name": "panvk-mali-g2-test48-cleanup-97ea8e3-38199bb7.zip",
+ "zip_sha256": "4fd8040b6806d8ed79b2864842f1cb77384190425a9de1b13b6c2834e7377f44",
+ "symbol_archive": "tools/artifacts/symbols/test48-unstripped.so.zst",
+ "diagnostics_default": false,
+ "change": "test46 behaviour plus diagnostics cleanup a2b3fc3; test47 regs32 compiler change reverted (97ea8e3) after DEVICE_LOST in LOR 1.1.0 and Eden",
+ "tests": {
+  "android_stripped": "9/9",
+  "anb_retire_pending": "FAILURES 0",
+  "work_regs": "64 as test46"
+ },
+ "game_validation": "pending"
+}
