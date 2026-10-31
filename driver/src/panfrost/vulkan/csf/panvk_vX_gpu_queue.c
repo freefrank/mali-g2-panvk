@@ -28,6 +28,8 @@
 #include "vk_drm_syncobj.h"
 #include "vk_log.h"
 
+#define PANVK_GEOM_BUF_SIZE (PAN_ARCH >= 15 ? 256 * 1024 : 64 * 1024)
+
 #define MIN_DESC_TRACEBUF_SIZE (128 * 1024)
 #define DEFAULT_DESC_TRACEBUF_SIZE (2 * 1024 * 1024)
 #define MIN_CS_TRACEBUF_SIZE (512 * 1024)
@@ -496,7 +498,7 @@ init_subqueue(struct panvk_gpu_queue *queue, enum panvk_subqueue_id subqueue)
           * size in the lower 12 bits so the address can be copied directly
           * to the tiler descriptors. */
          cs_ctx->render.geom_buf =
-            (cs_ctx->render.tiler_heap + 4096) | ((64 * 1024) >> 12);
+            (cs_ctx->render.tiler_heap + 4096) | (PANVK_GEOM_BUF_SIZE >> 12);
 
          /* Initialize the ringbuf */
          cs_ctx->render.desc_ringbuf = (struct panvk_cs_desc_ringbuf){
@@ -800,7 +802,7 @@ init_tiler(struct panvk_gpu_queue *queue)
     * so we can pass it through a single 64-bit register to the VERTEX_TILER
     * command streams. */
    struct panvk_pool_alloc_info alloc_info = {
-      .size = (64 * 1024) + 4096,
+      .size = PANVK_GEOM_BUF_SIZE + 4096,
       .alignment = 4096,
    };
 
