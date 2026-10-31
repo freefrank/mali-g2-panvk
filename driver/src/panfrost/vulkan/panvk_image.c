@@ -35,6 +35,9 @@
 #include "vk_object.h"
 #include "vk_util.h"
 
+#include "panvk_g2_trace.h"
+#include "util/u_atomic.h"
+
 
 static enum mali_texture_dimension
 panvk_image_type_to_mali_tex_dim(VkImageType type)
@@ -701,6 +704,16 @@ panvk_image_init(struct panvk_image *image,
    /* Now that we've patched the create/usage flags, we can proceed with the
     * modifier selection. */
    image->vk.drm_format_mod = panvk_image_get_mod(image, pCreateInfo);
+   if (panvk_g2_diagnostics) {
+      static uint32_t g2_images;
+      if (p_atomic_inc_return(&g2_images) <= 20000)
+         panvk_g2_trace("image fmt=%u type=%u tiling=%u usage=%#x flags=%#x %ux%ux%u mips=%u "
+                        "layers=%u samples=%u mod=%#" PRIx64,
+                        image->vk.format, image->vk.image_type, image->vk.tiling,
+                        image->vk.usage, image->vk.create_flags, image->vk.extent.width,
+                        image->vk.extent.height, image->vk.extent.depth, image->vk.mip_levels,
+                        image->vk.array_layers, image->vk.samples, image->vk.drm_format_mod);
+   }
 
    /* Some modifiers like AFBC affect some decisions we make for vkmeta, but
     * we don't want to outright prevent these modifiers. If those weren't used,
