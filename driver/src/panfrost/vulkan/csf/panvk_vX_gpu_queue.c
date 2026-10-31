@@ -30,6 +30,10 @@
 
 #define PANVK_GEOM_BUF_SIZE (PAN_ARCH >= 15 ? 256 * 1024 : 64 * 1024)
 
+/* Experiment knob (debug.mesa.panvk.kbase.group.priority): raw kbase group priority, 0 high,
+ * 1 medium, 2 low; -1 keeps the one mapped from the Vulkan queue priority. */
+DEBUG_GET_ONCE_NUM_OPTION(kbase_group_priority, "PANVK_KBASE_GROUP_PRIORITY", -1)
+
 #define MIN_DESC_TRACEBUF_SIZE (128 * 1024)
 #define DEFAULT_DESC_TRACEBUF_SIZE (2 * 1024 * 1024)
 #define MIN_CS_TRACEBUF_SIZE (512 * 1024)
@@ -738,10 +742,11 @@ create_group(struct panvk_gpu_queue *queue,
          [PANTHOR_GROUP_PRIORITY_HIGH] = PAN_KMOD_KBASE_CSF_PRIORITY_HIGH,
          [PANTHOR_GROUP_PRIORITY_REALTIME] = PAN_KMOD_KBASE_CSF_PRIORITY_REALTIME,
       };
+      const int64_t prio_override = debug_get_option_kbase_group_priority();
       queue->kbase_group = pan_kmod_kbase_csf_group_create(
          dev->kmod.dev, PANVK_SUBQUEUE_COUNT, phys_dev->compute_core_mask,
          phys_dev->fragment_core_mask, max_compute_cores, max_fragment_cores,
-         kbase_prio[group_priority]);
+         prio_override >= 0 && prio_override <= 2 ? prio_override : kbase_prio[group_priority]);
       if (!queue->kbase_group)
          return panvk_errorf(dev, VK_ERROR_INITIALIZATION_FAILED,
                              "Failed to create a scheduling group");
