@@ -48,6 +48,7 @@
 #include "compiler/pan_nir.h"
 #include "pan_shader.h"
 
+#include "compiler/nir/nir_serialize.h"
 #include "vk_log.h"
 #include "vk_pipeline.h"
 #include "vk_pipeline_layout.h"
@@ -1333,7 +1334,42 @@ panvk_compile_nir(struct panvk_device *dev, nir_shader *nir,
 
    struct util_dynarray binary = UTIL_DYNARRAY_INIT;
    const unsigned scratch_B = nir->scratch_size;
+   struct blob g2_dump = {0};
+   if (PAN_ARCH == 15 && panvk_g2_diagnostics &&
+       nir->info.stage == MESA_SHADER_VERTEX) {
+      struct pan_compile_inputs saved_inputs = input;
+      saved_inputs.model = NULL;
+      saved_inputs.varying_layout = NULL;
+      blob_init(&g2_dump);
+      blob_write_bytes(&g2_dump, "G2NIR001", 8);
+      blob_write_uint32(&g2_dump, nir->info.stage);
+      blob_write_uint32(&g2_dump, 1);
+      blob_write_uint32(&g2_dump, sizeof(saved_inputs));
+      blob_write_uint32(&g2_dump, sizeof(shader->info));
+      blob_write_uint32(&g2_dump, input.varying_layout ? sizeof(*input.varying_layout) : 0);
+      blob_write_bytes(&g2_dump, &saved_inputs, sizeof(saved_inputs));
+      blob_write_bytes(&g2_dump, &shader->info, sizeof(shader->info));
+      if (input.varying_layout)
+         blob_write_bytes(&g2_dump, input.varying_layout, sizeof(*input.varying_layout));
+      nir_serialize(&g2_dump, nir, true);
+   }
    pan_shader_compile(nir, &input, &binary, &shader->info);
+   if (g2_dump.data) {
+      static uint32_t g2_dumped;
+      if (!g2_dump.out_of_memory && shader->info.tls_size >= 256 &&
+          p_atomic_inc_return(&g2_dumped) <= 64) {
+         char path[128];
+         snprintf(path, sizeof(path),
+                  "/storage/emulated/0/Download/panvk-vsdump/vs-%u-tls%u.nir",
+                  g2_dumped, shader->info.tls_size);
+         FILE *f = fopen(path, "wb");
+         if (f) {
+            fwrite(g2_dump.data, 1, g2_dump.size, f);
+            fclose(f);
+         }
+      }
+      blob_finish(&g2_dump);
+   }
 
    /* Propagate potential additional FAU values into the panvk info struct. */
    /* FAU consts are pushed as 32bit values, but total_count is for 64bit
