@@ -1,0 +1,83 @@
+{
+ "policy_marker": "biblioklept",
+ "driver": "test47 dc87e198",
+ "window": "2026-10-31T00:02:30Z game foreground (Eden EmulationActivity), indoor scene, observation only",
+ "gpu_freq_samples_hz": [
+  979200000,
+  979200000,
+  1248000000,
+  1392000000,
+  1248000000
+ ],
+ "sf_game_layer": {
+  "composition": "DEVICE",
+  "averageFPS": 50.459,
+  "present2present_ms": {
+   "8": 17,
+   "16": 204,
+   "24": 15,
+   "25": 28,
+   "33": 12
+  }
+ },
+ "sf_global": {
+  "totalFrames": 510,
+  "clientCompositionFrames": 196,
+  "averageRenderEngineTiming_ms": 10.281,
+  "jankyFrames": 194,
+  "sfLongGpuJankyFrames": 39,
+  "sfSchedulingJankyFrames": 83,
+  "appBufferStuffingJankyFrames": 243
+ },
+ "counters_per_2s_window": [
+  {
+   "dur": 2.0,
+   "gpu_active_mcyc_per_s": 1069,
+   "sc_active_vs_gpu": 0.558,
+   "frag_iter_vs_gpu": 0.608,
+   "tiler_iter_vs_gpu": 0.044,
+   "compute_iter_vs_gpu": 0.014,
+   "tex_starved_fetch_vs_frag": 0.666,
+   "l2_ext_read_stall_vs_gpu": 0.068,
+   "cache_flush_cycles_vs_gpu": 0.059,
+   "cache_flushes_per_s": 4812,
+   "ext_read_beats_per_s_M": 264,
+   "ext_write_beats_per_s_M": 169,
+   "fpk_active_vs_frag": 0.826,
+   "triangles_per_s_M": 7.59
+  },
+  {
+   "dur": 2.004,
+   "gpu_active_mcyc_per_s": 1261,
+   "sc_active_vs_gpu": 0.489,
+   "frag_iter_vs_gpu": 0.541,
+   "tiler_iter_vs_gpu": 0.044,
+   "compute_iter_vs_gpu": 0.013,
+   "tex_starved_fetch_vs_frag": 0.628,
+   "l2_ext_read_stall_vs_gpu": 0.068,
+   "cache_flush_cycles_vs_gpu": 0.063,
+   "cache_flushes_per_s": 6039,
+   "ext_read_beats_per_s_M": 242,
+   "ext_write_beats_per_s_M": 196,
+   "fpk_active_vs_frag": 0.804,
+   "triangles_per_s_M": 9.88
+  },
+  {
+   "dur": 2.003,
+   "gpu_active_mcyc_per_s": 1208,
+   "sc_active_vs_gpu": 0.501,
+   "frag_iter_vs_gpu": 0.562,
+   "tiler_iter_vs_gpu": 0.046,
+   "compute_iter_vs_gpu": 0.014,
+   "tex_starved_fetch_vs_frag": 0.614,
+   "l2_ext_read_stall_vs_gpu": 0.064,
+   "cache_flush_cycles_vs_gpu": 0.067,
+   "cache_flushes_per_s": 6871,
+   "ext_read_beats_per_s_M": 267,
+   "ext_write_beats_per_s_M": 224,
+   "fpk_active_vs_frag": 0.792,
+   "triangles_per_s_M": 11.04
+  }
+ ],
+ "notes": "Counter block order FE/Tiler/Memory(sum of 8 L2)/SC(sum of 16 cores). Ratios use per-unit averages. Eden crashed at 00:03:03Z after the window (VK_ERROR_INITIALIZATION_FAILED in RasterizerVulkan::Draw)."
+}
