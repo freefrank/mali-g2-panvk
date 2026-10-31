@@ -21,6 +21,7 @@
 #include "panvk_cmd_buffer.h"
 #include "panvk_cmd_desc_state.h"
 #include "panvk_cmd_draw.h"
+#include "panvk_g2_trace.h"
 #include "panfrost/lib/kmod/kbase_kmod.h"
 #include "panvk_cmd_frame_shaders.h"
 #include "panvk_cmd_meta.h"
@@ -3853,6 +3854,21 @@ panvk_per_arch(CmdBeginRendering)(VkCommandBuffer commandBuffer,
                                   const VkRenderingInfo *pRenderingInfo)
 {
    VK_FROM_HANDLE(panvk_cmd_buffer, cmdbuf, commandBuffer);
+   if (panvk_g2_diagnostics) {
+      const VkRenderingAttachmentInfo *c0 =
+         pRenderingInfo->colorAttachmentCount ? &pRenderingInfo->pColorAttachments[0] : NULL;
+      const VkRenderingAttachmentInfo *z = pRenderingInfo->pDepthAttachment;
+      panvk_g2_trace("pass %ux%u+%d+%d layers=%u colors=%u c0load=%d c0store=%d c0res=%d "
+                     "z=%u zload=%d zstore=%d flags=%#x",
+                     pRenderingInfo->renderArea.extent.width,
+                     pRenderingInfo->renderArea.extent.height,
+                     pRenderingInfo->renderArea.offset.x, pRenderingInfo->renderArea.offset.y,
+                     pRenderingInfo->layerCount, pRenderingInfo->colorAttachmentCount,
+                     c0 ? (int)c0->loadOp : -1, c0 ? (int)c0->storeOp : -1,
+                     c0 ? (int)c0->resolveMode : -1, z && z->imageView != VK_NULL_HANDLE,
+                     z ? (int)z->loadOp : -1, z ? (int)z->storeOp : -1,
+                     pRenderingInfo->flags);
+   }
    ASSERTED struct panvk_cmd_graphics_state *state = &cmdbuf->state.gfx;
 
    /* patch rendering info in-place for Android efr support */

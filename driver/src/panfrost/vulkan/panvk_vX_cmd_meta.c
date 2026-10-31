@@ -8,6 +8,7 @@
 #include "panvk_bc_emu.h"
 #include "panvk_buffer.h"
 #include "panvk_cmd_meta.h"
+#include "panvk_g2_trace.h"
 #include "panvk_entrypoints.h"
 #include "panvk_meta.h"
 #include "panvk_tracepoints.h"
@@ -283,6 +284,12 @@ panvk_per_arch(CmdBlitImage2)(VkCommandBuffer commandBuffer,
    struct panvk_device *dev = to_panvk_device(cmdbuf->vk.base.device);
    struct panvk_cmd_meta_graphics_save_ctx save = {0};
 
+   if (panvk_g2_diagnostics) {
+      const VkImageBlit2 *r = &pBlitImageInfo->pRegions[0];
+      panvk_g2_trace("op blit regions=%u dst=%dx%d filter=%u",
+                     pBlitImageInfo->regionCount, r->dstOffsets[1].x - r->dstOffsets[0].x,
+                     r->dstOffsets[1].y - r->dstOffsets[0].y, pBlitImageInfo->filter);
+   }
    meta_gfx_start(cmdbuf, &save);
    vk_meta_blit_image2(&cmdbuf->vk, &dev->meta, pBlitImageInfo);
    meta_gfx_end(cmdbuf, &save);
@@ -296,6 +303,10 @@ panvk_per_arch(CmdResolveImage2)(VkCommandBuffer commandBuffer,
    struct panvk_device *dev = to_panvk_device(cmdbuf->vk.base.device);
    struct panvk_cmd_meta_graphics_save_ctx save = {0};
 
+   if (panvk_g2_diagnostics)
+      panvk_g2_trace("op resolve regions=%u %ux%u", pResolveImageInfo->regionCount,
+                     pResolveImageInfo->pRegions[0].extent.width,
+                     pResolveImageInfo->pRegions[0].extent.height);
    meta_gfx_start(cmdbuf, &save);
    vk_meta_resolve_image2(&cmdbuf->vk, &dev->meta, pResolveImageInfo);
    meta_gfx_end(cmdbuf, &save);
@@ -309,6 +320,9 @@ panvk_per_arch(CmdClearAttachments)(VkCommandBuffer commandBuffer,
                                     const VkClearRect *pRects)
 {
    VK_FROM_HANDLE(panvk_cmd_buffer, cmdbuf, commandBuffer);
+   if (panvk_g2_diagnostics)
+      panvk_g2_trace("op clear_attachments n=%u rects=%u %ux%u", attachmentCount, rectCount,
+                     pRects[0].rect.extent.width, pRects[0].rect.extent.height);
    struct panvk_device *dev = to_panvk_device(cmdbuf->vk.base.device);
    struct panvk_cmd_meta_graphics_save_ctx save = {0};
    struct vk_meta_rendering_info render = {
@@ -371,6 +385,9 @@ panvk_per_arch(CmdClearColorImage)(VkCommandBuffer commandBuffer, VkImage image,
 {
    VK_FROM_HANDLE(panvk_cmd_buffer, cmdbuf, commandBuffer);
    VK_FROM_HANDLE(panvk_image, img, image);
+   if (panvk_g2_diagnostics)
+      panvk_g2_trace("op clear_color %ux%u fmt=%u", img->vk.extent.width, img->vk.extent.height,
+                     img->vk.format);
    struct panvk_device *dev = to_panvk_device(cmdbuf->vk.base.device);
    struct panvk_cmd_meta_graphics_save_ctx save = {0};
 
@@ -950,6 +967,11 @@ panvk_per_arch(CmdCopyImage2)(VkCommandBuffer commandBuffer,
       return;
 
    const bool use_gfx_pipeline = copy_to_image_use_gfx_pipeline(dst_img);
+   if (panvk_g2_diagnostics)
+      panvk_g2_trace("op copy_image regions=%u %ux%u gfx=%u fmt=%u->%u",
+                     pCopyImageInfo->regionCount, pCopyImageInfo->pRegions[0].extent.width,
+                     pCopyImageInfo->pRegions[0].extent.height, use_gfx_pipeline,
+                     src_img->vk.format, dst_img->vk.format);
    struct vk_meta_copy_image_properties dst_img_props =
       panvk_meta_copy_get_image_properties(dst_img, use_gfx_pipeline, true);
    struct vk_meta_copy_image_properties src_img_props =
