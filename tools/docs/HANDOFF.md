@@ -6,6 +6,16 @@
 
 Policy marker: biblioklept
 
+## 0. 2026-10-31 进展（test47–test52）
+
+- 当前交付：test52 `39fd585`（`panvk-mali-g2-test52-noprecall-39fd585-0c9ba989.zip`）。test47 的 32 寄存器改动已撤回（`97ea8e3`），无性能收益。
+- **崩溃根因**：test37 起 LOR/Eden 的 `GPU_SHAREABILITY_FAULT`（0x88，内核同时报在 SF/HWUI/应用多个 AS，无地址）。test36 不崩只因残留 `debug.mesa.panvk.debug=sync` 当时总被解析。二分：诊断+sync 不崩，诊断无 sync 4 s 崩。修复 `b158bc8`：每次 kbase 提交在完成信号前做 L2/LSC clean+invalidate，删除 test44 的 cache_clean 跳过。用户确认 LOR 不再崩。
+- **界面卡**：`PANVK_KBASE_MAX_INFLIGHT`（属性 `debug.mesa.panvk.kbase.max.inflight`）限制每队列在途提交数，默认 1（`3273ae6`）。用户确认 LOR 界面不卡、帧率不降。设备属性目前也设为 1。
+- `39fd585` 去掉每个 CALL 前的 L2 clean+invalidate（与 panthor 一致）；合成 32 cmdbuf GPU 时间 -28%，游戏帧率无明显变化。
+- **性能对照（LOR，同场景）**：原厂 r56p0 约 60 FPS，GPU 仅 854–979 MHz；我们 13–19 FPS，GPU 1.5–1.6 GHz 满载。按每光栅化 quad：tiler 活跃 8×、等位置 shader 12×、POS_FIFO_FULL 原厂 0/我们 2.35 亿/s、COMPUTE_ACTIVE 16×、L2 snoop 40×、命令流 wait-blocked 原厂≈0/我们≈50%；tile 大小（quads/ptile）、早晚 ZS、TIB 写回、纹理外部读取约 1×。数据：`tools/fixtures/perf50-ingame-profile.json`，原始计数器在 Download `panvk-lor-vendor*`、`panvk-lor-perf2`。
+- 去掉 `COHERENT_LOCAL` 的实验：合成回归大面积失败（tiles 4/30），已撤回；现有缓存维护依赖它。
+- 用户新增优化目标 LOR（`io.github.freefrank.lostodyssey`，日志在 `Android/data/.../files/logs/runtime-*.log`，可读帧率）。原厂驱动可直接对照。
+
 ## 1. 给接手 agent 的任务
 
 在 `/root/mali-g2-project` 继续 Mali-G2 PanVK/kbase 的正确性与性能开发，保留已有文字、3D、开场渲染修复和 test45/test46 的有效增量。目标仍是游戏在 1× 下流畅运行，用户期望 60 FPS；现有持续卡顿与部分切回退出未解决。
