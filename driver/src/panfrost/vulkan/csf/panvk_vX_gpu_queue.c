@@ -1668,7 +1668,17 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
    }
 
    const int64_t max_inflight = debug_get_option_kbase_max_inflight();
-   if (max_inflight >= 0 && seq > (uint64_t)max_inflight) {
+   if (max_inflight == -2 && vk_submit->signal_count) {
+      /* Frame throttle: work within a frame overlaps freely, but a signalling submission waits
+       * for the previous one, so the GPU queues at most about one frame ahead of the display. */
+      if (queue->kbase_frame_seq) {
+         struct timespec ts;
+         clock_gettime(CLOCK_MONOTONIC, &ts);
+         pan_kmod_kbase_csf_wait(queue->kbase_group, queue->kbase_frame_seq,
+                                 (int64_t)ts.tv_sec * 1000000000ll + ts.tv_nsec + 3000000000ll);
+      }
+      queue->kbase_frame_seq = seq;
+   } else if (max_inflight >= 0 && seq > (uint64_t)max_inflight) {
       struct timespec ts;
       clock_gettime(CLOCK_MONOTONIC, &ts);
       pan_kmod_kbase_csf_wait(queue->kbase_group, seq - max_inflight,

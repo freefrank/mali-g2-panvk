@@ -85,6 +85,8 @@ struct panvk_gpu_queue {
    /* kbase (CSF UAPI 1.x): the queue group, and whether it reported a fault. */
    struct pan_kmod_kbase_csf_group *kbase_group;
    bool kbase_lost;
+   /* Last submission that signalled something (a frame end, usually), for the frame throttle. */
+   uint64_t kbase_frame_seq;
 
    struct panvk_tiler_heap tiler_heap;
    struct panvk_desc_ringbuf render_desc_ringbuf;
