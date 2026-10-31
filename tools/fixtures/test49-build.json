@@ -1,0 +1,26 @@
+{
+ "policy_marker": "biblioklept",
+ "tag": "test49-flush",
+ "source_commit": "b158bc8",
+ "library_sha256": "1b9da1592b2bc82d882c1a25187a20f2bd0a94bdfd0dc4aac93529783c4521c4",
+ "unstripped_library_sha256": "cfd9659df95d2df90e52de900ebaae2da47e5f86e264032d4b57323a69001faa",
+ "zip_name": "panvk-mali-g2-test49-flush-b158bc8-1b9da159.zip",
+ "zip_sha256": "2e62eb164a19b6b3fccec69b4209158960bd1f29807283026586ebf77268bd84",
+ "symbol_archive": "tools/artifacts/symbols/test49-unstripped.so.zst",
+ "diagnostics_default": false,
+ "change": "Every kbase submission ends with L2/LSC clean+invalidate before its completion signal; test44 cache_clean skip removed.",
+ "root_cause_evidence": {
+  "fault": "GPU_SHAREABILITY_FAULT 0x88 reported simultaneously in several AS (surfaceflinger, RenderThread, app), ADDRESS_VALID false",
+  "versions_affected": "test37..test48 in LOR 1.1.0 (4-18 s); test36 survived because the stale debug.mesa.panvk.debug=sync made every submit wait",
+  "bisect": "diagnostics=1 + sync -> no fault; diagnostics=1 without sync -> fault in 4 s; test49 normal mode -> no fault, user confirms in-game, no crash"
+ },
+ "tests": {
+  "android": "9/9",
+  "anb_retire_pending": "FAILURES 0",
+  "tiles_matrix": "29/30 (rt=122 same as test46/vendor)"
+ },
+ "game_validation": {
+  "LOR_1.1.0": "no crash (user); UI stutter and poor performance remain",
+  "Eden": "pending"
+ }
+}
