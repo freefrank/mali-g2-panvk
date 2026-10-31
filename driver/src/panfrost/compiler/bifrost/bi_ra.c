@@ -294,18 +294,12 @@ bi_compute_liveness_ra(bi_context *ctx)
 #define EVEN_BITS_MASK (0x5555555555555555ull)
 
 static uint64_t
-bi_make_affinity(uint64_t clobber, unsigned count, bool split_file, unsigned arch)
+bi_make_affinity(uint64_t clobber, unsigned count, bool split_file)
 {
    uint64_t clobbered = 0;
 
    for (unsigned i = 0; i < count; ++i)
       clobbered |= (clobber >> i);
-
-   if (split_file && arch >= 15) {
-      if (count > 1)
-         clobbered |= BITFIELD64_MASK(count - 1) << (32 - (count - 1));
-      return ~(clobbered | (BITFIELD64_MASK(32) << 32));
-   }
 
    /* Don't allocate past the end of the register file */
    if (count > 1) {
@@ -347,7 +341,7 @@ bi_mark_interference(bi_block *block, struct lcra_state *l, uint8_t *live,
          unsigned count = bi_count_write_registers(ins, d);
          unsigned offset = ins->dest[d].offset;
          uint64_t affinity =
-            bi_make_affinity(preload_live, count, split_file, arch) >> offset;
+            bi_make_affinity(preload_live, count, split_file) >> offset;
          /* Valhall needs >= 64-bit staging writes to be pair-aligned */
          if (aligned_sr && (count >= 2 || offset))
             affinity &= EVEN_BITS_MASK;
@@ -458,7 +452,6 @@ bi_allocate_registers(bi_context *ctx, bool *success, bool full_regs)
    uint64_t default_affinity =
       ctx->inputs->is_blend ? BITFIELD64_MASK(16)
       : full_regs           ? BITFIELD64_MASK(64)
-      : ctx->arch >= 15     ? BITFIELD64_MASK(32)
                   : (BITFIELD64_MASK(16) | (BITFIELD64_MASK(16) << 48));
 
    /* To test spilling, mimic a small register file */

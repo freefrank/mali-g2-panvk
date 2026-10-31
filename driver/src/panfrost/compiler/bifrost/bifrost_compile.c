@@ -4595,12 +4595,13 @@ bi_compile_variant(nir_shader *nir,
     * driver. We could unify the paths if the cost is acceptable.
     */
    if (nir->info.stage == MESA_SHADER_FRAGMENT && ctx->arch >= 9)
-      preload |= BITFIELD64_BIT(bi_preload_reg(BI_PRELOAD_CUMULATIVE_COVERAGE, ctx->arch)) |
-                 BITFIELD64_BIT(bi_preload_reg(BI_PRELOAD_RASTERIZER_COVERAGE, ctx->arch));
+      preload |= BITFIELD64_BIT(60) | BITFIELD64_BIT(61);
 
    if (ctx->arch == 15) {
       if (ctx->inputs->is_blend)
          preload = 0;
+      if (preload)
+         ctx->info.work_reg_count = MAX2(ctx->info.work_reg_count, 64);
       preload = va_v15_preload_mask(ctx->stage, preload);
    }
 

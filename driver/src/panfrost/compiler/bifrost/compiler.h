@@ -1170,7 +1170,7 @@ enum bi_preload {
 };
 
 static inline unsigned
-bi_preload_reg_legacy(enum bi_preload val, unsigned arch)
+bi_preload_reg(enum bi_preload val, unsigned arch)
 {
    switch (val) {
    /* Compute */
@@ -1259,13 +1259,6 @@ bi_preload_reg_legacy(enum bi_preload val, unsigned arch)
       return 48;
    }
    UNREACHABLE("Non-handled BI_PRELOAD");
-}
-
-static inline unsigned
-bi_preload_reg(enum bi_preload val, unsigned arch)
-{
-   unsigned reg = bi_preload_reg_legacy(val, arch);
-   return (arch >= 15 && reg >= 48) ? reg - 32 : reg;
 }
 
 typedef struct {
