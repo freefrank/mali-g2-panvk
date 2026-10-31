@@ -144,7 +144,7 @@ const struct pan_model pan_model_list[] = {
    FIFTHGEN_MODEL(PAN_PROD_ID(14, 8, 3), 4, "G1-Pro",  "G1", MODEL_ANISO(ALL),  MODEL_TB_SIZES(65536, 65536),
                                               MODEL_RATES(4, 8, 128)),
    FIFTHGEN_MODEL(PAN_PROD_ID(15, 8, 0), 4, "G2-Ultra-NX", "G2", MODEL_ANISO(NONE),
-                  MODEL_TB_SIZES(32768, 32768)),
+                  MODEL_TB_SIZES(16384, 16384)),
 };
 /* clang-format on */
 
