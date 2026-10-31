@@ -1322,7 +1322,7 @@ bifrost_make_unified_idvs_shader(nir_shader *nir)
 }
 
 static void
-bifrost_handle_unified_idvs_shader(nir_shader *nir)
+bifrost_handle_unified_idvs_shader(nir_shader *nir, unsigned arch)
 {
    NIR_PASS(_, nir, bifrost_make_unified_idvs_shader);
 
@@ -1336,8 +1336,11 @@ bifrost_handle_unified_idvs_shader(nir_shader *nir)
       NIR_PASS(progress, nir, nir_opt_cse);
    }
 
-   /* Hoist common values before the predicated blocks. */
-   NIR_PASS(_, nir, nir_opt_gcm, true);
+   /* Hoist common values before the predicated blocks. v15 shades deferred, so an invocation
+    * runs only one of the blocks and the hoisted values just stay live across both: on Lost
+    * Odyssey's vertex shaders that took register spilling from ~6 KB to ~62 KB over 64 shaders. */
+   if (arch < 15)
+      NIR_PASS(_, nir, nir_opt_gcm, true);
 }
 
 static const char *
@@ -1481,7 +1484,7 @@ bifrost_compile_shader_nir(nir_shader *nir,
     * optimization loop. */
    if (nir->info.stage == MESA_SHADER_VERTEX && info->vs.idvs &&
        (arch >= 12)) {
-      bifrost_handle_unified_idvs_shader(nir);
+      bifrost_handle_unified_idvs_shader(nir, arch);
    }
 
    bi_optimize_late(nir, arch, info);
