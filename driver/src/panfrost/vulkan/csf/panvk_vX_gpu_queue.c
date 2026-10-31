@@ -23,6 +23,7 @@
 
 #include "util/bitscan.h"
 #include "util/log.h"
+#include "util/u_debug.h"
 #include "panvk_g2_trace.h"
 #include "vk_drm_syncobj.h"
 #include "vk_log.h"
@@ -1535,6 +1536,8 @@ panvk_kbase_csf_done(void *data, bool ok)
  * and a wait that only saw the signal submitted could let this submission's subqueues run
  * alongside the producer's remaining ones.
  */
+DEBUG_GET_ONCE_NUM_OPTION(kbase_max_inflight, "PANVK_KBASE_MAX_INFLIGHT", -1)
+
 static VkResult
 panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *vk_submit)
 {
@@ -1655,6 +1658,14 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
          pan_kmod_kbase_sync_attach_fd(handles, vk_submit->signal_count, fd);
          close(fd);
       }
+   }
+
+   const int64_t max_inflight = debug_get_option_kbase_max_inflight();
+   if (max_inflight >= 0 && seq > (uint64_t)max_inflight) {
+      struct timespec ts;
+      clock_gettime(CLOCK_MONOTONIC, &ts);
+      pan_kmod_kbase_csf_wait(queue->kbase_group, seq - max_inflight,
+                              (int64_t)ts.tv_sec * 1000000000ll + ts.tv_nsec + 3000000000ll);
    }
 
    if (PANVK_DEBUG(SYNC) || PANVK_DEBUG(TRACE)) {
