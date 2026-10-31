@@ -2082,6 +2082,8 @@ struct pan_kmod_kbase_csf_group {
    /* One u64 seqno per queue, 64 bytes apart, in CSF_EVENT memory. */
    uint64_t seq_va;
    volatile uint64_t *seqno;
+   /* v15 deferred vertex shading scratch handed to the firmware at group creation. */
+   void *dvs;
    /* Submissions in flight, oldest first. */
    struct kbase_csf_sub subs[KBASE_CSF_MAX_SUBS];
    unsigned first_sub, nr_subs;
@@ -2440,6 +2442,8 @@ kbase_csf_thread(void *arg)
 
 static void kbase_csf_emit(struct kbase_csf_ring *r, uint64_t ins);
 
+#define KBASE_DVS_PAGES 97
+
 struct pan_kmod_kbase_csf_group *
 pan_kmod_kbase_csf_group_create(struct pan_kmod_dev *dev, unsigned nr_queues,
                                 uint64_t compute_mask, uint64_t fragment_mask,
@@ -2480,6 +2484,20 @@ pan_kmod_kbase_csf_group_create(struct pan_kmod_dev *dev, unsigned nr_queues,
    if (PAN_ARCH_MAJOR(dev->props.gpu_id) == 15) {
       gc.in.comp_pri_threshold = MIN2(max_compute, 4);
       gc.in.comp_pri_ratio = 3;
+
+      /* Shape copied from the vendor r56p0 driver: 97 pages, flags 0xd, CPU read-only, size
+       * code 6 in the low bits. Without it RUN_IDVS2 in deferred mode faults. */
+      union kbase_ioctl_mem_alloc dreq = {
+         .in = {.va_pages = KBASE_DVS_PAGES, .commit_pages = KBASE_DVS_PAGES, .flags = 0xd},
+      };
+      if (!pan_kmod_ioctl(dev->fd, KBASE_IOCTL_MEM_ALLOC, &dreq)) {
+         void *p = mmap(NULL, KBASE_DVS_PAGES * 4096, PROT_READ, MAP_SHARED, dev->fd,
+                        (off_t)dreq.out.gpu_va);
+         if (p != MAP_FAILED) {
+            g->dvs = p;
+            gc.in.dvs_buf = (uint64_t)(uintptr_t)p | 6;
+         }
+      }
    }
    if (pan_kmod_ioctl(dev->fd, KBASE_IOCTL_CS_QUEUE_GROUP_CREATE, &gc)) {
       mesa_loge("kbase: CS_QUEUE_GROUP_CREATE failed (err=%d)", errno);
@@ -2568,6 +2586,8 @@ err_term:
       }
    }
 err_free_seq:
+   if (g->dvs)
+      munmap(g->dvs, KBASE_DVS_PAGES * 4096);
    munmap((void *)g->seqno, 4096);
 err_free:
    free(g);
@@ -2602,6 +2622,8 @@ pan_kmod_kbase_csf_group_destroy(struct pan_kmod_kbase_csf_group *g)
       pan_kmod_ioctl(kdev->base.fd, KBASE_IOCTL_CS_QUEUE_TERMINATE, &a);
       munmap(r->cpu, KBASE_CSF_RING_SIZE);
    }
+   if (g->dvs)
+      munmap(g->dvs, KBASE_DVS_PAGES * 4096);
    munmap((void *)g->seqno, 4096);
    free(g);
 }

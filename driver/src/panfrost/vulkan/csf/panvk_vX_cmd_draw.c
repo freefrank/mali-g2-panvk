@@ -54,6 +54,9 @@
 #include "vk_render_pass.h"
 #include "poly/geometry.h"
 
+#define PANVK_IDVS_SHADING_MODE                                                 \
+   (PAN_ARCH >= 15 ? MALI_IDVS_SHADING_MODE_DEFERRED : MALI_IDVS_SHADING_MODE_EARLY)
+
 static bool
 render_needs_zs_crc_ext(struct panvk_cmd_buffer *cmdbuf)
 {
@@ -3151,7 +3154,7 @@ launch_draw(struct panvk_cmd_buffer *cmdbuf,
 #if PAN_ARCH >= 12
             cs_trace_run_idvs2(b, tracing_ctx, tracing_scratch_regs,
                                flags_override.opaque[0], true, cs_undef(),
-                               MALI_IDVS_SHADING_MODE_EARLY);
+                               PANVK_IDVS_SHADING_MODE);
 #else
             cs_trace_run_idvs(b, tracing_ctx, tracing_scratch_regs,
                               flags_override.opaque[0], true,
@@ -3177,7 +3180,7 @@ launch_draw(struct panvk_cmd_buffer *cmdbuf,
 #if PAN_ARCH >= 12
          cs_trace_run_idvs2(b, tracing_ctx, tracing_scratch_regs,
                             flags_override.opaque[0], true, cs_undef(),
-                            MALI_IDVS_SHADING_MODE_EARLY);
+                            PANVK_IDVS_SHADING_MODE);
 #else
          cs_trace_run_idvs(b, tracing_ctx, tracing_scratch_regs,
                            flags_override.opaque[0], true,
@@ -3397,7 +3400,7 @@ launch_indirect_draw(struct panvk_cmd_buffer *cmdbuf,
 #if PAN_ARCH >= 12
             cs_trace_run_idvs2(b, tracing_ctx, tracing_scratch_regs,
                                flags_override.opaque[0], true, draw_id,
-                               MALI_IDVS_SHADING_MODE_EARLY);
+                               PANVK_IDVS_SHADING_MODE);
 #else
             cs_trace_run_idvs(
                b, tracing_ctx, tracing_scratch_regs, flags_override.opaque[0],
@@ -3423,7 +3426,7 @@ launch_indirect_draw(struct panvk_cmd_buffer *cmdbuf,
 #if PAN_ARCH >= 12
          cs_trace_run_idvs2(b, tracing_ctx, tracing_scratch_regs,
                             flags_override.opaque[0], true, draw_id,
-                            MALI_IDVS_SHADING_MODE_EARLY);
+                            PANVK_IDVS_SHADING_MODE);
 #else
          cs_trace_run_idvs(
             b, tracing_ctx, tracing_scratch_regs, flags_override.opaque[0],
