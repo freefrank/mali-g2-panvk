@@ -4,6 +4,7 @@
  */
 
 #include "util/macros.h"
+#include "util/u_debug.h"
 
 #include "kmod/pan_kmod.h"
 #include "pan_props.h"
@@ -114,9 +115,26 @@ pan_query_afrc(const struct pan_kmod_dev_props *props)
  * For Mali-G510 and Mali-G310, we will need extra logic to query the tilebuffer
  * size for the particular variant. The CORE_FEATURES register might help.
  */
+/* Experiment knob for the G2 tile buffer (debug.mesa.panvk.g2.tib.size on Android): overrides
+ * the model's colour and depth tile buffer size when set to a power of two of at least 2 KiB. */
+DEBUG_GET_ONCE_NUM_OPTION(pan_g2_tib_size, "PANVK_G2_TIB_SIZE", 0)
+
+static unsigned
+pan_tib_size_override(const struct pan_model *model)
+{
+   const int64_t size = debug_get_option_pan_g2_tib_size();
+   if ((model->gpu_prod_id >> 16) != 15 || size < 2048 || !util_is_power_of_two_nonzero(size))
+      return 0;
+   return size;
+}
+
 unsigned
 pan_query_tib_size(const struct pan_model *model)
 {
+   const unsigned override = pan_tib_size_override(model);
+   if (override)
+      return override;
+
    /* Preconditions ensure the returned value is a multiple of 1 KiB, the
     * granularity of the colour buffer allocation field.
     */
@@ -129,6 +147,10 @@ pan_query_tib_size(const struct pan_model *model)
 unsigned
 pan_query_z_tib_size(const struct pan_model *model)
 {
+   const unsigned override = pan_tib_size_override(model);
+   if (override)
+      return override;
+
    /* Preconditions ensure the returned value is a multiple of 1 KiB, the
     * granularity of the colour buffer allocation field.
     */
