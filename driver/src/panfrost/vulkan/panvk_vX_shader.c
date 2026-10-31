@@ -1332,6 +1332,7 @@ panvk_compile_nir(struct panvk_device *dev, nir_shader *nir,
    input.fau.promote_immediates = true;
 
    struct util_dynarray binary = UTIL_DYNARRAY_INIT;
+   const unsigned scratch_B = nir->scratch_size;
    pan_shader_compile(nir, &input, &binary, &shader->info);
 
    /* Propagate potential additional FAU values into the panvk info struct. */
@@ -1339,9 +1340,9 @@ panvk_compile_nir(struct panvk_device *dev, nir_shader *nir,
     * ones. */
    shader->fau.total_count = DIV_ROUND_UP(shader->info.fau.count, 2);
    if (PAN_ARCH == 15 && panvk_g2_diagnostics)
-      panvk_g2_trace("shader ready stage=%u regs=%u tls=%u fau=%u bytes=%u",
+      panvk_g2_trace("shader ready stage=%u regs=%u tls=%u scratch=%u fau=%u bytes=%u",
                      nir->info.stage, shader->info.work_reg_count,
-                     shader->info.tls_size, shader->info.fau.count, binary.size);
+                     shader->info.tls_size, scratch_B, shader->info.fau.count, binary.size);
 
    void *bin_ptr = util_dynarray_element(&binary, uint8_t, 0);
    unsigned bin_size = util_dynarray_num_elements(&binary, uint8_t);
