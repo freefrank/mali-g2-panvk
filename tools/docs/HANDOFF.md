@@ -1,10 +1,47 @@
-# Mali-G2 驱动开发交接（当前 test46）
+# Mali-G2 驱动开发交接（当前 test62）
 
 先读本文件、根目录 [AGENTS.md](../../AGENTS.md) 和 [driver/AGENTS.md](../../driver/AGENTS.md)，再按需要读 [构建与测试](BUILD_AND_TEST.md)。[STATUS.md](STATUS.md) 保存历史快照，不是当前操作清单。
 
-**用户最新范围：只修驱动。当前 test46 已应用，但游戏切回退出与持续卡顿都尚未解决。** 已有一项 ANB 内存回收容错修复通过定向对照，不能据此宣称所有闪退已修复。
+**用户最新范围：只修驱动，性能是主线。当前交付 test62（`93a6a54`），LOR 同场景约 25 FPS、原厂约 60 FPS，差距约 3 倍未解决。** 用户明确：不要再在在途数、优先级这类小参数上花时间，直接攻 3 倍差距。下面第 00 节是最新状态，第 0 节之后是更早的历史。
 
 Policy marker: biblioklept
+
+## 00. 2026-10-31 晚间状态与下一步（接手先读这一节）
+
+**设备上的当前状态**
+- LOR（`io.github.freefrank.lostodyssey`，用户自己的 Xbox 360 recomp，日志在 `Android/data/<pkg>/files/logs/runtime-*.log`，按 `frame=` 计算帧率）是主要优化目标；Eden 是次要。
+- LOR 当前选用的驱动目录是 test64（test62 + 实验性的按帧限流开关）；Download 只保留 `panvk-mali-g2-test62-regs32-93a6a54-54823572.zip`。test64 与 test62 默认行为相同（开关默认关），可继续用。
+- 设备属性：`debug.mesa.panvk.g2.diagnostics=0`、`debug.mesa.panvk.debug=sync`（只在诊断开启时才被解析，正常无影响）、`debug.mesa.panvk.kbase.max.inflight=1`、`debug.mesa.panvk.g2.tib.size=0`、`debug.mesa.panvk.kbase.group.priority=-1`。
+- 2026-10-31 已按用户要求清理：Download 里旧驱动包和诊断目录、LOR 私有区的帧捕获和旧驱动、Eden 2 GB `eden_gpu.log`、系统 tombstone；本地 `tools/work` 旧 eden-test47..64 中间产物、帧捕获和 vendor 快照。保留 test45/46/58/62 包与符号、`work/vsdump`（64 个 LOR 顶点 shader NIR）、`work/vendor-snap` 解码工具与 `compare.md`。
+
+**本日确认有效、已在 test62 中的改动**
+| 提交 | 内容 | 依据 |
+| --- | --- | --- |
+| `b158bc8` | 每次 kbase 提交结束前 L2/LSC clean+invalidate | 修复 test37 起的 `GPU_SHAREABILITY_FAULT`(0x88) 崩溃；用户确认 LOR 不再崩 |
+| `3273ae6` | `PANVK_KBASE_MAX_INFLIGHT` 默认 1 | 安卓界面不卡；在途 2 约 +20% 帧率但界面卡，低优先级无效 |
+| `39fd585` | 去掉每个 CALL 前的 L2 全清 | 与 panthor 一致 |
+| `8512bc0` `959fcb0` | geometry buffer 256 KiB；Deferred 顶点着色 + firmware DVS 缓冲 | 与原厂命令流一致，消除 POS_FIFO_FULL |
+| `47e6e8e` | v15 统一 IDVS 顶点 shader 不做 GCM 提升 | 64 个 LOR 顶点 shader 溢出 62 KB→6 KB，LOR 15→22 FPS |
+| `6e09fe1` | G2 tile buffer 默认 32 KiB（4096 px tile） | 同场景 SF 计数 21.1→23.0 FPS |
+| `93a6a54` | 重新启用 32 寄存器模式 | 原先撤回是误判（崩溃实为 0x88，与寄存器无关）；溢出再降到 3 KB，约 24.8 FPS |
+
+**仍存在的 3 倍差距（同场景计数器，按每帧）**：片元活跃约 4.7 倍，其中光栅化 quad 约 1.9 倍（后期 ZS 测试 3.6 倍）、每 quad 着色时间约 2.5 倍（CVT 指令约 2×、算术缺活 10×、纹理等待约 3×）。tile 数、tiler 已大幅改善。结论是**我们编译的片元 shader 和早期深度剔除比原厂差**，需逐 shader 对比定位。
+
+**进行中：LOR 诊断版（逐 shader 编译统计对比）**
+- 在用户的 LOR 仓库建了分支 `diag/pipeline-stats`（`c9c299e`），新增 `tools/patches/plume-pipeline-stats.patch` 并接入 `tools/android/build-runtime.sh`：启用 `VK_KHR_pipeline_executable_properties`，所有图形 pipeline 以整管线创建（关闭 GPL 快速链接）并带 `CAPTURE_STATISTICS`，把每个 executable 的全部统计写入 `$LO_LOG_DIR/pipeline-stats.txt`，以顶点/片元 SPIR-V 的 FNV-1a 哈希为键。CI 已通过，APK 在 `Download/LostOdysseyRecomp-diag-pipeline-stats-c9c299e.apk`。
+- root `pm install` 在 KernelSU shell 里报 binder `Failed transaction`，未装上；debug 签名可能与已装版本不同，**不要卸载重装以免丢 LOR 私有数据**，由用户手动安装或先备份 `files/save`、`files/config`、`files/gpu_driver`。
+- 装好后：原厂驱动进同场景 1 分钟退出，再换 test62 同样一次；读两份 `pipeline-stats.txt` 按哈希对齐，找片元 shader 指令数/寄存器/周期/early-ZS 差距最大的一批，再改编译器。原厂驱动确认带 `VK_KHR_pipeline_executable_properties`（`libGLES_mali.so` 中可见）。
+
+**接下来按优先级**
+1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
+2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。
+3. 跨子队列同步（我们 tiler 队列每帧约 25 次等待，原厂 2 次）；需要先弄清 v15 `SHARED_SB_INC/DEC` 语义，工作量大。
+4. 不要再做：在途数、组优先级、按帧限流等调参（用户明确要求）；Deferred/寄存器/tile 已做完。
+
+**新增诊断与实验开关（都只在显式开启时生效）**
+- `PANVK_G2_DIAGNOSTICS=1`（`debug.mesa.panvk.g2.diagnostics`）下额外记录：shader ready 行带 `scratch=`；溢出≥256 B 的顶点 shader NIR 存到 `Download/panvk-vsdump/`；每个图像的格式/用途/modifier；每个 render pass 与 blit/resolve/copy_image/clear。日志写 `Download/panvk-g2-driver-events.log`（需预先存在，8 MiB 上限）。
+- `PANVK_G2_TIB_SIZE`（`debug.mesa.panvk.g2.tib.size`）、`PANVK_KBASE_GROUP_PRIORITY`、`PANVK_KBASE_MAX_INFLIGHT=-2`（按帧限流）为实验开关。
+- 设备采样脚本在 `tools/work/takeover/`（`run.sh <script> <marker>` 经 TermuxService 用 root 执行）：`lorperf.sh` 采 LOR 计数器+SF，`sffps2.sh` 测 20 秒 SF 帧率，`shaderdiag*.sh` 开诊断跑一次后自动恢复属性。
 
 ## 0. 2026-10-31 进展（test47–test52）
 

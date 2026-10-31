@@ -4,9 +4,9 @@
   "driver_repo": "/root/mali-g2-project/driver",
   "backend_tools": "/root/mali-g2-project/tools",
   "eden_reference": "/root/mali-g2-project/references/eden",
-  "driver_head": "49bf70ee39f7bb29ea5be30e7ed6cb9633e0aeb3",
-  "latest_package": "/storage/emulated/0/Download/panvk-mali-g2-test46-resume-49bf70e-0f5c62e4.zip",
-  "current_status": "Applied. ANB retirement guard verified; later Eden/Android-loader surface exception and null-swapchain SIGSEGV remain. User restricts work to driver only. Latest exact app trace: 24 events, 8 successful CreateSurface calls, then GPU thread SIGSEGV in Android vkAcquireNextImageKHR with swapchain argument x1/x25=0. No native application patch made.",
+  "driver_head": "85e0071",
+  "latest_package": "/storage/emulated/0/Download/panvk-mali-g2-test62-regs32-93a6a54-54823572.zip",
+  "current_status": "test62 (93a6a54): LOR same scene ~25 FPS vs vendor ~60 FPS. Crash (0x88 shareability) fixed in b158bc8, UI stutter fixed by in-flight=1, vertex spilling fixed (47e6e8e). Remaining 3x gap is fragment shading: ~1.9x quads (late ZS 3.6x) and ~2.5x time per quad. Next: per-shader stats comparison via LOR diag branch diag/pipeline-stats (APK built, not yet installed).",
   "build_note": "Existing driver/build-host and driver/build-android-arm support incremental builds. Read tools/docs/BUILD_AND_TEST.md. Current test46 symbols: tools/artifacts/symbols/test46-unstripped.so.zst; package/hash manifest: tools/fixtures/test46-build.json. artifacts/work/toolchain are local ignored data, not delivered by Git clone.",
   "git_policy": "Commit and push each milestone to origin/main; user explicitly requested frequent commit/push. Generated-by: LLM and biblioklept markers required. Do not post upstream or rewrite pushed history.",
   "remaining_capabilities": [
@@ -26,7 +26,7 @@
     "presentation": "Mailbox",
     "async_presentation": false
   },
-  "next_step": "Read the handoff runbook and verify current device/foreground/library SHA before development. Continue driver-only correctness/performance work using new driver-side evidence. Preserve test46 baseline; existing retirement wait covers submitted kbase work, not every possible runtime-pending submission. Overall game resume/stutter remains unresolved; distinguish loader null handles from real GPU faults. Do not modify Eden or inject loader hooks. No synthetic GPU work while user game is active.",
+  "next_step": "Install LostOdysseyRecomp-diag-pipeline-stats-c9c299e.apk (user, manually; do not uninstall), collect pipeline-stats.txt on vendor and test62 in the same scene, join by SPIR-V hash, fix fragment shader codegen / early-ZS where the gap is largest. See HANDOFF.md section 00.",
   "remaining_capabilities_note": "Historical test10-era capability checklist, not revalidated during test46 and not the current task priority. Do not assume those feature bits alone identify the present crash or performance issue.",
   "android_access": {
     "preferred": "adb",
@@ -63,5 +63,6 @@
     "The retirement guard waits per-group submitted sequence completion; queued work not yet in kbase and concurrent lifecycle edges need separate review.",
     "The early test46 success was superseded by subsequent native crashes.",
     "ADB serial and process IDs are historical; inspect native state and /proc/current_PID/root mount view."
-  ]
+  ],
+  "optimization_target": "Lost Odyssey Recomp (io.github.freefrank.lostodyssey), repo freefrank/LostOdysseyRecomp"
 }
