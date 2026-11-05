@@ -112,7 +112,7 @@ GENX(pan_image_view_can_crc)(const struct pan_image_view *view,
       return true;
 
    /* TODO: Temporarily disallow CRC on v14+ with AFBC, re-enable after fix. */
-   if (PAN_ARCH >= 14)
+   if (PAN_ARCH == 14)
       return false;
    
    /* Only sparse AFBC can be render targets. */

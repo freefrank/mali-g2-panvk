@@ -2617,6 +2617,9 @@ build_dcd_flags(struct panvk_cmd_buffer *cmdbuf,
             : MALI_CONSERVATIVE_RAST_MODE_DISABLED;
 #if PAN_ARCH < 14
       cfg.cull_zero_area = true;
+#elif PAN_ARCH == 15
+      cfg.cull_zero_area = true;
+      cfg.disable_vrs_clamp_2x2 = true;
 #endif
 #endif
    }
