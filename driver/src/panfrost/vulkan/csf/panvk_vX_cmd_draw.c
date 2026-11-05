@@ -4507,6 +4507,11 @@ cs_emit_static_fragment_state(struct cs_builder *b,
       cfg.effective_tile_size = fb->tile_size_px;
       cfg.point_sprite_coord_origin_max_y = false;
       cfg.first_provoking_vertex = get_first_provoking_vertex(cmdbuf);
+#if PAN_ARCH == 15
+      cfg.blend_suppress_inf = true;
+      cfg.blend_suppress_nan = true;
+      cfg.blend_suppress_signed_zero = true;
+#endif
 
       assert(fb->rt_count > 0);
       cfg.render_target_count = fb->rt_count;
