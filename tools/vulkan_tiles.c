@@ -940,17 +940,29 @@ main(int argc, char **argv)
          VkRenderPassBeginInfo rbi = {.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
             .renderPass = render_pass, .framebuffer = framebuffer, .renderArea = {{0, 0}, {w, h}},
             .clearValueCount = depth_format ? 2 : 1, .pClearValues = clears};
-         vkCmdBeginRenderPass(command, &rbi, VK_SUBPASS_CONTENTS_INLINE);
-         vkCmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, render_pipeline);
-         vkCmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &set, 0, NULL);
-         vkCmdSetScissor(command, 0, 1, &scissor);
-         if (index_bits) vkCmdBindIndexBuffer(command, buffers[5], 0,
-            index_bits == 16 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
-         if (!load_draw) {
-            if (index_bits) vkCmdDrawIndexed(command, 3, 1, 7, vertex_offset, 0);
-            else vkCmdDraw(command, 3, 1, 0, 0);
+         uint32_t repeat_passes = getenv("MALI_G2_TILES_PASSES") ?
+            strtoul(getenv("MALI_G2_TILES_PASSES"), NULL, 10) : 1;
+         if (repeat_passes < 1) repeat_passes = 1;
+         for (uint32_t repeat = 0; repeat < repeat_passes; repeat++) {
+            if (repeat) {
+               VkMemoryBarrier again = {.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+                  .srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                  .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT};
+               vkCmdPipelineBarrier(command, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 1, &again, 0, NULL, 0, NULL);
+            }
+            vkCmdBeginRenderPass(command, &rbi, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, render_pipeline);
+            vkCmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &set, 0, NULL);
+            vkCmdSetScissor(command, 0, 1, &scissor);
+            if (index_bits) vkCmdBindIndexBuffer(command, buffers[5], 0,
+               index_bits == 16 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
+            if (!load_draw) {
+               if (index_bits) vkCmdDrawIndexed(command, 3, 1, 7, vertex_offset, 0);
+               else vkCmdDraw(command, 3, 1, 0, 0);
+            }
+            vkCmdEndRenderPass(command);
          }
-         vkCmdEndRenderPass(command);
          if (load_enabled || load_draw) {
             VkMemoryBarrier preserve = {.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
                .srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,

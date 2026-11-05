@@ -39,6 +39,16 @@ Policy marker: biblioklept
 - 3 倍差距应回到运行时：quad 数 1.9×（后期 ZS 3.6×）、每 quad 时间 2.5×，需用运行时计数器继续定位。
 - 离线工具：test65 `fsdump` 包在诊断开启时把 ≥14000 字节的片元 NIR 存到 `Download/panvk-vsdump/fs-*.nir`（本地副本 `tools/work/fsdump/`）；`replay_nir` 配合 `MALI_G2_REPLAY_PRINT_NIR=1`、`BIFROST_MESA_DEBUG=shaders`、`MALI_G2_REPLAY_FASTMATH=1` 离线复现与对照；LOR 私有目录需用 `nsenter -t 1 -m --` 经 Termux root 访问。
 
+**render pass 固定开销实测（2026-11-05，`vulkan_tiles` 新增 `MALI_G2_TILES_PASSES=N`，每帧 N 个清除+1 次绘制的 pass，`MALI_G2_TILES_TIMING=1` 取 GPU 时间中位数）**
+| 尺寸 | 原厂每 pass | 我们每 pass | 倍数 |
+| --- | --- | --- | --- |
+| 64×64 | 约 15 µs | 约 40 µs | 2.7× |
+| 360×384 | 约 35 µs | 约 57 µs | 1.6× |
+| 1920×1080 | 约 175 µs | 约 305 µs | 1.7× |
+- LOR 每帧约 17 个 render pass（日志统计），按此估算固定开销多出 0.4–2 ms/帧，**远不足以解释约 24 ms 的帧时间差**，不是主因，但值得顺手优化（每 pass 的 WAIT、两次内存 SYNC_WAIT、额外的 RUN_FULLSCREEN 拷贝 pass，见 `vendor-snap/compare.md` §2–3）。
+- 离屏渲染目标已使用 AFBC（modifier `…351`），只有 3408×2272 的 swapchain 图像未压缩。
+- 命令：`MALI_G2_TILES_TIMING=1 MALI_G2_TILES_PASSES=34 build/bin/vulkan_tiles <driver.so> build/shaders/tiles_sample.comp.spv W H 21 37 build/shaders/tiles.vert.spv build/shaders/tiles.frag.spv`，原厂驱动为 `/vendor/lib64/hw/vulkan.mali.so`。游戏运行时不要跑。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。
