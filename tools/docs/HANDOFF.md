@@ -32,6 +32,13 @@ Policy marker: biblioklept
 - root `pm install` 在 KernelSU shell 里报 binder `Failed transaction`，未装上；debug 签名可能与已装版本不同，**不要卸载重装以免丢 LOR 私有数据**，由用户手动安装或先备份 `files/save`、`files/config`、`files/gpu_driver`。
 - 装好后：原厂驱动进同场景 1 分钟退出，再换 test62 同样一次；读两份 `pipeline-stats.txt` 按哈希对齐，找片元 shader 指令数/寄存器/周期/early-ZS 差距最大的一批，再改编译器。原厂驱动确认带 `VK_KHR_pipeline_executable_properties`（`libGLES_mali.so` 中可见）。
 
+**逐 shader 对比结果（2026-11-05，test62 vs 原厂 r56p0，1321 个唯一片元 shader，静态统计）**：详见 `tools/fixtures/lor-pipeline-stats-compare.txt`，脚本 `lor-pipeline-stats-cmp.py`。
+- 算术指令总数我们是原厂 1.35×（FMA 1.23×、CVT 1.43×、SFU 1.08×），Load/Store 1.65×，纹理/Varying 基本 1×；中位数 1.25×，p90 2.7×，最差单个 shader 达 10.9×（原厂 196 → 我们 2144）。
+- 最差一批的共性：原厂 Load/Store=0 而我们 29–118，CVT 相差 10×；说明有大量本应折叠/常量化的转换与 uniform 读取没被优化。
+- 我们 886/1321 个片元 shader 的 Threads=1（原厂分配寄存器可到 96）；10 个有 spill。
+- 原厂这批 shader 的 early-ZS 统计全为 0，无法据此判断 early-ZS，需要用其它办法对比。
+- 静态差距（1.35×）小于运行时每 quad 着色时间差距（2.5×），应加权到实际调用次数；下一步取最差 shader（如 `bdf1ab02e56275c3`、`7c5428fdb35c0f26`）的 NIR/反汇编查 CVT 与 Load/Store 来源。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。

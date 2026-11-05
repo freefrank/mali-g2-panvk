@@ -1,0 +1,37 @@
+pipelines compared 1377, unique fragment shaders 1321
+stat (sum over unique fs)           vendor     panvk  ratio
+Arithmetic                          611132    826326   1.35
+Arithmetic FMA (Valhall only)       220835    271916   1.23
+Arithmetic CVT (Valhall only)       380963    544331   1.43
+Arithmetic SFU (Valhall only)         9334     10079   1.08
+Load Store                           15725     26023   1.65
+Varying                              22550     25106   1.11
+Texture                               4811      4901   1.02
+{'vendor regs>32': 667, 'panvk threads=1': 886, 'panvk spills>0': 10, 'vendor early': 0, 'vendor side effects': 0, 'vendor depth write': 13, 'vendor coverage': 1311, 'panvk loops>0': 12}
+
+ratio distribution (panvk ALU / vendor Arithmetic):
+  p10 1.05
+  p25 1.09
+  p50 1.25
+  p75 1.76
+  p90 2.73
+  p100 10.94
+
+worst 15 by absolute ALU gap:
+ fs=bdf1ab02e56275c3  ALU v=1280 p=4712 | FMA  491/2172 CVT  716/2188 SFU  73/352 | LS   0/118 TEX 15/41 | regs v=48 p=42 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+ fs=7c5428fdb35c0f26  ALU v= 196 p=2144 | FMA   90/ 790 CVT  102/1346 SFU   4/  8 | LS   0/ 29 TEX 17/17 | regs v=32 p=53 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+ fs=d2dc5968d36d28ee  ALU v= 208 p=2155 | FMA   63/ 669 CVT  144/1485 SFU   1/  1 | LS   0/111 TEX 15/15 | regs v=80 p=64 thr=1 loops=0 spills=38 | v:early=0 side=0 dw=0
+ fs=3ac7c51f7e4e6dd4  ALU v= 592 p=2248 | FMA  188/ 910 CVT  379/1212 SFU  25/126 | LS   0/106 TEX 14/32 | regs v=48 p=52 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+ fs=baf15031013413d9  ALU v= 560 p=2185 | FMA  178/ 897 CVT  360/1165 SFU  22/123 | LS   0/104 TEX 12/31 | regs v=48 p=52 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+ fs=a70fed7357eafd80  ALU v= 215 p=1780 | FMA   82/ 627 CVT  129/1145 SFU   4/  8 | LS   2/ 29 TEX 13/13 | regs v=32 p=47 thr=1 loops=1 spills=0 | v:early=0 side=0 dw=0
+ fs=a546b4256d6d0cce  ALU v= 213 p=1769 | FMA   80/ 621 CVT  129/1140 SFU   4/  8 | LS   2/ 29 TEX 13/13 | regs v=32 p=46 thr=1 loops=1 spills=0 | v:early=0 side=0 dw=0
+ fs=3aadff3465d7b216  ALU v=1063 p=2368 | FMA  430/ 713 CVT  623/1645 SFU  10/ 10 | LS  22/ 59 TEX 13/13 | regs v=96 p=52 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+ fs=f70033dcd469c0b0  ALU v= 674 p=1796 | FMA  318/ 568 CVT  344/1216 SFU  12/ 12 | LS   0/ 46 TEX  9/ 9 | regs v=80 p=54 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+ fs=dc3d5685da0d31c2  ALU v= 661 p=1777 | FMA  307/ 555 CVT  344/1212 SFU  10/ 10 | LS   0/ 46 TEX  9/ 9 | regs v=80 p=53 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+ fs=403a2f86394af23d  ALU v= 661 p=1777 | FMA  307/ 555 CVT  344/1212 SFU  10/ 10 | LS   0/ 46 TEX  9/ 9 | regs v=80 p=53 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+ fs=2108f6aeb4788784  ALU v= 845 p=1899 | FMA  411/ 626 CVT  420/1259 SFU  14/ 14 | LS   0/ 44 TEX  9/ 9 | regs v=96 p=62 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+ fs=000d0f6d79018266  ALU v= 821 p=1861 | FMA  393/ 601 CVT  417/1249 SFU  11/ 11 | LS   0/ 42 TEX  9/ 9 | regs v=96 p=58 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+ fs=5e3a3da9d0802660  ALU v= 981 p=1957 | FMA  480/ 676 CVT  482/1262 SFU  19/ 19 | LS   0/ 47 TEX  9/ 9 | regs v=96 p=63 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+ fs=fc7afeb9124ffaf1  ALU v= 672 p=1647 | FMA  321/ 524 CVT  340/1112 SFU  11/ 11 | LS   0/ 43 TEX  8/ 8 | regs v=64 p=53 thr=1 loops=0 spills=0 | v:early=0 side=0 dw=0
+
+vendor pipelines without panvk match: 0  panvk without vendor: 73
