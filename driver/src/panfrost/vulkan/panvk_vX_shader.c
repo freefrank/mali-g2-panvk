@@ -1336,7 +1336,8 @@ panvk_compile_nir(struct panvk_device *dev, nir_shader *nir,
    const unsigned scratch_B = nir->scratch_size;
    struct blob g2_dump = {0};
    if (PAN_ARCH == 15 && panvk_g2_diagnostics &&
-       nir->info.stage == MESA_SHADER_VERTEX) {
+       (nir->info.stage == MESA_SHADER_VERTEX ||
+        nir->info.stage == MESA_SHADER_FRAGMENT)) {
       struct pan_compile_inputs saved_inputs = input;
       saved_inputs.model = NULL;
       saved_inputs.varying_layout = NULL;
@@ -1354,7 +1355,22 @@ panvk_compile_nir(struct panvk_device *dev, nir_shader *nir,
       nir_serialize(&g2_dump, nir, true);
    }
    pan_shader_compile(nir, &input, &binary, &shader->info);
-   if (g2_dump.data) {
+   if (g2_dump.data && nir->info.stage == MESA_SHADER_FRAGMENT) {
+      static uint32_t g2_fs_dumped;
+      if (!g2_dump.out_of_memory && binary.size >= 14000 &&
+          p_atomic_inc_return(&g2_fs_dumped) <= 96) {
+         char path[128];
+         snprintf(path, sizeof(path),
+                  "/storage/emulated/0/Download/panvk-vsdump/fs-%u-bin%u.nir",
+                  g2_fs_dumped, (unsigned)binary.size);
+         FILE *f = fopen(path, "wb");
+         if (f) {
+            fwrite(g2_dump.data, 1, g2_dump.size, f);
+            fclose(f);
+         }
+      }
+      blob_finish(&g2_dump);
+   } else if (g2_dump.data) {
       static uint32_t g2_dumped;
       if (!g2_dump.out_of_memory && shader->info.tls_size >= 256 &&
           p_atomic_inc_return(&g2_dumped) <= 64) {
