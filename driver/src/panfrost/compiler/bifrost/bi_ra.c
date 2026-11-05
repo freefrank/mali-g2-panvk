@@ -294,7 +294,8 @@ bi_compute_liveness_ra(bi_context *ctx)
 #define EVEN_BITS_MASK (0x5555555555555555ull)
 
 static uint64_t
-bi_make_affinity(uint64_t clobber, unsigned count, bool split_file, unsigned arch)
+bi_make_affinity(uint64_t clobber, unsigned count, bool split_file, unsigned arch,
+                 unsigned reg_end)
 {
    uint64_t clobbered = 0;
 
@@ -311,7 +312,7 @@ bi_make_affinity(uint64_t clobber, unsigned count, bool split_file, unsigned arc
    if (count > 1) {
       unsigned excess = count - 1;
       uint64_t mask = BITFIELD_MASK(excess);
-      clobbered |= mask << (64 - excess);
+      clobbered |= mask << (reg_end - excess);
 
       if (split_file)
          clobbered |= mask << (16 - excess);
@@ -328,7 +329,8 @@ bi_make_affinity(uint64_t clobber, unsigned count, bool split_file, unsigned arc
 static void
 bi_mark_interference(bi_block *block, struct lcra_state *l, uint8_t *live,
                      uint64_t preload_live, unsigned node_count, bool is_blend,
-                     bool split_file, unsigned arch)
+                     bool split_file, unsigned arch,
+                     unsigned reg_end)
 {
    bool aligned_sr = arch >= 9;
    bi_foreach_instr_in_block_rev(block, ins) {
@@ -347,7 +349,7 @@ bi_mark_interference(bi_block *block, struct lcra_state *l, uint8_t *live,
          unsigned count = bi_count_write_registers(ins, d);
          unsigned offset = ins->dest[d].offset;
          uint64_t affinity =
-            bi_make_affinity(preload_live, count, split_file, arch) >> offset;
+            bi_make_affinity(preload_live, count, split_file, arch, reg_end) >> offset;
          /* Valhall needs >= 64-bit staging writes to be pair-aligned */
          if (aligned_sr && (count >= 2 || offset))
             affinity &= EVEN_BITS_MASK;
@@ -431,7 +433,8 @@ bi_mark_interference(bi_block *block, struct lcra_state *l, uint8_t *live,
 }
 
 static void
-bi_compute_interference(bi_context *ctx, struct lcra_state *l, bool full_regs)
+bi_compute_interference(bi_context *ctx, struct lcra_state *l,
+                        unsigned reg_limit)
 {
    bi_compute_liveness_ra(ctx);
    bi_postra_liveness(ctx);
@@ -440,14 +443,15 @@ bi_compute_interference(bi_context *ctx, struct lcra_state *l, bool full_regs)
       uint8_t *live = mem_dup(blk->live_out, ctx->ssa_alloc);
 
       bi_mark_interference(blk, l, live, blk->reg_live_out, ctx->ssa_alloc,
-                           ctx->inputs->is_blend, !full_regs, ctx->arch);
+                           ctx->inputs->is_blend, reg_limit == 32, ctx->arch,
+                           reg_limit == 32 ? 64 : reg_limit);
 
       free(live);
    }
 }
 
 static struct lcra_state *
-bi_allocate_registers(bi_context *ctx, bool *success, bool full_regs)
+bi_allocate_registers(bi_context *ctx, bool *success, unsigned reg_limit)
 {
    struct lcra_state *l = lcra_alloc_equations(ctx->ssa_alloc);
 
@@ -457,7 +461,7 @@ bi_allocate_registers(bi_context *ctx, bool *success, bool full_regs)
 
    uint64_t default_affinity =
       ctx->inputs->is_blend ? BITFIELD64_MASK(16)
-      : full_regs           ? BITFIELD64_MASK(64)
+      : reg_limit != 32     ? BITFIELD64_MASK(reg_limit)
       : ctx->arch >= 15     ? BITFIELD64_MASK(32)
                   : (BITFIELD64_MASK(16) | (BITFIELD64_MASK(16) << 48));
 
@@ -509,7 +513,7 @@ bi_allocate_registers(bi_context *ctx, bool *success, bool full_regs)
       }
    }
 
-   bi_compute_interference(ctx, l, full_regs);
+   bi_compute_interference(ctx, l, reg_limit);
 
    /* Coalesce register moves if we're allowed. We need to be careful due
     * to the restricted affinity induced by the blend shader ABI.
@@ -1328,7 +1332,7 @@ bi_register_allocate(bi_context *ctx)
 
    /* Try with reduced register pressure to improve thread count */
    if (ctx->arch >= 7) {
-      l = bi_allocate_registers(ctx, &success, false);
+      l = bi_allocate_registers(ctx, &success, 32);
 
       if (success) {
          ctx->info.work_reg_count = 32;
@@ -1338,9 +1342,22 @@ bi_register_allocate(bi_context *ctx)
       }
    }
 
+   /* v15 can allocate registers in steps of 16 per thread; try an
+    * intermediate size before using the whole register file. */
+   if (!success && ctx->arch >= 15 && !ctx->inputs->is_blend) {
+      l = bi_allocate_registers(ctx, &success, 48);
+
+      if (success) {
+         ctx->info.work_reg_count = 48;
+      } else {
+         lcra_free(l);
+         l = NULL;
+      }
+   }
+
    /* Otherwise, use the register file and spill until we succeed */
    while (!success && ((iter_count++) < max_iters)) {
-      l = bi_allocate_registers(ctx, &success, true);
+      l = bi_allocate_registers(ctx, &success, BI_MAX_REGS);
 
       if (success) {
          ctx->info.work_reg_count = BI_MAX_REGS;

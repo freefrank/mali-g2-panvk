@@ -32,6 +32,10 @@ pan_shader_stage(const struct pan_shader_info *info)
 static inline enum mali_shader_register_allocation
 pan_register_allocation(unsigned work_reg_count)
 {
+#if PAN_ARCH >= 15
+   if (work_reg_count > 32 && work_reg_count <= 48)
+      return MALI_SHADER_REGISTER_ALLOCATION_48_PER_THREAD;
+#endif
    return (work_reg_count <= 32)
              ? MALI_SHADER_REGISTER_ALLOCATION_32_PER_THREAD
              : MALI_SHADER_REGISTER_ALLOCATION_64_PER_THREAD;

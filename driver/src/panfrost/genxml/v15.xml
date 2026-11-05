@@ -2030,6 +2030,7 @@
 
   <enum name="Shader Register Allocation">
     <value name="64 Per Thread" value="7"/>
+    <value name="48 Per Thread" value="5"/>
     <value name="32 Per Thread" value="3"/>
   </enum>
 
