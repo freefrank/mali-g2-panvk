@@ -1,58 +1,38 @@
 import re, sys, collections
-path = sys.argv[1]
-sess = []
 kv = re.compile(r'"([^"]+)"=(-?\d+)')
-for line in open(path):
+sess = []
+for line in open(sys.argv[1]):
     if line.startswith('device'):
-        sess.append(collections.defaultdict(dict)); continue
+        sess.append(collections.defaultdict(list)); continue
     m = re.match(r'pipe vs=(\w+) fs=(\w+) rts=(\d+) samples=(\d+) rt0=(\d+) exec=(\d+) stages=(\S+) name="([^"]+)"', line)
     if not m: continue
-    vs, fs, rts, smp, rt0, ex, st, name = m.groups()
-    sess[-1][(vs, fs, rts, smp, rt0)][name] = {k: int(v) for k, v in kv.findall(line[m.end():])}
+    key = m.groups()[:5]
+    ex = int(m.group(6))
+    lst = sess[-1][key]
+    if ex == 0 or not lst:
+        lst.append({})
+    lst[-1][m.group(8)] = {k: int(v) for k, v in kv.findall(line[m.end():])}
 V, P = sess
-# map vendor stat -> panvk stat
-MAP = [('Arithmetic', 'ALU'), ('Arithmetic FMA (Valhall only)', 'FMA'), ('Arithmetic CVT (Valhall only)', 'CVT'),
-       ('Arithmetic SFU (Valhall only)', 'SFU'), ('Load Store', 'Load/store'), ('Varying', 'Varying'), ('Texture', 'Texture')]
-common = sorted(set(V) & set(P))
+print('keys vendor %d panvk %d; variants vendor %d panvk %d' % (len(V), len(P), sum(map(len, V.values())), sum(map(len, P.values()))))
+multi = [(k, len(V[k]), len(P[k])) for k in V if k in P and (len(V[k]) > 1 or len(P[k]) > 1)]
+print('keys with >1 variant: %d; variant-count mismatches: %d' % (len(multi), sum(1 for k, a, b in multi if a != b)))
+# pair by occurrence, fragment only
+tv = tp = tvp = 0
 rows = []
-for k in common:
-    a, b = V[k].get('Fragment shader'), P[k].get('fragment')
-    if a and b: rows.append((k, a, b))
-# dedupe by fs hash only (rt formats multiply the same shader)
-by_fs = {}
-for k, a, b in rows: by_fs.setdefault(k[1], (k, a, b))
-print('pipelines compared %d, unique fragment shaders %d' % (len(rows), len(by_fs)))
-tv = collections.Counter(); tp = collections.Counter()
-for k, a, b in by_fs.values():
-    for va, pa in MAP:
-        tv[va] += a.get(va, 0); tp[va] += b.get(pa, 0)
-print('%-32s %9s %9s %6s' % ('stat (sum over unique fs)', 'vendor', 'panvk', 'ratio'))
-for va, pa in MAP:
-    print('%-32s %9d %9d %6.2f' % (va, tv[va], tp[va], tp[va] / tv[va] if tv[va] else 0))
-r = collections.Counter()
-for k, a, b in by_fs.values():
-    r['vendor regs>32'] += a.get('Registers allocated', 0) > 32
-    r['panvk threads=1'] += b.get('Threads', 2) == 1
-    r['panvk spills>0'] += b.get('Spills', 0) > 0
-    r['vendor early'] += a.get('Early fragment test', 0) > 0
-    r['vendor side effects'] += a.get('Side effects', 0) > 0
-    r['vendor depth write'] += a.get('Depth write', 0) > 0
-    r['vendor coverage'] += a.get('Coverage', 0) > 0
-    r['panvk loops>0'] += b.get('Loops', 0) > 0
-print(dict(r))
-rat = sorted(((b['ALU'] / a['Arithmetic'] if a.get('Arithmetic') else 0, k, a, b) for k, a, b in by_fs.values()), reverse=True)
-print('\nratio distribution (panvk ALU / vendor Arithmetic):')
-vals = sorted(x[0] for x in rat if x[0])
-for q in (0.1, 0.25, 0.5, 0.75, 0.9, 1.0):
-    print('  p%d %.2f' % (q * 100, vals[min(len(vals) - 1, int(q * len(vals)))]))
-print('\nworst 15 by absolute ALU gap:')
-for k, a, b in sorted(by_fs.values(), key=lambda x: x[2]['ALU'] - x[1].get('Arithmetic', 0), reverse=True)[:15]:
-    print(' fs=%s  ALU v=%4d p=%4d | FMA %4d/%4d CVT %4d/%4d SFU %3d/%3d | LS %3d/%3d TEX %2d/%2d | regs v=%d p=%d thr=%d loops=%d spills=%d | v:early=%d side=%d dw=%d' % (
-        k[1], a.get('Arithmetic', 0), b['ALU'], a.get('Arithmetic FMA (Valhall only)', 0), b['FMA'],
-        a.get('Arithmetic CVT (Valhall only)', 0), b['CVT'], a.get('Arithmetic SFU (Valhall only)', 0), b['SFU'],
-        a.get('Load Store', 0), b['Load/store'], a.get('Texture', 0), b['Texture'],
-        a.get('Registers allocated', 0), b['Registers used'], b['Threads'], b['Loops'], b['Spills'],
-        a.get('Early fragment test', 0), a.get('Side effects', 0), a.get('Depth write', 0)))
-# panvk-only / vendor-only pipelines
-print('\nvendor pipelines without panvk match:', len(set(V) - set(P)), ' panvk without vendor:', len(set(P) - set(V)))
-# usage-weighted proxy is not available; list vendor early-ZS = 0 but no side effects etc.
+for k in V:
+    if k not in P: continue
+    for a, b in zip(V[k], P[k]):
+        if 'Fragment shader' in a and 'fragment' in b:
+            va = a['Fragment shader'].get('Arithmetic', 0)
+            vp = a.get('Fragment pilot shader', {}).get('Arithmetic', 0)
+            pa = b['fragment']['ALU']
+            rows.append((pa - va - vp, k, va, vp, pa))
+            tv += va; tvp += vp; tp += pa
+print('paired fragment variants %d: vendor main %d + pilot %d = %d ; panvk %d ; ratio vs main %.2f, vs main+pilot %.2f' % (
+    len(rows), tv, tvp, tv + tvp, tp, tp / tv, tp / (tv + tvp)))
+import statistics
+rat = sorted(r[4] / (r[2] + r[3]) for r in rows if r[2] + r[3])
+print('ratio panvk/(main+pilot): p10 %.2f p50 %.2f p90 %.2f max %.2f' % (rat[len(rat)//10], rat[len(rat)//2], rat[len(rat)*9//10], rat[-1]))
+print('worst:')
+for d, k, va, vp, pa in sorted(rows, reverse=True)[:8]:
+    print('  fs=%s rt0=%s vendor main %d pilot %d | panvk %d' % (k[1], k[4], va, vp, pa))

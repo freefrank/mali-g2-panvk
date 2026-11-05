@@ -32,19 +32,12 @@ Policy marker: biblioklept
 - root `pm install` 在 KernelSU shell 里报 binder `Failed transaction`，未装上；debug 签名可能与已装版本不同，**不要卸载重装以免丢 LOR 私有数据**，由用户手动安装或先备份 `files/save`、`files/config`、`files/gpu_driver`。
 - 装好后：原厂驱动进同场景 1 分钟退出，再换 test62 同样一次；读两份 `pipeline-stats.txt` 按哈希对齐，找片元 shader 指令数/寄存器/周期/early-ZS 差距最大的一批，再改编译器。原厂驱动确认带 `VK_KHR_pipeline_executable_properties`（`libGLES_mali.so` 中可见）。
 
-**逐 shader 对比结果（2026-11-05，test62 vs 原厂 r56p0，1321 个唯一片元 shader，静态统计）**：详见 `tools/fixtures/lor-pipeline-stats-compare.txt`，脚本 `lor-pipeline-stats-cmp.py`。
-- 算术指令总数我们是原厂 1.35×（FMA 1.23×、CVT 1.43×、SFU 1.08×），Load/Store 1.65×，纹理/Varying 基本 1×；中位数 1.25×，p90 2.7×，最差单个 shader 达 10.9×（原厂 196 → 我们 2144）。
-- 最差一批的共性：原厂 Load/Store=0 而我们 29–118，CVT 相差 10×；说明有大量本应折叠/常量化的转换与 uniform 读取没被优化。
-- 我们 886/1321 个片元 shader 的 Threads=1（原厂分配寄存器可到 96）；10 个有 spill。
-- 原厂这批 shader 的 early-ZS 统计全为 0，无法据此判断 early-ZS，需要用其它办法对比。
-- 静态差距（1.35×）小于运行时每 quad 着色时间差距（2.5×），应加权到实际调用次数；下一步取最差 shader（如 `bdf1ab02e56275c3`、`7c5428fdb35c0f26`）的 NIR/反汇编查 CVT 与 Load/Store 来源。
-
-**片元 shader 离线分析（2026-11-05，test65 fsdump 包，50 个大片元 NIR 在 `tools/work/fsdump/`，已用 `replay_nir` 离线复现，字节数与设备一致）**
-- 复现与观察：`MALI_G2_REPLAY_PRINT_NIR=1` 输出 NIR；`BIFROST_MESA_DEBUG=shaders` 输出后端汇编；`MALI_G2_REPLAY_FASTMATH=1` 清掉 inf/nan 保持位做对照（只缩 6%，不是主因）。
-- 差距最大的 shader（如 `d2dc5968…`、`7c5428fd…`、`bdf1ab02…`）都含「Xenos 采样/纹理状态模拟」：状态位域经 push-constant 指针从全局缓冲读出（`load_global_constant`），再对每次采样把 wrap/mirror/clamp/border 各模式全算一遍用 `bcsel` 选。一个 shader 有 500–800 个 `bcsel`，后端变成同数量的 `CSEL`（算 CVT 管线）加 FCMP，这就是 CVT 约 2× 的来源。
-- 这些值全是每次绘制不变量（uniform）。原厂每个 shader 带 **pilot shader**（统计里的 `Fragment pilot shader`，数十条），原厂主片元 shader 里 Load/Store 为 0。我们的编译器与驱动**没有 pilot/preamble 支持**（v15.xml 只有 `Fragment Flags 3` 里的 `Job is pilot` 位）。
-- 但 pilot 本身只有几十条算术，不足以装下全部差额，所以「uniform 计算整体外提」只是假说，未验证。下一步要靠原厂命令流抓取（`tools/work/vendor-snap`）确认 pilot 的 job 布局，以及原厂主 shader 的汇编。
-- 统计对齐注意：不同 shader 代码大小可能相同，按大小匹配原厂数据不可靠。
+**逐 shader 对比结果（2026-11-05，更正版）**：`tools/fixtures/lor-pipeline-stats-compare.txt`，脚本 `lor-pipeline-stats-cmp.py`。
+- **更正**：本节早先版本（算术 1.35×、最差 10.9×、「采样状态模拟/缺 pilot 是主因」）是错的——原厂同一管线键会出现多份（应用用不同状态重复创建），每份含 `Fragment shader`+`Fragment pilot shader`，旧脚本按名字存字典导致覆盖。
+- 正确配对（同键按出现顺序，计入 pilot）后，3029 个片元变体：我们 / 原厂（主+pilot）= **1.03×**，p10 0.94、p50 1.03、p90 1.08；仅少数离群（`bdf1ab02…` 4712 vs 1327、`3ac7c51f…`/`baf15031…` 约 2200 vs 620、`39ae52dd…`、`910c6394…`，最大 3.7×）。**片元 shader 静态编译质量与原厂基本持平，不是 3 倍差距的主因。**
+- 配对仍是近似（584 个键两边变体数不一致）；统计是静态指令数，未按调用次数加权。没有 pilot 支持是事实，但没有造成总指令数差距。
+- 3 倍差距应回到运行时：quad 数 1.9×（后期 ZS 3.6×）、每 quad 时间 2.5×，需用运行时计数器继续定位。
+- 离线工具：test65 `fsdump` 包在诊断开启时把 ≥14000 字节的片元 NIR 存到 `Download/panvk-vsdump/fs-*.nir`（本地副本 `tools/work/fsdump/`）；`replay_nir` 配合 `MALI_G2_REPLAY_PRINT_NIR=1`、`BIFROST_MESA_DEBUG=shaders`、`MALI_G2_REPLAY_FASTMATH=1` 离线复现与对照；LOR 私有目录需用 `nsenter -t 1 -m --` 经 Termux root 访问。
 
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
