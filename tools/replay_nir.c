@@ -100,6 +100,16 @@ static int replay_one(const char *path, const char *output_path)
     nir_shader *nir = nir_deserialize(NULL, options, &reader);
     if (!nir || reader.overrun || reader.current != reader.end)
         return 1;
+    if (getenv("MALI_G2_REPLAY_FASTMATH")) {
+        nir_foreach_function_impl(impl, nir) {
+            nir_foreach_block(block, impl) {
+                nir_foreach_instr(instr, block) {
+                    if (instr->type == nir_instr_type_alu)
+                        nir_instr_as_alu(instr)->fp_math_ctrl = nir_fp_fast_math;
+                }
+            }
+        }
+    }
     if (getenv("MALI_G2_REPLAY_PRINT_NIR"))
         nir_print_shader(nir, stderr);
     if (!point) {
