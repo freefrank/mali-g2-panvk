@@ -56,6 +56,9 @@ Policy marker: biblioklept
 - 每帧 pass 概况：约 17 个 render pass，其中约 12 个大于 1080p 量级的全屏 pass（1920×1308 约 3.5 个、1920×1280 约 2.6 个、3408×2272 约 1 个），每帧合计约 30 MP；每帧 `copy_image`：1 次 1920×1280 + 2 次约 648×430（走图形管线）。这类全屏 pass 的每像素代价（shader、tile 读写）才是主导。
 - 已排除：片元 shader 静态质量（1.03×）、early-ZS 判定、render pass 固定开销（每帧约 0.4–2 ms）。**仍未解释的是 quad 数 1.9× 与每 quad 时间 2.5×**。下一步候选：①HSR（v13+）与 forward-pixel-kill 在 LOR 绘制上的实际设置对比（只需抓原厂一帧的 DCD 标志）；②v15 `Cull Zero Area`/`Disable VRS Clamp 2x2` 目前未设置（原厂设了）；③tile 写回/清除的每像素带宽，用 `vulkan_tiles` 1080p 单 pass 慢 1.7× 作线索做细分。
 
+**2026-11-05 同日 A/B（用户目测，LOR 同场景同位置）**：test62 14–18 FPS（基线）、test67 CRC 版 15–20、test68 `flagsonly`（test62 + v15 `Cull Zero Area` + `Disable VRS Clamp 2x2`，CRC 关）17–23。**保留两个标志（约 +20–30%），CRC 保持关闭**（合成测试里大幅受益是因为相邻 pass 内容完全相同，游戏里无可见收益；`pan_desc.c` 的 v14+ AFBC CRC 禁用保留）。当前代码 `647ee73` 即 test68。
+- **测量教训**：同一驱动不同时间差别可达 40%（test62 早先 ~25，今天 14–18），所以必须同一天、同一位置先测基线再比；应改用 LOR 运行日志里 `frame=` 与时间戳算 75 秒平均帧率，而不是目测。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。
