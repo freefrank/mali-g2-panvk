@@ -2536,6 +2536,36 @@ build_dcd_flags(struct panvk_cmd_buffer *cmdbuf,
          cfg.pixel_kill_operation = (enum mali_pixel_kill)out->earlyzs.kill;
          cfg.zs_update_operation = (enum mali_pixel_kill)out->earlyzs.update;
 
+         if (PAN_ARCH == 15 && panvk_g2_diagnostics) {
+            static uint32_t earlyzs_hist[2048];
+            static uint32_t earlyzs_calls;
+            uint32_t idx = (out->earlyzs.kill & 3) |
+                           (out->earlyzs.update & 3) << 2 |
+                           (uint32_t)fs->info.fs.can_discard << 4 |
+                           (uint32_t)(fs->info.fs.writes_depth ||
+                                      fs->info.fs.writes_stencil) << 5 |
+                           (uint32_t)(writes_zs) << 6 |
+                           (uint32_t)zs_always_passes << 7 |
+                           (uint32_t)alpha_to_coverage << 8 |
+                           (uint32_t)(zs_read != PAN_EARLYZS_ZS_TILEBUF_NOT_READ)
+                              << 9 |
+                           (uint32_t)fs->info.writes_global << 10;
+            p_atomic_inc(&earlyzs_hist[idx]);
+            if ((p_atomic_inc_return(&earlyzs_calls) % 20000) == 0) {
+               for (uint32_t i = 0; i < 2048; i++) {
+                  uint32_t n = p_atomic_read(&earlyzs_hist[i]);
+                  if (n)
+                     panvk_g2_trace("earlyzs kill=%u upd=%u discard=%u shzs=%u "
+                                    "pipezs=%u zspass=%u a2c=%u zsread=%u "
+                                    "wglobal=%u n=%u",
+                                    i & 3, (i >> 2) & 3, (i >> 4) & 1,
+                                    (i >> 5) & 1, (i >> 6) & 1, (i >> 7) & 1,
+                                    (i >> 8) & 1, (i >> 9) & 1, (i >> 10) & 1,
+                                    n);
+               }
+            }
+         }
+
          /* Use per-sample shading if required by API. Also use it when a
           * blend shader is used with multisampling, as this is handled by a
           * single ST_TILE in the blend shader with the current sample ID,
