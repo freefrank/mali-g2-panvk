@@ -39,6 +39,13 @@ Policy marker: biblioklept
 - 原厂这批 shader 的 early-ZS 统计全为 0，无法据此判断 early-ZS，需要用其它办法对比。
 - 静态差距（1.35×）小于运行时每 quad 着色时间差距（2.5×），应加权到实际调用次数；下一步取最差 shader（如 `bdf1ab02e56275c3`、`7c5428fdb35c0f26`）的 NIR/反汇编查 CVT 与 Load/Store 来源。
 
+**片元 shader 离线分析（2026-11-05，test65 fsdump 包，50 个大片元 NIR 在 `tools/work/fsdump/`，已用 `replay_nir` 离线复现，字节数与设备一致）**
+- 复现与观察：`MALI_G2_REPLAY_PRINT_NIR=1` 输出 NIR；`BIFROST_MESA_DEBUG=shaders` 输出后端汇编；`MALI_G2_REPLAY_FASTMATH=1` 清掉 inf/nan 保持位做对照（只缩 6%，不是主因）。
+- 差距最大的 shader（如 `d2dc5968…`、`7c5428fd…`、`bdf1ab02…`）都含「Xenos 采样/纹理状态模拟」：状态位域经 push-constant 指针从全局缓冲读出（`load_global_constant`），再对每次采样把 wrap/mirror/clamp/border 各模式全算一遍用 `bcsel` 选。一个 shader 有 500–800 个 `bcsel`，后端变成同数量的 `CSEL`（算 CVT 管线）加 FCMP，这就是 CVT 约 2× 的来源。
+- 这些值全是每次绘制不变量（uniform）。原厂每个 shader 带 **pilot shader**（统计里的 `Fragment pilot shader`，数十条），原厂主片元 shader 里 Load/Store 为 0。我们的编译器与驱动**没有 pilot/preamble 支持**（v15.xml 只有 `Fragment Flags 3` 里的 `Job is pilot` 位）。
+- 但 pilot 本身只有几十条算术，不足以装下全部差额，所以「uniform 计算整体外提」只是假说，未验证。下一步要靠原厂命令流抓取（`tools/work/vendor-snap`）确认 pilot 的 job 布局，以及原厂主 shader 的汇编。
+- 统计对齐注意：不同 shader 代码大小可能相同，按大小匹配原厂数据不可靠。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。
