@@ -49,6 +49,13 @@ Policy marker: biblioklept
 - 离屏渲染目标已使用 AFBC（modifier `…351`），只有 3408×2272 的 swapchain 图像未压缩。
 - 命令：`MALI_G2_TILES_TIMING=1 MALI_G2_TILES_PASSES=34 build/bin/vulkan_tiles <driver.so> build/shaders/tiles_sample.comp.spv W H 21 37 build/shaders/tiles.vert.spv build/shaders/tiles.frag.spv`，原厂驱动为 `/vendor/lib64/hw/vulkan.mali.so`。游戏运行时不要跑。
 
+**early-ZS 判定统计（2026-11-05，test66 `zshist`，LOR 同场景 75 秒）**
+- 诊断开启时每 2 万次绘制状态构建输出一次直方图（`earlyzs kill=… upd=… discard=…` 行，在 `panvk-g2-driver-events.log`）。注意 `Pixel Kill` 枚举：0 Force Early、1 Strong Early、2 Weak Early、3 Force Late。
+- 4 万次带片元 shader 的绘制：**全部** `zs_always_passes=1` 且管线不写深度，kill=Weak Early、update=Force Early，**没有任何 Force Late**；59% 带 discard、41% 不带；`alpha_to_coverage`、`writes_global`、读 ZS 均为 0。
+- LOR 的彩色 pass 都没有深度附件（`colors=1 z=0`），仅深度 pass 是 `colors=0 z=1`（阴影图等），所以彩色 pass 本来就没有 early-Z 可剔除。结论：**早期深度剔除判定不是差距来源**，计数器里「后期 ZS 3.6×」不是我们强制 late 造成的，应是别的原因（如 HSR/FPK 使用情况、原厂 pass 结构不同）。
+- 每帧 pass 概况：约 17 个 render pass，其中约 12 个大于 1080p 量级的全屏 pass（1920×1308 约 3.5 个、1920×1280 约 2.6 个、3408×2272 约 1 个），每帧合计约 30 MP；每帧 `copy_image`：1 次 1920×1280 + 2 次约 648×430（走图形管线）。这类全屏 pass 的每像素代价（shader、tile 读写）才是主导。
+- 已排除：片元 shader 静态质量（1.03×）、early-ZS 判定、render pass 固定开销（每帧约 0.4–2 ms）。**仍未解释的是 quad 数 1.9× 与每 quad 时间 2.5×**。下一步候选：①HSR（v13+）与 forward-pixel-kill 在 LOR 绘制上的实际设置对比（只需抓原厂一帧的 DCD 标志）；②v15 `Cull Zero Area`/`Disable VRS Clamp 2x2` 目前未设置（原厂设了）；③tile 写回/清除的每像素带宽，用 `vulkan_tiles` 1080p 单 pass 慢 1.7× 作线索做细分。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。
