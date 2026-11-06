@@ -59,6 +59,11 @@ Policy marker: biblioklept
 **2026-11-05 同日 A/B（用户目测，LOR 同场景同位置）**：test62 14–18 FPS（基线）、test67 CRC 版 15–20、test68 `flagsonly`（test62 + v15 `Cull Zero Area` + `Disable VRS Clamp 2x2`，CRC 关）17–23。**保留两个标志（约 +20–30%），CRC 保持关闭**（合成测试里大幅受益是因为相邻 pass 内容完全相同，游戏里无可见收益；`pan_desc.c` 的 v14+ AFBC CRC 禁用保留）。当前代码 `647ee73` 即 test68。
 - **测量教训**：同一驱动不同时间差别可达 40%（test62 早先 ~25，今天 14–18），所以必须同一天、同一位置先测基线再比；应改用 LOR 运行日志里 `frame=` 与时间戳算 75 秒平均帧率，而不是目测。
 
+**逐 pass 计时第一轮（2026-11-06，LOR 诊断 APK `e97e567`，分支 `diag/pipeline-stats`，补丁 `tools/patches/plume-pass-timing.patch`）**
+- 同场景 80 s（我们，test70）/ 310 s（原厂）。**每秒 pass 数原厂约为我们的 3.2 倍，与帧率比一致**，两边每个 pass 类别的绘制数完全相同（如 1920×1308 带深度 pass 17 个绘制）→ 每帧工作结构一致，差距纯粹是执行速度，不是我们多做了 pass。
+- 但**时间戳耗时不可用**：原厂小 pass 全是约 12 ms（与尺寸无关），我们的总和每秒 2090 ms 超过 1000 ms，说明两边的时间戳在 tiler/fragment 流水线下测到的是排队延迟，pass 之间重叠。下一版 APK 每 10 s 交替「自由」与「全屏障串行」两种计时（键前缀 `F`/`S`）。
+- 教训：LOR 用自己的 `submission::BeginCommands` 开命令缓冲，绕过 plume `begin()`；诊断钩子必须挂在那里。CI 的 Windows 任务不带 plume 补丁，LOR 源码里的钩子要用 `LO_PASS_TIMING` 宏保护；Android 工作流 `paths` 过滤要包含新补丁文件，否则不会触发构建。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。
