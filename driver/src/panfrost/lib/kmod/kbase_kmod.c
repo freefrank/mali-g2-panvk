@@ -54,6 +54,12 @@
 extern const struct pan_kmod_ops kbase_kmod_ops;
 
 DEBUG_GET_ONCE_BOOL_OPTION(kbase_g2_diagnostics, "PANVK_G2_DIAGNOSTICS", false)
+/* Experiment knobs: bits OR-ed into / cleared from the flags of ordinary read-write BOs, and
+ * the cache maintenance mode at the end of every submission (0 = clean+invalidate L2/LSC and
+ * invalidate other, 1 = clean only, 2 = clean+invalidate without invalidating other). */
+DEBUG_GET_ONCE_NUM_OPTION(kbase_mem_set, "PANVK_KBASE_MEM_SET", 0)
+DEBUG_GET_ONCE_NUM_OPTION(kbase_mem_clr, "PANVK_KBASE_MEM_CLR", 0)
+DEBUG_GET_ONCE_NUM_OPTION(kbase_flush_mode, "PANVK_KBASE_FLUSH_MODE", 0)
 
 /* ---- kbase UAPI, recovered by measurement ------------------------------------------------- */
 
@@ -581,6 +587,11 @@ kbase_kmod_bo_alloc(struct pan_kmod_dev *dev, struct pan_kmod_vm *exclusive_vm, 
                             ((flags & PAN_KMOD_BO_FLAG_WB_MMAP) ? BASE_MEM_CACHED_CPU : 0),
       },
    };
+
+   if (!exec) {
+      req.in.flags |= (uint64_t)debug_get_option_kbase_mem_set();
+      req.in.flags &= ~(uint64_t)debug_get_option_kbase_mem_clr();
+   }
 
    /* Not CSF_EVENT memory, although a queue descheduled while waiting on a sync object is
     * only resumed by kbase re-reading that object through the permanent kernel mapping such
@@ -2755,8 +2766,14 @@ pan_kmod_kbase_csf_submit(struct pan_kmod_kbase_csf_group *g,
       if (!kbase_csf_ring_reserve(g, r, 16 * 8))
          return 0;
       kbase_csf_emit(r, cs_ins(CS_OP_MOVE32, V << 48));
-      kbase_csf_emit(r, cs_ins(CS_OP_FLUSH_CACHE2,
-                               (V << 40) | (0xffffull << 16) | (2u << 8) | (3u << 4) | 3u));
+      {
+         const int64_t fm = debug_get_option_kbase_flush_mode();
+         const uint64_t mode = fm == 1 ? ((1u << 4) | 1u)
+                             : fm == 2 ? ((3u << 4) | 3u)
+                                       : ((2u << 8) | (3u << 4) | 3u);
+         kbase_csf_emit(r, cs_ins(CS_OP_FLUSH_CACHE2,
+                                  (V << 40) | (0xffffull << 16) | mode));
+      }
       kbase_csf_emit(r, cs_ins(CS_OP_WAIT, 0xffffull << 16));
       kbase_csf_emit(r, cs_ins(CS_OP_ERROR_BARRIER, 0));
       kbase_csf_emit(r, cs_ins(CS_OP_MOVE48, (A << 48) | (g->seq_va + q * 64)));
