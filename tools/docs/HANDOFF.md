@@ -77,6 +77,13 @@ Policy marker: biblioklept
 - 结合逐 pass 计时（我们 pass 时间只占墙钟约 53%，原厂约 106%）和早先计数器（命令流 wait-blocked 我们约 50%、原厂约 0），GPU 的空闲应发生在**单次提交的命令流内部**：tiler/fragment 子队列之间的内存同步等待（每 pass 两次 SYNC_WAIT64、每次提交开头 WAIT #fff8、结尾全清 + WAIT #ffff），而不是提交调度。下一步主攻这里。
 - 采集脚本问题：用户启动游戏后加载较慢，75 s 窗口大部分落在菜单；以后采集应等 LOR 日志出现 `map=` 非 `-` 后再开始计时。
 
+**屏障串行化与在途数 A/B（2026-11-09，test73 `vtnowait`，`tools/fixtures/lor-ab-test73.txt`，自动脚本 `tools/fixtures/abtest.sh`）**
+- 合成测试（`vulkan_tiles` 新增 `MALI_G2_TILES_LOR_BARRIER=1`，即 plume 每个图形屏障的阶段掩码：源和目标都含顶点+片元阶段）：64×64×34 pass，原厂每屏障约 27 µs，我们约 93 µs；去掉「tiler 子队列在屏障处等 fragment 子队列」（实验开关 `debug.mesa.panvk.g2.vt.no.frag.wait=1`）后约 9 µs。三轮稳定。
+- 游戏内（同场景，从进入场景起由 LOR 日志算平均帧率）：基线 14.7 FPS（90 s）、去掉该等待 16.2 FPS（80 s，首个 10 s 区间 22.7 可能是进场景时的偏差，去掉后约 15.3）、再加在途数 2 为 22.5 FPS（仅 40 s，区间 16–31，波动大）。
+- 解读：屏障等待在游戏里只值约 5–10%（每帧约 34 个屏障 × 约 85 µs ≈ 3 ms，与 68 ms 的帧时间相比约 4%，与测量一致），**不是主因**；开关保留为实验项，默认关，且不安全（顶点着色器读前一 pass 输出时会错）。
+- 在途数 2 的提升大，但用户此前确认会导致安卓界面卡顿。结合 submitstat（应用在两次提交之间约 4.3 ms，每帧约 2.6 次提交）：在途数 1 时，小提交执行完后 GPU 会空等下一次提交录制完成，这是气泡来源；原厂驱动 GPU 利用率低、空闲多，所以不受影响。
+- 本日基线（14.7 FPS）低于前几天（约 18–22），属于日间漂移，比较只看同日 A/B。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。

@@ -1,0 +1,23 @@
+start 2026-11-09T23:43:07+08:00
+variant 1 base ready 23:43:07 knob1=0 knob2=1 -- waiting for a new LOR process
+variant 1 pid=13796 started 23:43:31
+variant 1 in scene 23:43:46 log=runtime-1794239011608582.log
+variant 1 driver /data/data/io.github.freefrank.lostodyssey/files/gpu_driver/panvk-mali-g2-vtnowait-8a1dd93-cd5aea84/libvulkan_panfrost.so
+variant 1 sampled 60s 23:45:20 -- please exit LOR
+variant 1 LOR exited 23:46:30
+variant 2 nowait ready 23:46:30 knob1=1 knob2=1 -- waiting for a new LOR process
+variant 2 pid=19171 started 23:46:32
+variant 2 in scene 23:46:55 log=runtime-1794239190810692.log
+variant 2 driver /data/data/io.github.freefrank.lostodyssey/files/gpu_driver/panvk-mali-g2-vtnowait-8a1dd93-cd5aea84/libvulkan_panfrost.so
+variant 2 sampled 60s 23:48:18 -- please exit LOR
+variant 2 LOR exited 23:48:53
+variant 3 nowait_inflight2 ready 23:48:53 knob1=1 knob2=2 -- waiting for a new LOR process
+variant 3 pid=21256 started 23:48:55
+variant 3 in scene 23:49:18 log=runtime-1794239335009161.log
+variant 3 driver /data/data/io.github.freefrank.lostodyssey/files/gpu_driver/panvk-mali-g2-vtnowait-8a1dd93-cd5aea84/libvulkan_panfrost.so
+variant 3 sampled 60s 23:50:40 -- please exit LOR
+variant 3 LOR exited 23:53:42
+end 2026-11-09T23:53:42+08:00 knob1=0 knob2=1
+1-base.log               scene_points=10 span=90s avg=14.7 fps  per-10s: 13.3 16.3 14.2 16.0 14.1 16.4 13.5 15.3 13.3
+2-nowait.log             scene_points=9 span=80s avg=16.2 fps  per-10s: 22.7 14.8 16.3 14.8 16.2 14.8 16.0 14.3
+3-nowait_inflight2.log   scene_points=5 span=40s avg=22.5 fps  per-10s: 24.2 19.0 30.8 16.2
