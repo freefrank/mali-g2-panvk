@@ -81,9 +81,11 @@ panvk_g2_trace(const char *format, ...)
    if (trace_fd >= 0)
       sendto(trace_fd, message, length, MSG_DONTWAIT,
              (const struct sockaddr *)&destination, sizeof(destination));
+   /* Periodic statistics lines are few and must survive a log already full of per-pass lines. */
+   const bool is_stat = strncmp(format, "submitstat", 10) == 0;
    if (trace_file_fd >= 0 &&
-       atomic_fetch_add_explicit(&trace_file_bytes, length + 1,
-                                 memory_order_relaxed) < 8388608) {
+       (atomic_fetch_add_explicit(&trace_file_bytes, length + 1,
+                                  memory_order_relaxed) < 8388608 || is_stat)) {
       const struct iovec lines[] = {
          {.iov_base = message, .iov_len = length},
          {.iov_base = "\n", .iov_len = 1},
