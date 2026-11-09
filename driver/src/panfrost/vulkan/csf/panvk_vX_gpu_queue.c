@@ -1545,6 +1545,52 @@ panvk_kbase_csf_done(void *data, bool ok)
  */
 DEBUG_GET_ONCE_NUM_OPTION(kbase_max_inflight, "PANVK_KBASE_MAX_INFLIGHT", 1)
 
+/* Diagnostics: where the submitting thread's time goes. blocked = waiting for an earlier
+ * submission under the in-flight limit, inside = the whole submit call, between = time the
+ * application spent between two submit calls. */
+static __thread uint64_t g2_blocked_ns;
+
+static uint64_t
+g2_now_ns(void)
+{
+   struct timespec ts;
+   clock_gettime(CLOCK_MONOTONIC, &ts);
+   return (uint64_t)ts.tv_sec * 1000000000ull + ts.tv_nsec;
+}
+
+static void
+g2_submit_stats(uint64_t enter_ns, uint64_t exit_ns, uint64_t blocked_ns, bool signals)
+{
+   static uint64_t last_exit, last_report, n, sig, inside, blocked, between, max_between, max_inside;
+   static simple_mtx_t lock = SIMPLE_MTX_INITIALIZER;
+   simple_mtx_lock(&lock);
+   if (last_exit) {
+      const uint64_t gap = enter_ns - last_exit;
+      between += gap;
+      max_between = MAX2(max_between, gap);
+   }
+   n++;
+   sig += signals;
+   inside += exit_ns - enter_ns;
+   max_inside = MAX2(max_inside, exit_ns - enter_ns);
+   blocked += blocked_ns;
+   last_exit = exit_ns;
+   if (!last_report)
+      last_report = exit_ns;
+   if (exit_ns - last_report >= 5000000000ull) {
+      const double secs = (double)(exit_ns - last_report) / 1e9;
+      panvk_g2_trace("submitstat per_s=%.1f signalling_per_s=%.1f inside_ms=%.2f blocked_ms=%.2f "
+                     "between_ms=%.2f max_inside_ms=%.1f max_between_ms=%.1f "
+                     "blocked_share=%.0f%% inside_share=%.0f%% between_share=%.0f%%",
+                     n / secs, sig / secs, inside / 1e6 / n, blocked / 1e6 / n, between / 1e6 / n,
+                     max_inside / 1e6, max_between / 1e6, 100.0 * blocked / 1e9 / secs,
+                     100.0 * (inside - blocked) / 1e9 / secs, 100.0 * between / 1e9 / secs);
+      last_report = exit_ns;
+      n = sig = inside = blocked = between = max_between = max_inside = 0;
+   }
+   simple_mtx_unlock(&lock);
+}
+
 static VkResult
 panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *vk_submit)
 {
@@ -1683,6 +1729,8 @@ panvk_queue_submit_kbase(struct panvk_gpu_queue *queue, struct vk_queue_submit *
       clock_gettime(CLOCK_MONOTONIC, &ts);
       pan_kmod_kbase_csf_wait(queue->kbase_group, seq - max_inflight,
                               (int64_t)ts.tv_sec * 1000000000ll + ts.tv_nsec + 3000000000ll);
+      if (panvk_g2_diagnostics)
+         g2_blocked_ns += g2_now_ns() - ((uint64_t)ts.tv_sec * 1000000000ull + ts.tv_nsec);
    }
 
    if (PANVK_DEBUG(SYNC) || PANVK_DEBUG(TRACE)) {
@@ -1722,7 +1770,12 @@ panvk_per_arch(gpu_queue_submit)(struct vk_queue *vk_queue, struct vk_queue_subm
 
    struct panvk_gpu_queue *gpu_queue = container_of(vk_queue, struct panvk_gpu_queue, vk);
    if (gpu_queue->kbase_group) {
+      const bool stats = PAN_ARCH == 15 && panvk_g2_diagnostics;
+      const uint64_t enter_ns = stats ? g2_now_ns() : 0;
+      g2_blocked_ns = 0;
       result = panvk_queue_submit_kbase(gpu_queue, vk_submit);
+      if (stats)
+         g2_submit_stats(enter_ns, g2_now_ns(), g2_blocked_ns, vk_submit->signal_count != 0);
       if (PAN_ARCH == 15 && result != VK_SUCCESS)
          panvk_g2_trace("submit failed result=%d", result);
       return result;
