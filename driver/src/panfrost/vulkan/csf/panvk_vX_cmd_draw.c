@@ -22,6 +22,23 @@
 #include "panvk_cmd_desc_state.h"
 #include "panvk_cmd_draw.h"
 #include "panvk_g2_trace.h"
+
+/* Experiment (debug.mesa.panvk.g2.hsr): 1 enables the HSR prepass on v15 (otherwise only with
+ * PANVK_DEBUG=hsr_prepass); 2 also lets Z/S pipelining use exactly half the Z tile buffer, which
+ * is what tile-size selection gives whenever depth is the limiting factor. */
+DEBUG_GET_ONCE_NUM_OPTION(g2_hsr, "PANVK_G2_HSR", 0)
+
+#if PAN_ARCH >= 13
+static bool
+g2_can_pipeline_zs(const struct pan_fb_layout *fb)
+{
+   if (pan_fb_can_pipeline_zs(fb))
+      return true;
+   if (PAN_ARCH != 15 || debug_get_option_g2_hsr() < 2)
+      return false;
+   return sizeof(float) * fb->sample_count * fb->tile_size_px <= fb->tile_z_budget_B;
+}
+#endif
 #include "panfrost/lib/kmod/kbase_kmod.h"
 #include "panvk_cmd_frame_shaders.h"
 #include "panvk_cmd_meta.h"
@@ -1490,8 +1507,8 @@ init_layer_fragment_state(const struct pan_fb_desc_info *info,
        * performance, so disable HSR in that case.
        */
       cfg.hsr_prepass_enable =
-         info->allow_hsr_prepass && pan_fb_can_pipeline_zs(fb);
-      cfg.hsr_prepass_interleaving_enable = pan_fb_can_pipeline_zs(fb);
+         info->allow_hsr_prepass && g2_can_pipeline_zs(fb);
+      cfg.hsr_prepass_interleaving_enable = g2_can_pipeline_zs(fb);
       cfg.hsr_prepass_filter_enable = true;
       cfg.hsr_hierarchical_optimizations_enable = true;
 
@@ -1776,7 +1793,8 @@ get_fb_descs(struct panvk_cmd_buffer *cmdbuf)
       .sample_pos_array_pointer = dev->sample_positions->addr.dev +
          pan_sample_positions_offset(pan_sample_pattern(sample_count)),
       .provoking_vertex_first = get_first_provoking_vertex(cmdbuf),
-      .allow_hsr_prepass = PAN_ARCH >= 13 && PANVK_DEBUG(HSR_PREPASS),
+      .allow_hsr_prepass = PAN_ARCH >= 13 && (PANVK_DEBUG(HSR_PREPASS) ||
+                                              (PAN_ARCH == 15 && debug_get_option_g2_hsr() >= 1)),
       .tiler_ctx = &tiler_ctx,
    };
 
