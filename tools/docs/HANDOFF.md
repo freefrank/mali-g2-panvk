@@ -64,6 +64,12 @@ Policy marker: biblioklept
 - 但**时间戳耗时不可用**：原厂小 pass 全是约 12 ms（与尺寸无关），我们的总和每秒 2090 ms 超过 1000 ms，说明两边的时间戳在 tiler/fragment 流水线下测到的是排队延迟，pass 之间重叠。下一版 APK 每 10 s 交替「自由」与「全屏障串行」两种计时（键前缀 `F`/`S`）。
 - 教训：LOR 用自己的 `submission::BeginCommands` 开命令缓冲，绕过 plume `begin()`；诊断钩子必须挂在那里。CI 的 Windows 任务不带 plume 补丁，LOR 源码里的钩子要用 `LO_PASS_TIMING` 宏保护；Android 工作流 `paths` 过滤要包含新补丁文件，否则不会触发构建。
 
+**逐 pass 计时第二轮（2026-11-09，APK `9850419`，交替自由/串行窗口；数据 `tools/fixtures/lor-pass-timing-serial.txt`，脚本 `lor-pass-timing-cmp.py`/`-perframe.py`）**
+- 串行窗口（pass 间全屏障，互不重叠）下同类 pass：我们/原厂 = 1.3–3.3×，按 pass 数加权平均 **1.48×**（264 µs 对 178 µs）。最大绝对差：1920×1308 f97 无深度 1.83×（561 对 306 µs）、1920×1280 f37 1.71×、1920×1308 f97+f130 带深度 2.39×（清除版 3.31×）、纯深度 f130 pass 2.4–2.8×（1760×1792 为 2.79×）。唯一更快的是 3408×2272 交换链 pass（0.81×）。
+- 自由窗口：每秒 pass 数原厂 5806、我们 1990（2.9×，与帧率比一致）；**我们的 pass 时间只占墙钟的约 53%（串行 44%），原厂约 106%（pass 互相重叠）**。即整体 2.9× ≈ 每个 pass 约 1.5× 慢 × 约 1.9× 的 GPU 空闲/停顿。后者很可能是提交之间的气泡（在途数 1、每次提交结束的 L2/LSC 清除、跨队列内存同步等待）。
+- 可信度：原厂串行样本只有 2–3 个窗口，我们 5 个；原厂有的区间每帧 pass 时间异常（约 220 ms，时间戳异常），已排除在逐类比较之外但可能仍影响平均；每个 list 的 pass 数两边不同（34 对 49，list 切分点不同）；pass-timing.txt 是追加文件，含多轮数据，只取最后两段。
+- 下一步：①驱动内诊断统计「阻塞在途限制的时间 / 提交 ioctl 时间 / 相邻两次提交之间 GPU 空闲间隔」，同一次 LOR 运行输出，直接量化气泡；②纯深度 pass（D32S8，阴影图类）和 1080p 带深度 pass 的单 pass 开销比原厂高 2.4–3.3×，逐项查（tile 大小、ZS 写回、AFBC ZS、HSR）。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。

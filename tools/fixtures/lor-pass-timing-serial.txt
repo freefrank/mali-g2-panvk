@@ -1,0 +1,23 @@
+vendor intervals(S)=3 passes=78512 total_ms=14017
+ours intervals(S)=5 passes=59558 total_ms=15722
+pass                                     |    o_n  o_avg_us |    v_n  v_avg_us |   o/v
+1920x1308 f97 nodepth                    |   5925       561 |   7683       306 |  1.83  excess_ms/ours_pass_count=1509
+1920x1280 f37 nodepth                    |   4006       604 |   6141       354 |  1.71  excess_ms/ours_pass_count=1001
+1920x1308 f97 f130 depth                 |   2101       752 |   8297       314 |  2.39  excess_ms/ours_pass_count=920
+720x853 f97 nodepth clr1                 |   7480       190 |   6186       103 |  1.84  excess_ms/ours_pass_count=650
+1920x1308 f97 f130 depth clr1            |    525      1330 |   2043       402 |  3.31  excess_ms/ours_pass_count=488
+1920x1308 f130 depth                     |   2620       287 |   7690       113 |  2.55  excess_ms/ours_pass_count=458
+1920x1308 f97 nodepth clr1               |   4175       221 |   4075       147 |  1.50  excess_ms/ours_pass_count=307
+720x853 f97 nodepth                      |   5390        83 |   3076        52 |  1.60  excess_ms/ours_pass_count=168
+360x384 f97 nodepth clr1                 |   6435        64 |   4631        38 |  1.69  excess_ms/ours_pass_count=167
+1760x1792 f130 depth                     |   1400       185 |   5448        66 |  2.79  excess_ms/ours_pass_count=166
+640x640 f130 depth                       |   2960        92 |   4370        64 |  1.44  excess_ms/ours_pass_count=83
+360x384 f130 depth                       |   5565        71 |   3757        57 |  1.26  excess_ms/ours_pass_count=81
+960x640 f103 nodepth                     |    175      1143 |    680       680 |  1.68  excess_ms/ours_pass_count=81
+640x640 f97 nodepth clr1                 |   4175        66 |   3692        48 |  1.39  excess_ms/ours_pass_count=78
+660x672 f130 depth                       |   1225        79 |   4767        33 |  2.40  excess_ms/ours_pass_count=57
+360x384 f130 depth clr1073741824         |    870        74 |    874        42 |  1.77  excess_ms/ours_pass_count=28
+1920x1280 f100 nodepth                   |    870       160 |    874       136 |  1.18  excess_ms/ours_pass_count=21
+1320x1200 f97 nodepth clr1               |    350        68 |   1362        34 |  1.99  excess_ms/ours_pass_count=12
+1728x1728 f100 nodepth                   |    175       125 |    681        72 |  1.73  excess_ms/ours_pass_count=9
+3408x2272 f37 nodepth                    |   3136       637 |   2184       789 |  0.81  excess_ms/ours_pass_count=-477

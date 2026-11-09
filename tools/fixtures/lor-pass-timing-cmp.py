@@ -1,39 +1,37 @@
 import re, sys, collections
+path = sys.argv[1]
+mode = sys.argv[2] if len(sys.argv) > 2 else 'S'
 secs = []
-for line in open(sys.argv[1]):
+for line in open(path):
     if line.startswith('device'):
         secs.append({'drv': int(line.split('driver=')[1]), 'iv': []}); continue
     if line.startswith('interval'):
         m = re.match(r'interval t=([\d.]+) secs=([\d.]+) lists=(\d+) passes=(\d+) total_ms=([\d.]+)', line)
-        secs[-1]['iv'].append({'t': float(m[1]), 'secs': float(m[2]), 'lists': int(m[3]), 'passes': int(m[4]), 'ms': float(m[5]), 'rows': {}})
+        secs[-1]['iv'].append({'t': float(m[1]), 'secs': float(m[2]), 'rows': {}})
         continue
-    m = re.match(r'pass (.*) n=(\d+) avg_us=([\d.]+) max_us=([\d.]+) total_ms=([\d.]+) draws=(\d+)', line)
-    if m:
-        secs[-1]['iv'][-1]['rows'][m[1]] = (int(m[2]), float(m[5]), int(m[6]))
-name = {109457507: 'ours', 234881024: 'vendor'}
-agg = {}
-for s in secs:
-    d = name.get(s['drv'], str(s['drv']))
-    ivs = [i for i in s['iv'] if i['t'] >= 20]  # skip warm-up
+    m = re.match(r'pass ([SF]) (.*) n=(\d+) avg_us=([\d.]+) max_us=([\d.]+) total_ms=([\d.]+) draws=(\d+)', line)
+    if m and m[1] == mode:
+        secs[-1]['iv'][-1]['rows'][m[2]] = (int(m[3]), float(m[6]), int(m[7]))
+new = secs[-2:]  # newest run: vendor then ours (or the reverse)
+res = {}
+for s in new:
+    name = 'ours' if s['drv'] == 109457507 else 'vendor'
     tot = collections.defaultdict(lambda: [0, 0.0, 0])
-    secs_sum = sum(i['secs'] for i in ivs)
-    lists = sum(i['lists'] for i in ivs)
-    for i in ivs:
+    nint = 0
+    for i in s['iv']:
+        if i['t'] < 20 or not i['rows']:
+            continue
+        nint += 1
         for k, (n, ms, dr) in i['rows'].items():
             t = tot[k]; t[0] += n; t[1] += ms; t[2] += dr
-    agg[d] = (tot, secs_sum, lists, len(ivs))
-    print('%s: intervals=%d secs=%.0f lists=%d passes=%d pass_ms_total=%.0f (%.1f ms/s, %.2f ms per list)' % (
-        d, len(ivs), secs_sum, lists, sum(v[0] for v in tot.values()), sum(v[1] for v in tot.values()),
-        sum(v[1] for v in tot.values()) / secs_sum, sum(v[1] for v in tot.values()) / max(lists, 1)))
-o, v = agg['ours'], agg['vendor']
-print()
-print('%-46s | %8s %8s %6s | %8s %8s %6s | %5s' % ('pass key', 'o_n/s', 'o_avg_us', 'o_dr', 'v_n/s', 'v_avg_us', 'v_dr', 'ratio'))
-keys = sorted(set(o[0]) | set(v[0]), key=lambda k: -(o[0][k][1] if k in o[0] else 0))
-for k in keys[:25]:
-    a = o[0].get(k); b = v[0].get(k)
-    def f(x, s):
-        if not x: return ('-', '-', '-')
-        return ('%.1f' % (x[0] / s), '%.0f' % (x[1] * 1000 / x[0]), '%.0f' % (x[2] / x[0]))
-    fa, fb = f(a, o[1]), f(b, v[1])
-    ratio = '%.2f' % ((a[1] / a[0]) / (b[1] / b[0])) if a and b else '-'
-    print('%-46s | %8s %8s %6s | %8s %8s %6s | %5s' % (k[:46], *fa, *fb, ratio))
+    res[name] = tot
+    print('%s intervals(%s)=%d passes=%d total_ms=%.0f' % (name, mode, nint, sum(v[0] for v in tot.values()), sum(v[1] for v in tot.values())))
+o, v = res['ours'], res['vendor']
+print('%-40s | %6s %9s | %6s %9s | %5s' % ('pass', 'o_n', 'o_avg_us', 'v_n', 'v_avg_us', 'o/v'))
+rows = []
+for k in set(o) | set(v):
+    a, b = o.get(k), v.get(k)
+    if a and b and a[0] >= 20 and b[0] >= 20:
+        rows.append((a[1] / a[0] * a[0] - b[1] / b[0] * a[0], k, a, b))  # excess ms if ours had ours count
+for ex, k, a, b in sorted(rows, reverse=True)[:22]:
+    print('%-40s | %6d %9.0f | %6d %9.0f | %5.2f  excess_ms/ours_pass_count=%.0f' % (k[:40], a[0], a[1] * 1000 / a[0], b[0], b[1] * 1000 / b[0], (a[1] / a[0]) / (b[1] / b[0]), ex))
