@@ -84,6 +84,14 @@ Policy marker: biblioklept
 - 在途数 2 的提升大，但用户此前确认会导致安卓界面卡顿。结合 submitstat（应用在两次提交之间约 4.3 ms，每帧约 2.6 次提交）：在途数 1 时，小提交执行完后 GPU 会空等下一次提交录制完成，这是气泡来源；原厂驱动 GPU 利用率低、空闲多，所以不受影响。
 - 本日基线（14.7 FPS）低于前几天（约 18–22），属于日间漂移，比较只看同日 A/B。
 
+**CPU 开销与合成测试可信度（2026-11-10）**
+- `vulkan_tiles` 新增 `MALI_G2_TILES_DRAWS=N`（每 pass 额外 N 次绘制，每次重绑描述符集和裁剪）与 `TILES_CPU` 输出（录制/提交 CPU 时间中位数）。640×640×17 pass：每次绘制录制原厂约 0.19 µs、我们约 0.24 µs；每次 `vkQueueSubmit` 原厂约 0.3 ms、我们约 0.45 ms。按每帧几百次绘制、约 2.6 次提交算，驱动 CPU 只多约 0.5 ms/帧，**两次提交之间的 4.3 ms 基本是 LOR 自己的 CPU 工作**。
+- 组优先级：`debug.mesa.panvk.kbase.group.priority` 2 = LOW（核对过映射），此前「低优先级 + 在途数 2」仍卡且掉帧，所以界面卡不是简单的组优先级问题。
+- **合成测试的 GPU 时间受升降频影响很大**：测试每帧之间有大量 CPU 校验，GPU 时忙时闲，governor（`/sys/class/devfreq/gpufreq_core`，只有 `dynamic`，polling 8 ms）跟不上；原厂同一配置三轮可差 2 倍。把 `min_freq` 设成 979.2 MHz 约 31 s 后被系统改回 119 MHz，锁频不可靠（脚本 `tools/fixtures/gpupin.sh`、`freqsample.sh`，请求写在 `Download/panvk-pin/req`）。**跨驱动的绝对比值（如此前 1.7×、2.5×）只能当方向**；同一轮交替比较的结论（屏障、CPU）不受影响。
+- 把 max_freq 从 1392 压到 979 MHz，两边 1920×1308 全屏 pass 时间几乎不变 → 这类 pass 主要受内存带宽/延迟限制，不是着色器时钟。
+- 屏障只会失效只读 L1（others），不刷 L2；L2 只在每次提交结束时清。
+- 偶发：我们 `rgba16f+d32s8`（1920×1308，17 pass）有一次 120 s 超时挂住，另两轮正常；之后 dmesg 未见 GPU 故障，但时间已久可能被覆盖，**未查明**。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。

@@ -1,0 +1,58 @@
+--- round 1
+vulkan.mali.so rgba8 TILES_PASS render_median_us=3907.456
+vulkan.mali.so rgba16f TILES_PASS render_median_us=5666.944
+vulkan.mali.so rgba16f+d32s8 TILES_PASS render_median_us=8693.664
+vulkan.mali.so rgba8+d24s8 TILES_PASS render_median_us=6434.720
+libvulkan_panfrost.so rgba8 TILES_PASS render_median_us=6230.592
+libvulkan_panfrost.so rgba16f TILES_PASS render_median_us=8143.520
+libvulkan_panfrost.so rgba16f+d32s8 TILES_PASS render_median_us=8523.040
+libvulkan_panfrost.so rgba8+d24s8 TILES_PASS render_median_us=6835.200
+--- round 2
+vulkan.mali.so rgba8 TILES_PASS render_median_us=2786.592
+vulkan.mali.so rgba16f TILES_PASS render_median_us=5642.464
+vulkan.mali.so rgba16f+d32s8 TILES_PASS render_median_us=5044.128
+vulkan.mali.so rgba8+d24s8 TILES_PASS render_median_us=6570.496
+libvulkan_panfrost.so rgba8 TILES_PASS render_median_us=6195.584
+libvulkan_panfrost.so rgba16f TILES_PASS render_median_us=8272.256
+libvulkan_panfrost.so rgba16f+d32s8 TILES_PASS render_median_us=8777.088
+libvulkan_panfrost.so rgba8+d24s8 TILES_PASS render_median_us=6675.808
+--- round 3
+vulkan.mali.so rgba8 TILES_PASS render_median_us=3518.144
+vulkan.mali.so rgba16f TILES_PASS render_median_us=3344.416
+vulkan.mali.so rgba16f+d32s8 TILES_PASS render_median_us=8708.064
+vulkan.mali.so rgba8+d24s8 TILES_PASS render_median_us=4015.200
+libvulkan_panfrost.so rgba8 TILES_PASS render_median_us=5918.528
+libvulkan_panfrost.so rgba16f TILES_PASS render_median_us=8118.528
+libvulkan_panfrost.so rgba16f+d32s8 TILES_PASS render_median_us=8570.272
+libvulkan_panfrost.so rgba8+d24s8 TILES_PASS render_median_us=6548.928
+--- max_freq pinned at 979.2 MHz (min reset by the system after ~31 s)
+      9 576000000
+     25 979200000
+    366 238740000
+--- round 1
+--- round 2
+--- round 3
+libvulkan_panfrost.so rgba16f TILES_PASS render_median_us=7943.392
+libvulkan_panfrost.so rgba16f TILES_PASS render_median_us=8105.600
+libvulkan_panfrost.so rgba16f TILES_PASS render_median_us=8451.584
+libvulkan_panfrost.so rgba16f+d32s8 
+libvulkan_panfrost.so rgba16f+d32s8 TILES_PASS render_median_us=8319.712
+libvulkan_panfrost.so rgba16f+d32s8 TILES_PASS render_median_us=8789.024
+libvulkan_panfrost.so rgba8 TILES_PASS render_median_us=5899.776
+libvulkan_panfrost.so rgba8 TILES_PASS render_median_us=5943.520
+libvulkan_panfrost.so rgba8 TILES_PASS render_median_us=6343.808
+libvulkan_panfrost.so rgba8+d24s8 TILES_PASS render_median_us=6789.120
+libvulkan_panfrost.so rgba8+d24s8 TILES_PASS render_median_us=7106.656
+libvulkan_panfrost.so rgba8+d24s8 TILES_PASS render_median_us=8224.256
+vulkan.mali.so rgba16f TILES_PASS render_median_us=3050.080
+vulkan.mali.so rgba16f TILES_PASS render_median_us=3542.464
+vulkan.mali.so rgba16f TILES_PASS render_median_us=5634.144
+vulkan.mali.so rgba16f+d32s8 TILES_PASS render_median_us=3010.624
+vulkan.mali.so rgba16f+d32s8 TILES_PASS render_median_us=4742.752
+vulkan.mali.so rgba16f+d32s8 TILES_PASS render_median_us=4898.560
+vulkan.mali.so rgba8 TILES_PASS render_median_us=2426.592
+vulkan.mali.so rgba8 TILES_PASS render_median_us=3332.960
+vulkan.mali.so rgba8 TILES_PASS render_median_us=3502.720
+vulkan.mali.so rgba8+d24s8 TILES_PASS render_median_us=3392.064
+vulkan.mali.so rgba8+d24s8 TILES_PASS render_median_us=3654.528
+vulkan.mali.so rgba8+d24s8 TILES_PASS render_median_us=4114.240

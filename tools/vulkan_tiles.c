@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <sys/socket.h>
 
 #define CHECK(call) do { VkResult r = (call); if (r != VK_SUCCESS) { \
@@ -715,6 +716,9 @@ main(int argc, char **argv)
          .queryType = VK_QUERY_TYPE_TIMESTAMP, .queryCount = graphics ? 4 : 2};
       CHECK(vkCreateQueryPool(device, &q, NULL, &timestamp_query));
    }
+   double *record_cpu = calloc(frames, sizeof(double)), *submit_cpu = calloc(frames, sizeof(double));
+   if (!record_cpu || !submit_cpu) return 1;
+   struct timespec cpu_t0, cpu_t1, cpu_t2;
    for (uint32_t frame = 0; frame < frames; frame++) {
       if (binding_base) {
          float uniform[4] = {64.0f / 255.0f, 128.0f / 255.0f, 192.0f / 255.0f, 0.5f};
@@ -807,6 +811,7 @@ main(int argc, char **argv)
       if (graphics) memset(mapped[3], 0xa5, sizes[3]);
       CHECK(vkResetCommandBuffer(command, 0));
       VkCommandBufferBeginInfo begin = {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+      clock_gettime(CLOCK_MONOTONIC, &cpu_t0);
       CHECK(vkBeginCommandBuffer(command, &begin));
       if (timing) vkCmdResetQueryPool(command, timestamp_query, 0, graphics ? 4 : 2);
       VkImageMemoryBarrier ib = {.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -971,6 +976,18 @@ main(int argc, char **argv)
                if (index_bits) vkCmdDrawIndexed(command, 3, 1, 7, vertex_offset, 0);
                else vkCmdDraw(command, 3, 1, 0, 0);
             }
+            /* MALI_G2_TILES_DRAWS: extra draws per pass, each rebinding the descriptor set and
+             * scissor like a game does, to measure CPU recording cost. Each redraws one pixel with
+             * the same full-screen triangle, so the image is unchanged. */
+            uint32_t extra_draws = getenv("MALI_G2_TILES_DRAWS") ?
+               strtoul(getenv("MALI_G2_TILES_DRAWS"), NULL, 10) : 0;
+            for (uint32_t d = 0; d < extra_draws; d++) {
+               VkRect2D none = {{(int32_t)(d % w), 0}, {1, 1}};
+               vkCmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &set, 0, NULL);
+               vkCmdSetScissor(command, 0, 1, &none);
+               vkCmdDraw(command, 3, 1, 0, 0);
+            }
+            if (extra_draws) vkCmdSetScissor(command, 0, 1, &scissor);
             vkCmdEndRenderPass(command);
          }
          if (load_enabled || load_draw) {
@@ -1082,9 +1099,13 @@ main(int argc, char **argv)
       vkCmdPipelineBarrier(command, VK_PIPELINE_STAGE_TRANSFER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
          VK_PIPELINE_STAGE_HOST_BIT, 0, 1, &mb, 0, NULL, 0, NULL);
       CHECK(vkEndCommandBuffer(command));
+      clock_gettime(CLOCK_MONOTONIC, &cpu_t1);
       VkSubmitInfo submit = {.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
          .commandBufferCount = 1, .pCommandBuffers = &command};
       CHECK(vkQueueSubmit(queue, 1, &submit, VK_NULL_HANDLE));
+      clock_gettime(CLOCK_MONOTONIC, &cpu_t2);
+      record_cpu[frame] = (cpu_t1.tv_sec - cpu_t0.tv_sec) * 1e6 + (cpu_t1.tv_nsec - cpu_t0.tv_nsec) / 1e3;
+      submit_cpu[frame] = (cpu_t2.tv_sec - cpu_t1.tv_sec) * 1e6 + (cpu_t2.tv_nsec - cpu_t1.tv_nsec) / 1e3;
       CHECK(vkQueueWaitIdle(queue));
       if (timing) {
          uint64_t stamps[4];
@@ -1199,6 +1220,11 @@ main(int argc, char **argv)
       (unsigned long long)raw_bad, (unsigned long long)sample_bad, graphics, render_format, blend_enabled, dual_source, discard_enabled, scissor_enabled, load_enabled, load_draw, partial_render, white_background, binding_base, image_copy, split_upload, alpha_r,
       depth_format, reverse_depth, reject_depth, index_bits, vertex_offset,
       (unsigned long long)render_bad, (unsigned long long)depth_bad, (unsigned long long)stencil_bad);
+   qsort(record_cpu, frames, sizeof(double), compare_double);
+   qsort(submit_cpu, frames, sizeof(double), compare_double);
+   printf("TILES_CPU frames=%u record_median_us=%.1f submit_median_us=%.1f\n", frames,
+          record_cpu[frames / 2], submit_cpu[frames / 2]);
+   free(record_cpu); free(submit_cpu);
    if (timing) {
       qsort(compute_times, frames, sizeof(*compute_times), compare_double);
       qsort(render_times, frames, sizeof(*render_times), compare_double);
