@@ -92,6 +92,11 @@ Policy marker: biblioklept
 - 屏障只会失效只读 L1（others），不刷 L2；L2 只在每次提交结束时清。
 - 偶发：我们 `rgba16f+d32s8`（1920×1308，17 pass）有一次 120 s 超时挂住，另两轮正常；之后 dmesg 未见 GPU 故障，但时间已久可能被覆盖，**未查明**。
 
+**在途数 A/B（2026-11-10，`tools/fixtures/lor-ab2-inflight.txt`）**
+- 用户实际三次：进程 30283 在途数 1（18.7 FPS，界面顺）、7319 在途数 1（18.0 FPS，有点卡）、15510 在途数 2（**26.0 FPS**，很卡）。脚本缺陷：第 1 次采样窗口未结束时用户已退出重开，`pidof` 匹配到新进程，导致变体错位、在途数 3 未测；已改为跟踪具体进程号（`[ -d /proc/$cur ]`）。
+- GPU 频率（每秒采样 `cur_freq`）：在途数 1 时多数为 652 MHz（混入了第 2 次启动阶段，不完全干净），在途数 2 时 854–1593 MHz。**在途数 1 时 GPU 没吃满**：提交间空档降低利用率 → governor 降频 → 每帧更慢。原厂在同场景 60 FPS 下也只需 854–979 MHz。
+- 结论：剩余差距里最大的一块是「GPU 等 CPU 录制下一次提交」+ 随之而来的降频；放开在途数可得约 +40%，但界面卡。下一步：在在途数 1/2 下分别抓 SurfaceFlinger frametimeline 的卡顿分类（GPU deadline missed 还是 CPU/调度），判断界面卡是 GPU 抢占问题还是 CPU 竞争问题。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。

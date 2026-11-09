@@ -31,16 +31,16 @@ for variant in base nowait nowait_inflight2; do
   sleep 5
   log=$(ls -t $LOGS/runtime-*.log | head -1)
   while :; do
-    pidof $P >/dev/null || break
+    [ -d /proc/$cur ] || break
     grep "texinfo spec" $log | tail -1 | grep -q "map=[^- ]" && break
     sleep 3
   done
   echo "variant $n in scene $(date +%T) log=$(basename $log)" >> $S
-  t=0; while [ $t -lt 60 ] && pidof $P >/dev/null; do sleep 2; t=$((t+2)); done
+  t=0; while [ $t -lt 60 ] && [ -d /proc/$cur ]; do sleep 2; t=$((t+2)); done
   for f in /proc/$cur/map_files/*; do l=$(readlink $f); case "$l" in *libvulkan_panfrost*|*vulkan.mali*) echo "variant $n driver $l" >> $S; break;; esac; done
   cp $log $out/$n-$variant.log
   echo "variant $n sampled ${t}s $(date +%T) -- please exit LOR" >> $S
-  while pidof $P >/dev/null; do sleep 2; done
+  while [ -d /proc/$cur ]; do sleep 2; done
   prev=$cur
   echo "variant $n LOR exited $(date +%T)" >> $S
 done

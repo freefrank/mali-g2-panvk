@@ -1,0 +1,18 @@
+start 2026-11-10T00:28:07+08:00
+variant 1 inflight1 ready 00:28:07 knob1=0 knob2=1 -- waiting for a new LOR process
+variant 1 pid=30283 started 00:29:27
+variant 1 in scene 00:29:50 log=runtime-1794241765885979.log
+variant 1 sampled 60s 00:31:58 -- please exit LOR
+variant 1 LOR exited 00:33:14
+variant 2 inflight2 ready 00:33:14 knob1=0 knob2=2 -- waiting for a new LOR process
+variant 2 pid=15510 started 00:33:16
+variant 2 in scene 00:33:39 log=runtime-1794241995307928.log
+variant 2 sampled 53s 00:34:35 -- please exit LOR
+variant 2 LOR exited 00:34:35
+variant 3 inflight3 ready 00:34:35 knob1=0 knob2=3 -- waiting for a new LOR process
+--- actual runs (exit-info): 30283 inflight1 exit 00:31:12, 7319 inflight1 exit 00:33:13 (missed by script), 15510 inflight2 exit 00:34:35; user: 1 smooth, 2 slightly janky, 3 very janky
+1-run1-inflight1.log     scene_points=8 span=70s avg=18.7 fps  per-10s: 27.8 16.0 27.1 14.0 16.0 14.0 15.8
+2-run2-inflight1.log     scene_points=10 span=90s avg=18.0 fps  per-10s: 25.8 13.4 28.6 15.4 16.7 14.2 16.8 13.9 17.2
+3-run3-inflight2.log     scene_points=6 span=50s avg=26.0 fps  per-10s: 29.2 19.9 26.9 24.9 29.3
+1-inflight1-freq.txt: 412 MHz x1, 576 MHz x10, 652 MHz x28, 748 MHz x3, 979 MHz x11, 1113 MHz x7, 
+2-inflight2-freq.txt: 364 MHz x1, 576 MHz x10, 854 MHz x21, 979 MHz x4, 1248 MHz x1, 1593 MHz x16, 
