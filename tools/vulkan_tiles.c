@@ -945,11 +945,21 @@ main(int argc, char **argv)
          if (repeat_passes < 1) repeat_passes = 1;
          for (uint32_t repeat = 0; repeat < repeat_passes; repeat++) {
             if (repeat) {
+               /* MALI_G2_TILES_LOR_BARRIER: the stage masks plume (Lost Odyssey) uses for every
+                * graphics barrier, vertex and fragment stages on both sides. */
+               const VkPipelineStageFlags gfx = VK_PIPELINE_STAGE_VERTEX_INPUT_BIT |
+                  VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT |
+                  VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT |
+                  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+               const int lor = getenv("MALI_G2_TILES_LOR_BARRIER") != NULL;
                VkMemoryBarrier again = {.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
                   .srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                  .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT};
-               vkCmdPipelineBarrier(command, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 1, &again, 0, NULL, 0, NULL);
+                  .dstAccessMask = lor ? (VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT)
+                                       : VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT};
+               vkCmdPipelineBarrier(command,
+                  lor ? gfx : VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                  lor ? (gfx | VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT) : VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                  0, 1, &again, 0, NULL, 0, NULL);
             }
             vkCmdBeginRenderPass(command, &rbi, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, render_pipeline);

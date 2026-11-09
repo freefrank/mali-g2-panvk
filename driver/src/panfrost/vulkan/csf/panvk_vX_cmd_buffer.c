@@ -275,6 +275,11 @@ panvk_per_arch(EndCommandBuffer)(VkCommandBuffer commandBuffer)
    return vk_command_buffer_end(&cmdbuf->vk);
 }
 
+/* Experiment (debug.mesa.panvk.g2.vt.no.frag.wait): the vertex/tiler subqueue does not wait for
+ * the fragment subqueue at barriers. Unsafe if a vertex shader reads what a fragment shader or an
+ * attachment write produced before the barrier; only for measuring what the serialisation costs. */
+DEBUG_GET_ONCE_BOOL_OPTION(g2_vt_no_frag_wait, "PANVK_G2_VT_NO_FRAG_WAIT", false)
+
 static void
 add_execution_dependency(uint32_t wait_masks[static PANVK_SUBQUEUE_COUNT],
                          VkPipelineStageFlags2 src_stages,
@@ -310,6 +315,8 @@ add_execution_dependency(uint32_t wait_masks[static PANVK_SUBQUEUE_COUNT],
          if ((src_stages & panvk_get_subqueue_stages(i)) ==
              VK_PIPELINE_STAGE_2_DRAW_INDIRECT_BIT)
             wait_mask &= ~BITFIELD_BIT(i);
+         if (PAN_ARCH == 15 && debug_get_option_g2_vt_no_frag_wait())
+            wait_mask &= ~BITFIELD_BIT(PANVK_SUBQUEUE_FRAGMENT);
          break;
       case PANVK_SUBQUEUE_FRAGMENT:
          /* The fragment subqueue always waits for the tiler subqueue already.
