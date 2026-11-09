@@ -1,0 +1,14 @@
+178593.341439 per_s=88.8 signalling_per_s=88.8 inside_ms=2.82 blocked_ms=2.77 between_ms=8.44 max_inside_ms=23.5 max_between_ms=537.9 blocked_share=25% inside_share=1% between_share=75%
+178598.343700 per_s=119.7 signalling_per_s=119.7 inside_ms=0.71 blocked_ms=0.66 between_ms=7.64 max_inside_ms=13.9 max_between_ms=20.0 blocked_share=8% inside_share=1% between_share=91%
+178603.354420 per_s=119.9 signalling_per_s=119.9 inside_ms=1.20 blocked_ms=1.15 between_ms=7.14 max_inside_ms=8.2 max_between_ms=10.0 blocked_share=14% inside_share=1% between_share=86%
+178608.355825 per_s=119.2 signalling_per_s=119.2 inside_ms=2.15 blocked_ms=2.09 between_ms=6.25 max_inside_ms=19.7 max_between_ms=14.6 blocked_share=25% inside_share=1% between_share=74%
+178613.360141 per_s=120.1 signalling_per_s=120.1 inside_ms=1.08 blocked_ms=1.00 between_ms=7.25 max_inside_ms=9.6 max_between_ms=12.9 blocked_share=12% inside_share=1% between_share=87%
+178618.365061 per_s=96.1 signalling_per_s=96.1 inside_ms=1.90 blocked_ms=1.82 between_ms=8.51 max_inside_ms=50.9 max_between_ms=243.3 blocked_share=17% inside_share=1% between_share=82%
+178623.379145 per_s=69.8 signalling_per_s=69.8 inside_ms=7.71 blocked_ms=7.63 between_ms=6.61 max_inside_ms=96.8 max_between_ms=189.6 blocked_share=53% inside_share=1% between_share=46%
+178628.381280 per_s=117.7 signalling_per_s=117.7 inside_ms=4.03 blocked_ms=3.96 between_ms=4.46 max_inside_ms=15.3 max_between_ms=10.1 blocked_share=47% inside_share=1% between_share=52%
+178633.389591 per_s=119.2 signalling_per_s=119.2 inside_ms=2.28 blocked_ms=2.22 between_ms=6.11 max_inside_ms=13.3 max_between_ms=16.0 blocked_share=26% inside_share=1% between_share=73%
+178638.394242 per_s=96.9 signalling_per_s=96.9 inside_ms=6.27 blocked_ms=6.19 between_ms=4.05 max_inside_ms=15.0 max_between_ms=11.1 blocked_share=60% inside_share=1% between_share=39%
+178643.395233 per_s=77.6 signalling_per_s=77.6 inside_ms=8.66 blocked_ms=8.57 between_ms=4.23 max_inside_ms=19.6 max_between_ms=11.0 blocked_share=66% inside_share=1% between_share=33%
+178648.398303 per_s=76.8 signalling_per_s=76.8 inside_ms=8.76 blocked_ms=8.66 between_ms=4.27 max_inside_ms=20.5 max_between_ms=9.4 blocked_share=66% inside_share=1% between_share=33%
+178653.407139 per_s=86.2 signalling_per_s=86.2 inside_ms=7.17 blocked_ms=7.08 between_ms=4.42 max_inside_ms=17.5 max_between_ms=73.8 blocked_share=61% inside_share=1% between_share=38%
+178658.409624 per_s=31.0 signalling_per_s=31.0 inside_ms=10.73 blocked_ms=10.62 between_ms=21.54 max_inside_ms=29.8 max_between_ms=68.6 blocked_share=33% inside_share=0% between_share=67%

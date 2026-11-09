@@ -70,6 +70,13 @@ Policy marker: biblioklept
 - 可信度：原厂串行样本只有 2–3 个窗口，我们 5 个；原厂有的区间每帧 pass 时间异常（约 220 ms，时间戳异常），已排除在逐类比较之外但可能仍影响平均；每个 list 的 pass 数两边不同（34 对 49，list 切分点不同）；pass-timing.txt 是追加文件，含多轮数据，只取最后两段。
 - 下一步：①驱动内诊断统计「阻塞在途限制的时间 / 提交 ioctl 时间 / 相邻两次提交之间 GPU 空闲间隔」，同一次 LOR 运行输出，直接量化气泡；②纯深度 pass（D32S8，阴影图类）和 1080p 带深度 pass 的单 pass 开销比原厂高 2.4–3.3×，逐项查（tile 大小、ZS 写回、AFBC ZS、HSR）。
 
+**提交线程时间去向（2026-11-09，test72 `submitstat2`，`tools/fixtures/lor-submitstat-test72.txt`）**
+- 诊断开启时每 5 s 一行 `submitstat`（不受 8 MiB 日志上限限制）。在途数 1 的路径是「提交 N，再等 N-1 完成」：`blocked` = 等 N-1 的时间，`between` = 应用在两次提交之间的时间。
+- 菜单段（LOR 53–60 FPS，每秒约 120 次提交）：blocked 8–25%、between 74–91%，CPU/显示节奏受限，不是 GPU 受限。
+- 帧率下降段（LOR 时间 53–73 s，38→29 FPS，map 仍为 `-`，**不确定是否已进场景**）：每秒 77–97 次提交，blocked 60–66%、between 33–39%（每次约 8.6 ms 对 4.3 ms）。即提交线程大部分时间在等 GPU，且每次提交时上一笔仍在执行 → **GPU 一直有排队的工作，提交之间没有气泡**。
+- 结合逐 pass 计时（我们 pass 时间只占墙钟约 53%，原厂约 106%）和早先计数器（命令流 wait-blocked 我们约 50%、原厂约 0），GPU 的空闲应发生在**单次提交的命令流内部**：tiler/fragment 子队列之间的内存同步等待（每 pass 两次 SYNC_WAIT64、每次提交开头 WAIT #fff8、结尾全清 + WAIT #ffff），而不是提交调度。下一步主攻这里。
+- 采集脚本问题：用户启动游戏后加载较慢，75 s 窗口大部分落在菜单；以后采集应等 LOR 日志出现 `map=` 非 `-` 后再开始计时。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。
