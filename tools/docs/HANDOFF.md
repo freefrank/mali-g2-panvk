@@ -97,6 +97,12 @@ Policy marker: biblioklept
 - GPU 频率（每秒采样 `cur_freq`）：在途数 1 时多数为 652 MHz（混入了第 2 次启动阶段，不完全干净），在途数 2 时 854–1593 MHz。**在途数 1 时 GPU 没吃满**：提交间空档降低利用率 → governor 降频 → 每帧更慢。原厂在同场景 60 FPS 下也只需 854–979 MHz。
 - 结论：剩余差距里最大的一块是「GPU 等 CPU 录制下一次提交」+ 随之而来的降频；放开在途数可得约 +40%，但界面卡。下一步：在在途数 1/2 下分别抓 SurfaceFlinger frametimeline 的卡顿分类（GPU deadline missed 还是 CPU/调度），判断界面卡是 GPU 抢占问题还是 CPU 竞争问题。
 
+**界面卡顿分类（2026-11-10，`tools/fixtures/lor-ab3-jank.txt`，脚本 `abtest3.sh`）**
+- 在途数 1：LOR 22.2 FPS（40 s），用户「不卡」；SystemUI gfxinfo 卡顿帧 2.9%，帧耗时 p50/p90/p99 = 9/46/81 ms，Slow UI thread 13、Slow issue draw commands 35。
+- 在途数 2：LOR 25.5 FPS（40 s），用户「有点卡」；卡顿帧 8.5%，p50/p90/p99 = 23/69/133 ms，Slow UI thread 16、**Slow issue draw commands 61**。
+- UI 线程慢几乎不变，增加的是 RenderThread 提交 GPU 命令慢 → **界面卡是 GPU 调度问题（SystemUI 的 GPU 工作排在我们的队列之后），不是 CPU 竞争**。p99 约 133 ms 接近 kbase 默认 100 ms 调度周期，疑为同优先级组只能按周期轮换。
+- 我们默认组优先级 MEDIUM（1，来自 Vulkan 默认队列优先级）。下一步：在途数 2 下对比组优先级 LOW（2），用同样的指标客观判断。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。
