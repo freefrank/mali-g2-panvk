@@ -103,6 +103,11 @@ Policy marker: biblioklept
 - UI 线程慢几乎不变，增加的是 RenderThread 提交 GPU 命令慢 → **界面卡是 GPU 调度问题（SystemUI 的 GPU 工作排在我们的队列之后），不是 CPU 竞争**。p99 约 133 ms 接近 kbase 默认 100 ms 调度周期，疑为同优先级组只能按周期轮换。
 - 我们默认组优先级 MEDIUM（1，来自 Vulkan 默认队列优先级）。下一步：在途数 2 下对比组优先级 LOW（2），用同样的指标客观判断。
 
+**组优先级与调度周期（2026-11-10，`tools/fixtures/lor-ab4-priority.txt`，脚本 `abtest4.sh`）**
+- 全部在途数 2，用户「三次都卡」。SystemUI 卡顿帧：组优先级 LOW 13.5%、`csg_scheduling_period` 20 ms 10.0%、两者 15.0%（对照：默认 8.5%，在途数 1 为 2.9%）；p99 降到 61–85 ms，但 p50 和卡顿比例不降，增加的仍是 Slow issue draw commands。LOR 帧率不受 LOW 优先级影响（28.4 FPS，60 s）。
+- 结论：**降低我们的优先级或缩短调度周期都不能消除界面卡**，所以不是「系统界面排在我们后面等调度」这么简单。更可能是 GPU 资源本身被占满（我们在 1593 MHz 满载，系统界面的模糊等绘制分不到足够的核或带宽而变慢）。界面卡的根本解法仍是降低我们每帧的 GPU 时间；可试的折中是给我们的组限制着色器核数，给系统界面留余量（`create_group` 已有 `shader_core_count` 参数）。
+- 内核接口：`/sys/class/misc/mali0/device/csg_scheduling_period`（默认 100 ms）、`add_prioritized_process`/`remove_prioritized_process`（只写，配合 PCM，未使用）。
+
 **接下来按优先级**
 1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
 2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。

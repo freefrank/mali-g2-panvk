@@ -1,0 +1,51 @@
+start 2026-11-10T01:02:38+08:00
+variant 1 low ready 01:02:38 inflight=2 prio=2 period=100 -- waiting for a new LOR process
+variant 1 pid=16821 started 01:03:19
+variant 1 in scene 01:03:42 log=runtime-1794243799218840.log
+variant 1 sampled 60s 01:04:45 -- please exit LOR
+variant 1 LOR exited 01:04:45
+variant 2 period20 ready 01:04:45 inflight=2 prio=-1 period=20 -- waiting for a new LOR process
+variant 2 pid=21379 started 01:04:47
+variant 2 in scene 01:05:10 log=runtime-1794243887245768.log
+variant 2 sampled 50s 01:06:02 -- please exit LOR
+variant 2 LOR exited 01:06:02
+variant 3 low_period20 ready 01:06:02 inflight=2 prio=2 period=20 -- waiting for a new LOR process
+variant 3 pid=29033 started 01:06:11
+variant 3 in scene 01:06:25 log=runtime-1794243969269470.log
+variant 3 sampled 33s 01:06:59 -- please exit LOR
+variant 3 LOR exited 01:06:59
+end 2026-11-10T01:06:59+08:00 inflight=1 prio=-1 period=100
+--- user: 1, 2, 3 all janky
+===== 1-low
+Total frames rendered: 820
+Janky frames: 111 (13.54%)
+50th percentile: 32ms
+90th percentile: 44ms
+99th percentile: 61ms
+Number Slow UI thread: 18
+Number Slow issue draw commands: 88
+Number Frame deadline missed: 111
+freq: 576 MHz x7, 652 MHz x2, 748 MHz x1, 854 MHz x4, 979 MHz x10, 1113 MHz x2, 1248 MHz x2, 1392 MHz x1, 1593 MHz x31, 
+===== 2-period20
+Total frames rendered: 1200
+Janky frames: 120 (10.00%)
+50th percentile: 22ms
+90th percentile: 57ms
+99th percentile: 85ms
+Number Slow UI thread: 11
+Number Slow issue draw commands: 109
+Number Frame deadline missed: 120
+freq: 576 MHz x11, 748 MHz x4, 854 MHz x13, 979 MHz x4, 1113 MHz x1, 1248 MHz x1, 1593 MHz x16, 
+===== 3-low_period20
+Total frames rendered: 374
+Janky frames: 56 (14.97%)
+50th percentile: 23ms
+90th percentile: 44ms
+99th percentile: 69ms
+Number Slow UI thread: 6
+Number Slow issue draw commands: 47
+Number Frame deadline missed: 56
+freq: 119 MHz x4, 238 MHz x5, 576 MHz x12, 748 MHz x2, 979 MHz x6, 1497 MHz x2, 1593 MHz x2, 
+1-low.log                scene_points=7 span=60s avg=28.4 fps  per-10s: 33.0 21.0 37.5 22.7 34.1 22.2
+2-period20.log           scene_points=5 span=40s avg=23.7 fps  per-10s: 35.9 18.0 20.6 20.4
+3-low_period20.log       scene_points=2 span=10s avg=26.0 fps  per-10s: 26.0
