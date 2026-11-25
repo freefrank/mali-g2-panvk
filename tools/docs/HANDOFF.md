@@ -78,20 +78,18 @@ Git 里有：驱动源码、`tools/` 下的源码和脚本、`tools/device/` 设
 | `tools/work/` | 218 MB | **要迁**。`vendor-snap/`（原厂命令流快照、解码工具、`compare.md`）、`vsdump/` 和 `fsdump/`（LOR shader NIR）、各轮 A/B 原始数据 |
 | `tools/build/bin/` | 187 MB（整个 `build/`） | 建议迁。Android 版辅助程序（`vulkan_tiles`、`counter_percore`、`replay_nir_android` 等）可以直接推到设备上用，换了工具链之后也能重建 |
 | `references/malibridge/`、`references/eden-upstream/` | 22 MB | 可迁，也可以重新获取（来源见 `references/SOURCES.md`） |
-| `toolchain/`、`driver/build-*` | 1.2 GB | **不迁**。这些依赖 Termux clang 和 PRoot 路径，在 Windows 上没用，要重建 |
+| `toolchain/`、`driver/build-*` | 1.2 GB | **不迁**（留在 PRoot 原位置）。这些依赖 Termux clang 和 PRoot 路径，在 Windows 上没用，要重建 |
 | `/root/lor/LostOdysseyRecomp` | — | 不用迁。诊断分支 `diag/pipeline-stats`（`9850419`）已推到 GitHub |
 
-在 PRoot 里打包到公共存储，再从 PC 拉取：
+**2026-11-25 已完成搬迁**：仓库和上表中“要迁”“建议迁”“可迁”的本地数据，已复制到手机共享存储 `/storage/emulated/0/mali-g2-project`（约 521 MB）。复制方式是 `git clone` 加 tar，文件数和 `tools/artifacts` 的内容已核对一致。`references/eden-upstream` 只带了源码，没带它的 `.git`（PRoot 里的符号链接已损坏）。`origin` 已指向 GitHub，`core.filemode=false`。PC 上直接拉取：
 
 ```sh
-cd /root/mali-g2-project
-tar -cf /storage/emulated/0/Download/mali-g2-local.tar \
-  tools/artifacts tools/work tools/build/bin references/malibridge references/eden-upstream
-# PC 上：
-adb pull /storage/emulated/0/Download/mali-g2-local.tar
+adb pull /storage/emulated/0/mali-g2-project
 ```
 
-解包到 clone 下来的仓库根目录。之后可以删掉 Download 里那份。
+拉到 Windows 以后，建议在 WSL2 的 ext4 里再 `git clone` 一份用于构建，`tools/artifacts`、`tools/work` 等本地数据从拉下来的副本里拷过去。原来的 `/root/mali-g2-project`（PRoot）暂时保留：PRoot 构建环境（`toolchain/`、`driver/build-*`）只在那里能用，等 Windows 环境能出包后再删。
+
+共享存储不支持符号链接和可执行位。这份副本只适合查看、`adb pull` 和提交文档，不要在里面构建。
 
 ### 6.2 构建环境
 
