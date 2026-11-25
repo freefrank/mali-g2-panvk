@@ -1,13 +1,13 @@
 {
-  "objective": "Fix persistent Eden frame pacing and Android UI stutter while preserving confirmed rendering fixes.",
-  "project_root": "/root/mali-g2-project",
-  "driver_repo": "/root/mali-g2-project/driver",
-  "backend_tools": "/root/mali-g2-project/tools",
-  "eden_reference": "/root/mali-g2-project/references/eden",
-  "driver_head": "85e0071",
-  "latest_package": "/storage/emulated/0/Download/panvk-mali-g2-test62-regs32-93a6a54-54823572.zip",
-  "current_status": "test62 (93a6a54): LOR same scene ~25 FPS vs vendor ~60 FPS. Crash (0x88 shareability) fixed in b158bc8, UI stutter fixed by in-flight=1, vertex spilling fixed (47e6e8e). Remaining 3x gap is fragment shading: ~1.9x quads (late ZS 3.6x) and ~2.5x time per quad. Next: per-shader stats comparison via LOR diag branch diag/pipeline-stats (APK built, not yet installed).",
-  "build_note": "Existing driver/build-host and driver/build-android-arm support incremental builds. Read tools/docs/BUILD_AND_TEST.md. Current test46 symbols: tools/artifacts/symbols/test46-unstripped.so.zst; package/hash manifest: tools/fixtures/test46-build.json. artifacts/work/toolchain are local ignored data, not delivered by Git clone.",
+  "objective": "Close the ~3x LOR performance gap to the vendor driver on Mali-G2 (v15); driver-only changes.",
+  "project_root": "repository root (moving off /root/mali-g2-project; see tools/docs/HANDOFF.md section 6)",
+  "driver_repo": "driver/",
+  "backend_tools": "tools/",
+  "eden_reference": "references/eden",
+  "driver_head": "cbb43fc (last driver change: HSR prepass knob)",
+  "latest_package": "tools/artifacts/test74/panvk-mali-g2-hsr-cbb43fc-b5eaa811.zip (defaults equal test68 647ee73)",
+  "current_status": "LOR same scene ~15-25 FPS vs vendor ~60. Excluded: fragment shader static quality (1.03x), early-ZS, per-pass fixed cost, driver CPU, barrier waits, BO flags. Remaining: ~1.5x per-pass (depth passes 2.4-3.3x, bandwidth-bound) and ~1.9x GPU idle at in-flight 1 (in-flight 2 +40% but UI jank). HSR A/B (tools/device/abtest6.sh) not yet run.",
+  "build_note": "New environment: WSL2 + Android NDK r29, driver/build.sh; adb from Windows. tools/build_helpers.py and test_*.py still assume running on the phone (see HANDOFF 6.3). artifacts/work are local data not in Git.",
   "git_policy": "Commit and push each milestone to origin/main; user explicitly requested frequent commit/push. Generated-by: LLM and biblioklept markers required. Do not post upstream or rewrite pushed history.",
   "remaining_capabilities": [
     "fillModeNonSolid",
@@ -19,24 +19,9 @@
     "geometry streams and transform feedback on CSF"
   ],
   "policy_marker": "biblioklept",
-  "settings": {
-    "resolution": "1x",
-    "async_gpu": false,
-    "diagnostics": false,
-    "presentation": "Mailbox",
-    "async_presentation": false
-  },
-  "next_step": "Install LostOdysseyRecomp-diag-pipeline-stats-c9c299e.apk (user, manually; do not uninstall), collect pipeline-stats.txt on vendor and test62 in the same scene, join by SPIR-V hash, fix fragment shader codegen / early-ZS where the gap is largest. See HANDOFF.md section 00.",
+  "next_step": "Run HSR A/B; break down depth-pass cost; copy_image without tiler; reduce cross-subqueue waits.",
   "remaining_capabilities_note": "Historical test10-era capability checklist, not revalidated during test46 and not the current task priority. Do not assume those feature bits alone identify the present crash or performance issue.",
-  "android_access": {
-    "preferred": "adb",
-    "serial": "127.0.0.1:33641",
-    "shell_uid": 0,
-    "paired": true,
-    "package": "android-tools 34.0.4-3",
-    "note": "Wireless port may change; inspect adb devices first. Pairing was authorized interactively; do not commit keys/codes. Existing TermuxService native-root bridge remains a fallback. Read /proc/PID/task/TID/comm for thread names; ps NAME is the process name here.",
-    "connection_status": "ADB disconnected at end of phase. Native TermuxService root bridge works; current root mount namespace hides target /data/data path, so access through /proc/<native Eden PID>/root/data/data/<package>. Verified test46 file SHA through process root. Probes removed and diagnostics off. Do not infer uninstall/driver removal from the hidden direct path."
-  },
+  "android_access": "adb; device scripts in tools/device (adb-run.sh), su via KernelSU granted to com.android.shell.",
   "constraints": {
     "scope": "driver only; user explicitly said 只修驱动 after declining application work",
     "eden_changes": "Do not edit, patch, rebuild or replace Eden APK/native code.",
@@ -50,13 +35,7 @@
     "tools/continuation.json",
     "tools/docs/BUILD_AND_TEST.md"
   ],
-  "historical_document": "tools/docs/STATUS.md",
-  "checkpoint_before_handoff_documentation": "8277b4956d10ae11d563a775034f7e6775e3eb35",
-  "driver_tree": "df8ccad5ef2f85c4f0d0ce23ebe00442e9641c35",
-  "current_package_manifest": "tools/fixtures/test46-build.json",
-  "library_sha256": "0f5c62e45a6135d68c91c287e51e970276514056a29a2d7a0fb6fdbe0a0a00b2",
-  "next_driver_tag": "test47",
-  "handoff_requested": true,
+  "historical_document": "tools/docs/archive/",
   "known_limitations": [
     "29 candidate regression cases plus 1 expected-failure test45 control do not prove stable gameplay or 60 FPS.",
     "Latest null swapchain and Android loader null read are directly observed; zero maxImageExtent is source-supported but was not captured as the input value.",
@@ -64,5 +43,6 @@
     "The early test46 success was superseded by subsequent native crashes.",
     "ADB serial and process IDs are historical; inspect native state and /proc/current_PID/root mount view."
   ],
-  "optimization_target": "Lost Odyssey Recomp (io.github.freefrank.lostodyssey), repo freefrank/LostOdysseyRecomp"
+  "optimization_target": "io.github.freefrank.lostodyssey (LOR); Eden secondary",
+  "next_driver_tag": "test75"
 }

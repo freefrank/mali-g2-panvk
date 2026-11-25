@@ -1,6 +1,8 @@
 # 构建与测试
 
-## 环境
+> 2026-11-25 起开发环境迁移到 Windows（WSL2 构建）+ adb，新环境的构建方法和待适配项见 [HANDOFF.md §6](HANDOFF.md#6-迁移到-windows--adb)。下面「环境」「构建辅助程序」「构建 Android 驱动」「Root 与崩溃记录」写的是旧的手机 PRoot 环境，路径只适用于旧环境。各回归测试的环境变量和判定方法两边都适用；在旧环境里本地执行的命令，迁移后改成推到 `/data/local/tmp/mali-g2/` 再用 `adb shell` 执行。
+
+## 环境（旧 PRoot）
 
 - 项目根目录：`/root/mali-g2-project`
 - Meson：`/root/mali-g2-project/toolchain/bin/meson`
@@ -174,7 +176,7 @@ Policy marker: biblioklept
 
 `python3 driver/android/package.py <stripped.so> <输出目录> <标签>`。标签、提交和库哈希会写进 meta.json 的 name/packageVersion 和 ZIP 文件名；名称相同的包 Eden 不会替换已安装的驱动。
 
-## Root 与崩溃记录
+## Root 与崩溃记录（旧 PRoot；新环境用 `adb shell su -c`，见 `tools/device/`）
 
 Termux 已有 Android root。旧会话能用 `/system/bin/sh -c 'su -c "logcat -d -b crash"'`，当前 PRoot 中这条命令 ENOENT；已通过原生 Termux 服务验证 `uid=0(root) context=u:r:ksu:s0`。不能把 PRoot 里的假 UID 0 当作 Android root，也不能把该 ENOENT 当作设备没 root。
 

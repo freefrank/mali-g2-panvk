@@ -1,6 +1,6 @@
 # 目录与数据约定
 
-本文件中的相对路径以 `tools/` 为基准，整个仓库根目录为 `/root/mali-g2-project`。接手入口是 [HANDOFF.md](HANDOFF.md)，[STATUS.md](STATUS.md) 保存历史快照，[continuation.json](../continuation.json) 提供机器可读状态。
+本文件中的相对路径以 `tools/` 为基准。接手入口是 [HANDOFF.md](HANDOFF.md)，[archive/](archive/) 保存历史快照，[continuation.json](../continuation.json) 提供机器可读状态。
 
 ## 稳定内容
 
@@ -8,6 +8,7 @@
 | --- | --- | --- |
 | 根目录 `*.c` / `*.py` | 诊断和测试源码 | 跟踪 |
 | `docs/` | 状态、构建和数据说明 | 跟踪 |
+| `device/` | 设备端 shell 脚本（adb 执行） | 跟踪 |
 | `isa/` | v14/v15 ISA 定义 | 跟踪 |
 | `fixtures/` | 固定输入、基准输出、验证报告 | 选择性跟踪 |
 
@@ -28,8 +29,8 @@
 ## 发布规则
 
 1. 驱动源码必须先提交，再构建，以保证 Mesa Git SHA 和 cache UUID 对应正确提交。
-2. 新版本使用独立的 `artifacts/testN/` 或带 SHA 的版本目录，不覆盖旧版本；当前 test46 位于 `artifacts/test46/`。
-3. ZIP 使用新的文件名并原子移动到 `/storage/emulated/0/Download`。
+2. 新版本使用独立的 `artifacts/testN/` 或带 SHA 的版本目录，不覆盖旧版本；现有 test45–test74。
+3. ZIP 使用新的文件名，`adb push` 到 `/storage/emulated/0/Download`。
 4. 发布前校验 ZIP CRC、库 SHA-256、成员列表和 `RUNPATH`。
 5. 诊断版本必须明确标记，不能称为已修复版本。
 
@@ -41,6 +42,8 @@
 
 - Git 中删除 test29–test44 结果（test44 合成 fence 证据保留）、eden/panvk/vi32/nir 等旧记录，以及诊断设施专用测试 `test_diagnostics.py`、`test_monitor.py`、`test_log_capture.py`、`driver_monitor.py`、`log_redirect_hook.c`；需要时从 Git 历史取回。`fixtures/` 现只保留测试输入（shader、ASTC 参考）和 test45/test46 报告。
 - 本地删除 `captures/`、`legacy/`、`work/eden-test8`–`eden-test44`、`work/eden-perf38`–`perf47`、`artifacts/test1`–`test44` 及其符号，不可恢复。保留 test45/test46 包与符号、`work/eden-test45`、`eden-test46`、`eden-perf48`、`eden-perf49`。
-- STATUS.md 与 BUILD_AND_TEST.md 中指向上述旧文件的链接只作历史说明。
+- archive/ 与 BUILD_AND_TEST.md 中指向上述旧文件的链接只作历史说明。
+
+2026-11-25 迁移到 Windows + adb：要从旧环境带走的本地数据见 [HANDOFF.md §6.1](HANDOFF.md)。
 
 Policy marker: biblioklept

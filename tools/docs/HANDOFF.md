@@ -1,380 +1,139 @@
-# Mali-G2 驱动开发交接（当前 test62）
+# Mali-G2 驱动开发交接（2026-11-25，迁移到 Windows + adb）
 
-先读本文件、根目录 [AGENTS.md](../../AGENTS.md) 和 [driver/AGENTS.md](../../driver/AGENTS.md)，再按需要读 [构建与测试](BUILD_AND_TEST.md)。[STATUS.md](STATUS.md) 保存历史快照，不是当前操作清单。
-
-**用户最新范围：只修驱动，性能是主线。当前交付 test62（`93a6a54`），LOR 同场景约 25 FPS、原厂约 60 FPS，差距约 3 倍未解决。** 用户明确：不要再在在途数、优先级这类小参数上花时间，直接攻 3 倍差距。下面第 00 节是最新状态，第 0 节之后是更早的历史。
+接手先读本文件、根目录 [AGENTS.md](../../AGENTS.md) 和 [driver/AGENTS.md](../../driver/AGENTS.md)。构建命令和回归测试的参数见 [BUILD_AND_TEST.md](BUILD_AND_TEST.md)，设备端脚本见 [../device/README.md](../device/README.md)。旧的交接和历史记录已移到 [archive/](archive/)，那些内容只作背景，不是操作清单。
 
 Policy marker: biblioklept
 
-## 00. 2026-10-31 晚间状态与下一步（接手先读这一节）
+## 1. 工作约束（用户明确要求）
 
-**设备上的当前状态**
-- LOR（`io.github.freefrank.lostodyssey`，用户自己的 Xbox 360 recomp，日志在 `Android/data/<pkg>/files/logs/runtime-*.log`，按 `frame=` 计算帧率）是主要优化目标；Eden 是次要。
-- LOR 当前选用的驱动目录是 test64（test62 + 实验性的按帧限流开关）；Download 只保留 `panvk-mali-g2-test62-regs32-93a6a54-54823572.zip`。test64 与 test62 默认行为相同（开关默认关），可继续用。
-- 设备属性：`debug.mesa.panvk.g2.diagnostics=0`、`debug.mesa.panvk.debug=sync`（只在诊断开启时才被解析，正常无影响）、`debug.mesa.panvk.kbase.max.inflight=1`、`debug.mesa.panvk.g2.tib.size=0`、`debug.mesa.panvk.kbase.group.priority=-1`。
-- 2026-10-31 已按用户要求清理：Download 里旧驱动包和诊断目录、LOR 私有区的帧捕获和旧驱动、Eden 2 GB `eden_gpu.log`、系统 tombstone；本地 `tools/work` 旧 eden-test47..64 中间产物、帧捕获和 vendor 快照。保留 test45/46/58/62 包与符号、`work/vsdump`（64 个 LOR 顶点 shader NIR）、`work/vendor-snap` 解码工具与 `compare.md`。
+- **只修驱动。** 目标只有 Mali-G2-Ultra-NX（Valhall v15，XRing O3）。上游 `src/panfrost` 对 AI 的限制不适用于这个 fork。
+- **随时 commit push** 到 `origin/main`（`https://github.com/freefrank/mali-g2-panvk.git`）。不要 force-push，不要重写已推送的历史，不要向 Mesa/GitLab 提交或评论。提交标题优先用用户原话，正文带 `Generated-by: LLM` 和 `Policy-marker: biblioklept`。
+- **性能是主线。不要再调在途数、组优先级、按帧限流这类参数**，直接攻 3 倍差距。
+- 用户在玩游戏或反馈整机卡时，不要并行跑合成 GPU 测试。
+- 诊断默认关闭，排查完要恢复。
+- LOR 诊断 APK 不要卸载重装，否则会丢私有数据和存档。
+- 测帧率必须同一天、同一位置先测基线，用 LOR 日志里的 `frame=` 算平均值，不要目测。同一个驱动在不同日子能差 40%。
 
-**本日确认有效、已在 test62 中的改动**
-| 提交 | 内容 | 依据 |
+## 2. 当前状态
+
+| 项目 | 值 |
+| --- | --- |
+| 代码 HEAD | `main`，最后一个驱动改动是 `cbb43fc`（HSR 实验开关） |
+| 推荐日常版 | test68 `flagsonly`（`647ee73`），也就是 test62 加上 v15 `Cull Zero Area` 和 `Disable VRS Clamp 2x2`。之后的 test69–74 默认行为相同，只是多了默认关闭的开关 |
+| 最新包 | test74 `panvk-mali-g2-hsr-cbb43fc-b5eaa811.zip`（`tools/artifacts/test74/`），默认等同 test68 |
+| 性能 | LOR 同场景我们约 15–25 FPS，原厂约 60 FPS |
+| 设备属性 | `debug.mesa.panvk.g2.diagnostics=0`、`kbase.max.inflight=1`、`kbase.group.priority=-1`、`g2.vt.no.frag.wait=0`；残留的 `debug.mesa.panvk.debug=sync` 只在诊断开启时才生效 |
+
+**进行中**：HSR 预处理的游戏内 A/B。开关是 `debug.mesa.panvk.g2.hsr`，0 为默认，1 在 v15 开启 HSR prepass，2 在 1 的基础上把深度刚好占一半预算的 Z/S tile 也当作可流水化。离线 MSAA 48/48 通过，深度、discard、blend 和局部渲染也都通过。设备端脚本是 `tools/device/abtest6.sh`，按 hsr0 → hsr2 → hsr0 跑，**还没在游戏里跑过**。
+
+## 3. 3 倍差距目前的结论
+
+**已经排除（不是主因）**
+- 片元 shader 静态编译质量：和原厂（主 shader 加 pilot）相比是 1.03 倍。数据在 `fixtures/lor-pipeline-stats-compare.txt`。
+- early-ZS 判定：没有 Force Late；LOR 的彩色 pass 本来就没有深度附件。
+- render pass 固定开销：每帧多 0.4–2 ms。
+- 驱动 CPU 开销：每帧多约 0.5 ms。
+- 屏障里 tiler 等 fragment：游戏内只占 5–10%。
+- BO 内存标志、提交结束时的刷新方式（`PANVK_KBASE_MEM_SET/CLR`、`FLUSH_MODE`）：合成测试里在 4% 以内，看不出差别。
+- 片元 shader 用 48 寄存器档位、开 AFBC CRC：游戏里没有收益。
+
+**仍然存在**
+1. **单个 pass 慢约 1.5 倍。** 把 pass 串行跑来比，最差的是纯深度 pass（D32S8，阴影图一类，2.4–2.8 倍）和带深度的 1920×1308 pass（2.4–3.3 倍）。把最高频率压到 979 MHz，全屏 pass 的耗时几乎不变，说明是带宽或延迟受限。数据：`fixtures/lor-pass-timing-serial.txt`。
+2. **GPU 空闲约 1.9 倍。** 在途数为 1 时，GPU 要等 CPU 录完下一次提交；LOR 在两次提交之间约 4.3 ms，governor 于是降频到 652 MHz。在途数改成 2 能多约 40%，但安卓界面会卡。降低组优先级、把调度周期缩到 20 ms 都没用，判断是 GPU 被我们占满，系统界面分不到资源。
+
+## 4. 下一步
+
+1. 跑 HSR A/B（`abtest6.sh`）。有收益就把默认值改掉。
+2. 逐项查深度 pass 慢的原因：ZS 写回、AFBC ZS、tile 大小和 HSR。可以先用 `vulkan_tiles` 的 `MALI_G2_TILES_DEPTH_FORMAT=130` 加 `MALI_G2_TILES_TIMING=1` 复现。
+3. LOR 每帧 3 次 `copy_image` 目标都是 AFBC，现在走 tiler 加全屏片元；原厂用纯片元的 frame shader，可以改成不经过 tiler 的路径。
+4. 减少跨子队列同步：我们的 tiler 队列每帧约 25 次等待，原厂约 2 次。要先弄清 v15 `SHARED_SB_INC/DEC` 的语义。
+5. 折中方案：用 `create_group` 的 `shader_core_count` 限制我们的核数，给系统界面留余量，以此缓解在途数 2 的界面卡。这和第 1 节说的“不再调参”有冲突，做之前先问用户。
+
+## 5. 实验开关
+
+Android 上的属性名由环境变量名转换而来：全部小写，`_` 换成 `.`，再加 `debug.mesa.` 前缀，例如 `PANVK_G2_HSR` → `debug.mesa.panvk.g2.hsr`。所有开关默认不改变行为。
+
+| 开关 | 含义 |
+| --- | --- |
+| `PANVK_G2_DIAGNOSTICS` | 1 时记录事件日志到 `Download/panvk-g2-driver-events.log`（文件要预先建好，8 MiB 上限），每 5 s 输出一行 `submitstat`，每 2 万次绘制输出一次 early-ZS 直方图，并转储大 shader 的 NIR。这时 `PANVK_DEBUG` 才会被解析 |
+| `PANVK_G2_HSR` | 0/1/2，见第 2 节 |
+| `PANVK_G2_VT_NO_FRAG_WAIT` | 屏障处 tiler 不等 fragment。**不安全**，只用来测量 |
+| `PANVK_KBASE_MAX_INFLIGHT` | 默认 1；-2 为按帧限流 |
+| `PANVK_KBASE_GROUP_PRIORITY` | kbase 组优先级原值：0 高、1 中、2 低；-1 跟随 Vulkan |
+| `PANVK_G2_TIB_SIZE` | 覆盖 tile buffer 大小（默认 32 KiB） |
+| `PANVK_KBASE_MEM_SET/CLR`、`PANVK_KBASE_FLUSH_MODE` | BO 内存标志、提交结束时的缓存刷新模式 |
+| `PANVK_G2_TILER_INITIAL_CHUNKS/MAX_CHUNKS`、`PANVK_G2_EXPERIMENTAL` | tiler heap 大小；关闭实验性特性 |
+
+## 6. 迁移到 Windows + adb
+
+### 6.1 什么在 Git 里，什么不在
+
+Git 里有：驱动源码、`tools/` 下的源码和脚本、`tools/device/` 设备端脚本、`tools/fixtures/` 测试输入和结果摘要、文档。
+
+**只在本机（手机的 PRoot 里）、clone 拿不到的：**
+
+| 路径 | 大小 | 迁不迁 |
 | --- | --- | --- |
-| `b158bc8` | 每次 kbase 提交结束前 L2/LSC clean+invalidate | 修复 test37 起的 `GPU_SHAREABILITY_FAULT`(0x88) 崩溃；用户确认 LOR 不再崩 |
-| `3273ae6` | `PANVK_KBASE_MAX_INFLIGHT` 默认 1 | 安卓界面不卡；在途 2 约 +20% 帧率但界面卡，低优先级无效 |
-| `39fd585` | 去掉每个 CALL 前的 L2 全清 | 与 panthor 一致 |
-| `8512bc0` `959fcb0` | geometry buffer 256 KiB；Deferred 顶点着色 + firmware DVS 缓冲 | 与原厂命令流一致，消除 POS_FIFO_FULL |
-| `47e6e8e` | v15 统一 IDVS 顶点 shader 不做 GCM 提升 | 64 个 LOR 顶点 shader 溢出 62 KB→6 KB，LOR 15→22 FPS |
-| `6e09fe1` | G2 tile buffer 默认 32 KiB（4096 px tile） | 同场景 SF 计数 21.1→23.0 FPS |
-| `93a6a54` | 重新启用 32 寄存器模式 | 原先撤回是误判（崩溃实为 0x88，与寄存器无关）；溢出再降到 3 KB，约 24.8 FPS |
+| `tools/artifacts/` | 161 MB | **要迁**。test45–74 的 ZIP 和 `symbols/*.zst`，tombstone 符号化离不开它们 |
+| `tools/work/` | 218 MB | **要迁**。`vendor-snap/`（原厂命令流快照、解码工具、`compare.md`）、`vsdump/` 和 `fsdump/`（LOR shader NIR）、各轮 A/B 原始数据 |
+| `tools/build/bin/` | 187 MB（整个 `build/`） | 建议迁。Android 版辅助程序（`vulkan_tiles`、`counter_percore`、`replay_nir_android` 等）可以直接推到设备上用，换了工具链之后也能重建 |
+| `references/malibridge/`、`references/eden-upstream/` | 22 MB | 可迁，也可以重新获取（来源见 `references/SOURCES.md`） |
+| `toolchain/`、`driver/build-*` | 1.2 GB | **不迁**。这些依赖 Termux clang 和 PRoot 路径，在 Windows 上没用，要重建 |
+| `/root/lor/LostOdysseyRecomp` | — | 不用迁。诊断分支 `diag/pipeline-stats`（`9850419`）已推到 GitHub |
 
-**仍存在的 3 倍差距（同场景计数器，按每帧）**：片元活跃约 4.7 倍，其中光栅化 quad 约 1.9 倍（后期 ZS 测试 3.6 倍）、每 quad 着色时间约 2.5 倍（CVT 指令约 2×、算术缺活 10×、纹理等待约 3×）。tile 数、tiler 已大幅改善。结论是**我们编译的片元 shader 和早期深度剔除比原厂差**，需逐 shader 对比定位。
+在 PRoot 里打包到公共存储，再从 PC 拉取：
 
-**进行中：LOR 诊断版（逐 shader 编译统计对比）**
-- 在用户的 LOR 仓库建了分支 `diag/pipeline-stats`（`c9c299e`），新增 `tools/patches/plume-pipeline-stats.patch` 并接入 `tools/android/build-runtime.sh`：启用 `VK_KHR_pipeline_executable_properties`，所有图形 pipeline 以整管线创建（关闭 GPL 快速链接）并带 `CAPTURE_STATISTICS`，把每个 executable 的全部统计写入 `$LO_LOG_DIR/pipeline-stats.txt`，以顶点/片元 SPIR-V 的 FNV-1a 哈希为键。CI 已通过，APK 在 `Download/LostOdysseyRecomp-diag-pipeline-stats-c9c299e.apk`。
-- root `pm install` 在 KernelSU shell 里报 binder `Failed transaction`，未装上；debug 签名可能与已装版本不同，**不要卸载重装以免丢 LOR 私有数据**，由用户手动安装或先备份 `files/save`、`files/config`、`files/gpu_driver`。
-- 装好后：原厂驱动进同场景 1 分钟退出，再换 test62 同样一次；读两份 `pipeline-stats.txt` 按哈希对齐，找片元 shader 指令数/寄存器/周期/early-ZS 差距最大的一批，再改编译器。原厂驱动确认带 `VK_KHR_pipeline_executable_properties`（`libGLES_mali.so` 中可见）。
+```sh
+cd /root/mali-g2-project
+tar -cf /storage/emulated/0/Download/mali-g2-local.tar \
+  tools/artifacts tools/work tools/build/bin references/malibridge references/eden-upstream
+# PC 上：
+adb pull /storage/emulated/0/Download/mali-g2-local.tar
+```
 
-**逐 shader 对比结果（2026-11-05，更正版）**：`tools/fixtures/lor-pipeline-stats-compare.txt`，脚本 `lor-pipeline-stats-cmp.py`。
-- **更正**：本节早先版本（算术 1.35×、最差 10.9×、「采样状态模拟/缺 pilot 是主因」）是错的——原厂同一管线键会出现多份（应用用不同状态重复创建），每份含 `Fragment shader`+`Fragment pilot shader`，旧脚本按名字存字典导致覆盖。
-- 正确配对（同键按出现顺序，计入 pilot）后，3029 个片元变体：我们 / 原厂（主+pilot）= **1.03×**，p10 0.94、p50 1.03、p90 1.08；仅少数离群（`bdf1ab02…` 4712 vs 1327、`3ac7c51f…`/`baf15031…` 约 2200 vs 620、`39ae52dd…`、`910c6394…`，最大 3.7×）。**片元 shader 静态编译质量与原厂基本持平，不是 3 倍差距的主因。**
-- 配对仍是近似（584 个键两边变体数不一致）；统计是静态指令数，未按调用次数加权。没有 pilot 支持是事实，但没有造成总指令数差距。
-- 3 倍差距应回到运行时：quad 数 1.9×（后期 ZS 3.6×）、每 quad 时间 2.5×，需用运行时计数器继续定位。
-- 离线工具：test65 `fsdump` 包在诊断开启时把 ≥14000 字节的片元 NIR 存到 `Download/panvk-vsdump/fs-*.nir`（本地副本 `tools/work/fsdump/`）；`replay_nir` 配合 `MALI_G2_REPLAY_PRINT_NIR=1`、`BIFROST_MESA_DEBUG=shaders`、`MALI_G2_REPLAY_FASTMATH=1` 离线复现与对照；LOR 私有目录需用 `nsenter -t 1 -m --` 经 Termux root 访问。
+解包到 clone 下来的仓库根目录。之后可以删掉 Download 里那份。
 
-**render pass 固定开销实测（2026-11-05，`vulkan_tiles` 新增 `MALI_G2_TILES_PASSES=N`，每帧 N 个清除+1 次绘制的 pass，`MALI_G2_TILES_TIMING=1` 取 GPU 时间中位数）**
-| 尺寸 | 原厂每 pass | 我们每 pass | 倍数 |
-| --- | --- | --- | --- |
-| 64×64 | 约 15 µs | 约 40 µs | 2.7× |
-| 360×384 | 约 35 µs | 约 57 µs | 1.6× |
-| 1920×1080 | 约 175 µs | 约 305 µs | 1.7× |
-- LOR 每帧约 17 个 render pass（日志统计），按此估算固定开销多出 0.4–2 ms/帧，**远不足以解释约 24 ms 的帧时间差**，不是主因，但值得顺手优化（每 pass 的 WAIT、两次内存 SYNC_WAIT、额外的 RUN_FULLSCREEN 拷贝 pass，见 `vendor-snap/compare.md` §2–3）。
-- 离屏渲染目标已使用 AFBC（modifier `…351`），只有 3408×2272 的 swapchain 图像未压缩。
-- 命令：`MALI_G2_TILES_TIMING=1 MALI_G2_TILES_PASSES=34 build/bin/vulkan_tiles <driver.so> build/shaders/tiles_sample.comp.spv W H 21 37 build/shaders/tiles.vert.spv build/shaders/tiles.frag.spv`，原厂驱动为 `/vendor/lib64/hw/vulkan.mali.so`。游戏运行时不要跑。
+### 6.2 构建环境
 
-**early-ZS 判定统计（2026-11-05，test66 `zshist`，LOR 同场景 75 秒）**
-- 诊断开启时每 2 万次绘制状态构建输出一次直方图（`earlyzs kill=… upd=… discard=…` 行，在 `panvk-g2-driver-events.log`）。注意 `Pixel Kill` 枚举：0 Force Early、1 Strong Early、2 Weak Early、3 Force Late。
-- 4 万次带片元 shader 的绘制：**全部** `zs_always_passes=1` 且管线不写深度，kill=Weak Early、update=Force Early，**没有任何 Force Late**；59% 带 discard、41% 不带；`alpha_to_coverage`、`writes_global`、读 ZS 均为 0。
-- LOR 的彩色 pass 都没有深度附件（`colors=1 z=0`），仅深度 pass 是 `colors=0 z=1`（阴影图等），所以彩色 pass 本来就没有 early-Z 可剔除。结论：**早期深度剔除判定不是差距来源**，计数器里「后期 ZS 3.6×」不是我们强制 late 造成的，应是别的原因（如 HSR/FPK 使用情况、原厂 pass 结构不同）。
-- 每帧 pass 概况：约 17 个 render pass，其中约 12 个大于 1080p 量级的全屏 pass（1920×1308 约 3.5 个、1920×1280 约 2.6 个、3408×2272 约 1 个），每帧合计约 30 MP；每帧 `copy_image`：1 次 1920×1280 + 2 次约 648×430（走图形管线）。这类全屏 pass 的每像素代价（shader、tile 读写）才是主导。
-- 已排除：片元 shader 静态质量（1.03×）、early-ZS 判定、render pass 固定开销（每帧约 0.4–2 ms）。**仍未解释的是 quad 数 1.9× 与每 quad 时间 2.5×**。下一步候选：①HSR（v13+）与 forward-pixel-kill 在 LOR 绘制上的实际设置对比（只需抓原厂一帧的 DCD 标志）；②v15 `Cull Zero Area`/`Disable VRS Clamp 2x2` 目前未设置（原厂设了）；③tile 写回/清除的每像素带宽，用 `vulkan_tiles` 1080p 单 pass 慢 1.7× 作线索做细分。
+建议用 **WSL2 Ubuntu** 构建，adb 用 Windows 端的 platform-tools；WSL 里也可以直接调用 `adb.exe`。原生 Windows 不行：第一步的 host 工具（`mesa_clc`、`vtn_bindgen2`、`panfrost_compile`）需要 LLVM、libclc 和 SPIR-V LLVM Translator，`driver/build.sh` 已经写明只支持 Linux 和 WSL。
 
-**2026-11-05 同日 A/B（用户目测，LOR 同场景同位置）**：test62 14–18 FPS（基线）、test67 CRC 版 15–20、test68 `flagsonly`（test62 + v15 `Cull Zero Area` + `Disable VRS Clamp 2x2`，CRC 关）17–23。**保留两个标志（约 +20–30%），CRC 保持关闭**（合成测试里大幅受益是因为相邻 pass 内容完全相同，游戏里无可见收益；`pan_desc.c` 的 v14+ AFBC CRC 禁用保留）。当前代码 `647ee73` 即 test68。
-- **测量教训**：同一驱动不同时间差别可达 40%（test62 早先 ~25，今天 14–18），所以必须同一天、同一位置先测基线再比；应改用 LOR 运行日志里 `frame=` 与时间戳算 75 秒平均帧率，而不是目测。
+1. 装依赖：meson、ninja、python3（mako、packaging、pyyaml）、pkg-config、glslangValidator，以及**同一主版本**的 llvm-dev、libclang-dev、libclc-XX-dev、libllvmspirvlib-XX-dev 和 clang。SPIRV-Tools 要比 2023.6 新；旧环境是自己编译后用 `PKG_CONFIG_PATH` 指过去的。
+2. 下载 Android NDK r29，然后运行 `driver/build.sh <NDK 路径>`。它会依次构建 `build-host`，生成 gralloc 桩，再交叉编译 `build-android`（API 31，arm64）。旧环境里手写的 `toolchain/android-cross.ini` 和 Termux clang 的包装脚本都不再需要。
+3. 构建完必须检查：`llvm-readelf -d libvulkan_panfrost.so` 的 NEEDED 列表里**不能有 `libc++.so`**，否则应用一创建设备就闪退（test8 出过这个问题）。
+4. 改了 `src/panfrost/compiler` 里的结构体以后，要先重编 host 的 `panfrost_compile`，再删掉 `libpan_shaders_v*` 重新生成。
+5. 打包：`python3 driver/android/package.py <stripped.so> <输出目录> <标签>`。标签必须是新的，否则应用不会替换已装的驱动。
+6. 第一次在新环境出包时，先用同一个提交构建，和 `tools/artifacts/test74` 里的库对比；行为一致之后再开始改代码。
 
-**逐 pass 计时第一轮（2026-11-06，LOR 诊断 APK `e97e567`，分支 `diag/pipeline-stats`，补丁 `tools/patches/plume-pass-timing.patch`）**
-- 同场景 80 s（我们，test70）/ 310 s（原厂）。**每秒 pass 数原厂约为我们的 3.2 倍，与帧率比一致**，两边每个 pass 类别的绘制数完全相同（如 1920×1308 带深度 pass 17 个绘制）→ 每帧工作结构一致，差距纯粹是执行速度，不是我们多做了 pass。
-- 但**时间戳耗时不可用**：原厂小 pass 全是约 12 ms（与尺寸无关），我们的总和每秒 2090 ms 超过 1000 ms，说明两边的时间戳在 tiler/fragment 流水线下测到的是排队延迟，pass 之间重叠。下一版 APK 每 10 s 交替「自由」与「全屏障串行」两种计时（键前缀 `F`/`S`）。
-- 教训：LOR 用自己的 `submission::BeginCommands` 开命令缓冲，绕过 plume `begin()`；诊断钩子必须挂在那里。CI 的 Windows 任务不带 plume 补丁，LOR 源码里的钩子要用 `LO_PASS_TIMING` 宏保护；Android 工作流 `paths` 过滤要包含新补丁文件，否则不会触发构建。
+### 6.3 待适配（迁移后先做）
 
-**逐 pass 计时第二轮（2026-11-09，APK `9850419`，交替自由/串行窗口；数据 `tools/fixtures/lor-pass-timing-serial.txt`，脚本 `lor-pass-timing-cmp.py`/`-perframe.py`）**
-- 串行窗口（pass 间全屏障，互不重叠）下同类 pass：我们/原厂 = 1.3–3.3×，按 pass 数加权平均 **1.48×**（264 µs 对 178 µs）。最大绝对差：1920×1308 f97 无深度 1.83×（561 对 306 µs）、1920×1280 f37 1.71×、1920×1308 f97+f130 带深度 2.39×（清除版 3.31×）、纯深度 f130 pass 2.4–2.8×（1760×1792 为 2.79×）。唯一更快的是 3408×2272 交换链 pass（0.81×）。
-- 自由窗口：每秒 pass 数原厂 5806、我们 1990（2.9×，与帧率比一致）；**我们的 pass 时间只占墙钟的约 53%（串行 44%），原厂约 106%（pass 互相重叠）**。即整体 2.9× ≈ 每个 pass 约 1.5× 慢 × 约 1.9× 的 GPU 空闲/停顿。后者很可能是提交之间的气泡（在途数 1、每次提交结束的 L2/LSC 清除、跨队列内存同步等待）。
-- 可信度：原厂串行样本只有 2–3 个窗口，我们 5 个；原厂有的区间每帧 pass 时间异常（约 220 ms，时间戳异常），已排除在逐类比较之外但可能仍影响平均；每个 list 的 pass 数两边不同（34 对 49，list 切分点不同）；pass-timing.txt 是追加文件，含多轮数据，只取最后两段。
-- 下一步：①驱动内诊断统计「阻塞在途限制的时间 / 提交 ioctl 时间 / 相邻两次提交之间 GPU 空闲间隔」，同一次 LOR 运行输出，直接量化气泡；②纯深度 pass（D32S8，阴影图类）和 1080p 带深度 pass 的单 pass 开销比原厂高 2.4–3.3×，逐项查（tile 大小、ZS 写回、AFBC ZS、HSR）。
+- `tools/build_helpers.py` 第 57 行写死了 `/data/data/com.termux/files/usr/bin/clang`，要改成 NDK 的 `aarch64-linux-android31-clang`。
+- `test_android.py`、`test_msaa.py`、`test_eden_compute.py` 和 `fixtures/sweep*.sh` 默认在手机本机执行测试程序（`LD_LIBRARY_PATH=/vendor/lib64...`，驱动路径 `/vendor/lib64/hw/vulkan.mali.so`）。要加一层 adb 封装：把程序、驱动和 SPIR-V 推到 `/data/local/tmp/mali-g2/`，再用 `adb shell` 执行，然后把输出拉回来。
+- **未验证**：`shell` 用户能不能直接打开 `/dev/mali0` 跑 Vulkan 测试。不能的话改用 `adb shell su -c`。
+- 仓库已加 `.gitattributes`，`*.sh` 强制 LF。Windows 端不要用会把换行改成 CRLF 的编辑器保存设备脚本。
 
-**提交线程时间去向（2026-11-09，test72 `submitstat2`，`tools/fixtures/lor-submitstat-test72.txt`）**
-- 诊断开启时每 5 s 一行 `submitstat`（不受 8 MiB 日志上限限制）。在途数 1 的路径是「提交 N，再等 N-1 完成」：`blocked` = 等 N-1 的时间，`between` = 应用在两次提交之间的时间。
-- 菜单段（LOR 53–60 FPS，每秒约 120 次提交）：blocked 8–25%、between 74–91%，CPU/显示节奏受限，不是 GPU 受限。
-- 帧率下降段（LOR 时间 53–73 s，38→29 FPS，map 仍为 `-`，**不确定是否已进场景**）：每秒 77–97 次提交，blocked 60–66%、between 33–39%（每次约 8.6 ms 对 4.3 ms）。即提交线程大部分时间在等 GPU，且每次提交时上一笔仍在执行 → **GPU 一直有排队的工作，提交之间没有气泡**。
-- 结合逐 pass 计时（我们 pass 时间只占墙钟约 53%，原厂约 106%）和早先计数器（命令流 wait-blocked 我们约 50%、原厂约 0），GPU 的空闲应发生在**单次提交的命令流内部**：tiler/fragment 子队列之间的内存同步等待（每 pass 两次 SYNC_WAIT64、每次提交开头 WAIT #fff8、结尾全清 + WAIT #ffff），而不是提交调度。下一步主攻这里。
-- 采集脚本问题：用户启动游戏后加载较慢，75 s 窗口大部分落在菜单；以后采集应等 LOR 日志出现 `map=` 非 `-` 后再开始计时。
+### 6.4 设备操作对照
 
-**屏障串行化与在途数 A/B（2026-11-09，test73 `vtnowait`，`tools/fixtures/lor-ab-test73.txt`，自动脚本 `tools/fixtures/abtest.sh`）**
-- 合成测试（`vulkan_tiles` 新增 `MALI_G2_TILES_LOR_BARRIER=1`，即 plume 每个图形屏障的阶段掩码：源和目标都含顶点+片元阶段）：64×64×34 pass，原厂每屏障约 27 µs，我们约 93 µs；去掉「tiler 子队列在屏障处等 fragment 子队列」（实验开关 `debug.mesa.panvk.g2.vt.no.frag.wait=1`）后约 9 µs。三轮稳定。
-- 游戏内（同场景，从进入场景起由 LOR 日志算平均帧率）：基线 14.7 FPS（90 s）、去掉该等待 16.2 FPS（80 s，首个 10 s 区间 22.7 可能是进场景时的偏差，去掉后约 15.3）、再加在途数 2 为 22.5 FPS（仅 40 s，区间 16–31，波动大）。
-- 解读：屏障等待在游戏里只值约 5–10%（每帧约 34 个屏障 × 约 85 µs ≈ 3 ms，与 68 ms 的帧时间相比约 4%，与测量一致），**不是主因**；开关保留为实验项，默认关，且不安全（顶点着色器读前一 pass 输出时会错）。
-- 在途数 2 的提升大，但用户此前确认会导致安卓界面卡顿。结合 submitstat（应用在两次提交之间约 4.3 ms，每帧约 2.6 次提交）：在途数 1 时，小提交执行完后 GPU 会空等下一次提交录制完成，这是气泡来源；原厂驱动 GPU 利用率低、空闲多，所以不受影响。
-- 本日基线（14.7 FPS）低于前几天（约 18–22），属于日间漂移，比较只看同日 A/B。
-
-**CPU 开销与合成测试可信度（2026-11-10）**
-- `vulkan_tiles` 新增 `MALI_G2_TILES_DRAWS=N`（每 pass 额外 N 次绘制，每次重绑描述符集和裁剪）与 `TILES_CPU` 输出（录制/提交 CPU 时间中位数）。640×640×17 pass：每次绘制录制原厂约 0.19 µs、我们约 0.24 µs；每次 `vkQueueSubmit` 原厂约 0.3 ms、我们约 0.45 ms。按每帧几百次绘制、约 2.6 次提交算，驱动 CPU 只多约 0.5 ms/帧，**两次提交之间的 4.3 ms 基本是 LOR 自己的 CPU 工作**。
-- 组优先级：`debug.mesa.panvk.kbase.group.priority` 2 = LOW（核对过映射），此前「低优先级 + 在途数 2」仍卡且掉帧，所以界面卡不是简单的组优先级问题。
-- **合成测试的 GPU 时间受升降频影响很大**：测试每帧之间有大量 CPU 校验，GPU 时忙时闲，governor（`/sys/class/devfreq/gpufreq_core`，只有 `dynamic`，polling 8 ms）跟不上；原厂同一配置三轮可差 2 倍。把 `min_freq` 设成 979.2 MHz 约 31 s 后被系统改回 119 MHz，锁频不可靠（脚本 `tools/fixtures/gpupin.sh`、`freqsample.sh`，请求写在 `Download/panvk-pin/req`）。**跨驱动的绝对比值（如此前 1.7×、2.5×）只能当方向**；同一轮交替比较的结论（屏障、CPU）不受影响。
-- 把 max_freq 从 1392 压到 979 MHz，两边 1920×1308 全屏 pass 时间几乎不变 → 这类 pass 主要受内存带宽/延迟限制，不是着色器时钟。
-- 屏障只会失效只读 L1（others），不刷 L2；L2 只在每次提交结束时清。
-- 偶发：我们 `rgba16f+d32s8`（1920×1308，17 pass）有一次 120 s 超时挂住，另两轮正常；之后 dmesg 未见 GPU 故障，但时间已久可能被覆盖，**未查明**。
-
-**在途数 A/B（2026-11-10，`tools/fixtures/lor-ab2-inflight.txt`）**
-- 用户实际三次：进程 30283 在途数 1（18.7 FPS，界面顺）、7319 在途数 1（18.0 FPS，有点卡）、15510 在途数 2（**26.0 FPS**，很卡）。脚本缺陷：第 1 次采样窗口未结束时用户已退出重开，`pidof` 匹配到新进程，导致变体错位、在途数 3 未测；已改为跟踪具体进程号（`[ -d /proc/$cur ]`）。
-- GPU 频率（每秒采样 `cur_freq`）：在途数 1 时多数为 652 MHz（混入了第 2 次启动阶段，不完全干净），在途数 2 时 854–1593 MHz。**在途数 1 时 GPU 没吃满**：提交间空档降低利用率 → governor 降频 → 每帧更慢。原厂在同场景 60 FPS 下也只需 854–979 MHz。
-- 结论：剩余差距里最大的一块是「GPU 等 CPU 录制下一次提交」+ 随之而来的降频；放开在途数可得约 +40%，但界面卡。下一步：在在途数 1/2 下分别抓 SurfaceFlinger frametimeline 的卡顿分类（GPU deadline missed 还是 CPU/调度），判断界面卡是 GPU 抢占问题还是 CPU 竞争问题。
-
-**界面卡顿分类（2026-11-10，`tools/fixtures/lor-ab3-jank.txt`，脚本 `abtest3.sh`）**
-- 在途数 1：LOR 22.2 FPS（40 s），用户「不卡」；SystemUI gfxinfo 卡顿帧 2.9%，帧耗时 p50/p90/p99 = 9/46/81 ms，Slow UI thread 13、Slow issue draw commands 35。
-- 在途数 2：LOR 25.5 FPS（40 s），用户「有点卡」；卡顿帧 8.5%，p50/p90/p99 = 23/69/133 ms，Slow UI thread 16、**Slow issue draw commands 61**。
-- UI 线程慢几乎不变，增加的是 RenderThread 提交 GPU 命令慢 → **界面卡是 GPU 调度问题（SystemUI 的 GPU 工作排在我们的队列之后），不是 CPU 竞争**。p99 约 133 ms 接近 kbase 默认 100 ms 调度周期，疑为同优先级组只能按周期轮换。
-- 我们默认组优先级 MEDIUM（1，来自 Vulkan 默认队列优先级）。下一步：在途数 2 下对比组优先级 LOW（2），用同样的指标客观判断。
-
-**组优先级与调度周期（2026-11-10，`tools/fixtures/lor-ab4-priority.txt`，脚本 `abtest4.sh`）**
-- 全部在途数 2，用户「三次都卡」。SystemUI 卡顿帧：组优先级 LOW 13.5%、`csg_scheduling_period` 20 ms 10.0%、两者 15.0%（对照：默认 8.5%，在途数 1 为 2.9%）；p99 降到 61–85 ms，但 p50 和卡顿比例不降，增加的仍是 Slow issue draw commands。LOR 帧率不受 LOW 优先级影响（28.4 FPS，60 s）。
-- 结论：**降低我们的优先级或缩短调度周期都不能消除界面卡**，所以不是「系统界面排在我们后面等调度」这么简单。更可能是 GPU 资源本身被占满（我们在 1593 MHz 满载，系统界面的模糊等绘制分不到足够的核或带宽而变慢）。界面卡的根本解法仍是降低我们每帧的 GPU 时间；可试的折中是给我们的组限制着色器核数，给系统界面留余量（`create_group` 已有 `shader_core_count` 参数）。
-- 内核接口：`/sys/class/misc/mali0/device/csg_scheduling_period`（默认 100 ms）、`add_prioritized_process`/`remove_prioritized_process`（只写，配合 PCM，未使用）。
-
-**接下来按优先级**
-1. 完成上面的逐 shader 对比，针对片元 shader 编译质量和 early-ZS 判定修编译器（`compiler/bifrost`、`pan_earlyzs.c`）。离线复现用 `tools/build/bin/replay_nir` + `PANVK_G2_DIAGNOSTICS` 下的 NIR dump（当前只 dump 顶点 shader，需扩展到片元）。
-2. LOR 每帧 3 次 `copy_image` 目标是 AFBC，走 tiler+全屏片元的图形管线；原厂用纯片元 frame shader。可改为无 tiler 的路径。
-3. 跨子队列同步（我们 tiler 队列每帧约 25 次等待，原厂 2 次）；需要先弄清 v15 `SHARED_SB_INC/DEC` 语义，工作量大。
-4. 不要再做：在途数、组优先级、按帧限流等调参（用户明确要求）；Deferred/寄存器/tile 已做完。
-
-**新增诊断与实验开关（都只在显式开启时生效）**
-- `PANVK_G2_DIAGNOSTICS=1`（`debug.mesa.panvk.g2.diagnostics`）下额外记录：shader ready 行带 `scratch=`；溢出≥256 B 的顶点 shader NIR 存到 `Download/panvk-vsdump/`；每个图像的格式/用途/modifier；每个 render pass 与 blit/resolve/copy_image/clear。日志写 `Download/panvk-g2-driver-events.log`（需预先存在，8 MiB 上限）。
-- `PANVK_G2_TIB_SIZE`（`debug.mesa.panvk.g2.tib.size`）、`PANVK_KBASE_GROUP_PRIORITY`、`PANVK_KBASE_MAX_INFLIGHT=-2`（按帧限流）为实验开关。
-- 设备采样脚本在 `tools/work/takeover/`（`run.sh <script> <marker>` 经 TermuxService 用 root 执行）：`lorperf.sh` 采 LOR 计数器+SF，`sffps2.sh` 测 20 秒 SF 帧率，`shaderdiag*.sh` 开诊断跑一次后自动恢复属性。
-
-## 0. 2026-10-31 进展（test47–test52）
-
-- 当前交付：test52 `39fd585`（`panvk-mali-g2-test52-noprecall-39fd585-0c9ba989.zip`）。test47 的 32 寄存器改动已撤回（`97ea8e3`），无性能收益。
-- **崩溃根因**：test37 起 LOR/Eden 的 `GPU_SHAREABILITY_FAULT`（0x88，内核同时报在 SF/HWUI/应用多个 AS，无地址）。test36 不崩只因残留 `debug.mesa.panvk.debug=sync` 当时总被解析。二分：诊断+sync 不崩，诊断无 sync 4 s 崩。修复 `b158bc8`：每次 kbase 提交在完成信号前做 L2/LSC clean+invalidate，删除 test44 的 cache_clean 跳过。用户确认 LOR 不再崩。
-- **界面卡**：`PANVK_KBASE_MAX_INFLIGHT`（属性 `debug.mesa.panvk.kbase.max.inflight`）限制每队列在途提交数，默认 1（`3273ae6`）。用户确认 LOR 界面不卡、帧率不降。设备属性目前也设为 1。
-- `39fd585` 去掉每个 CALL 前的 L2 clean+invalidate（与 panthor 一致）；合成 32 cmdbuf GPU 时间 -28%，游戏帧率无明显变化。
-- **性能对照（LOR，同场景）**：原厂 r56p0 约 60 FPS，GPU 仅 854–979 MHz；我们 13–19 FPS，GPU 1.5–1.6 GHz 满载。按每光栅化 quad：tiler 活跃 8×、等位置 shader 12×、POS_FIFO_FULL 原厂 0/我们 2.35 亿/s、COMPUTE_ACTIVE 16×、L2 snoop 40×、命令流 wait-blocked 原厂≈0/我们≈50%；tile 大小（quads/ptile）、早晚 ZS、TIB 写回、纹理外部读取约 1×。数据：`tools/fixtures/perf50-ingame-profile.json`，原始计数器在 Download `panvk-lor-vendor*`、`panvk-lor-perf2`。
-- 去掉 `COHERENT_LOCAL` 的实验：合成回归大面积失败（tiles 4/30），已撤回；现有缓存维护依赖它。
-- 用户新增优化目标 LOR（`io.github.freefrank.lostodyssey`，日志在 `Android/data/.../files/logs/runtime-*.log`，可读帧率）。原厂驱动可直接对照。
-
-## 1. 给接手 agent 的任务
-
-在 `/root/mali-g2-project` 继续 Mali-G2 PanVK/kbase 的正确性与性能开发，保留已有文字、3D、开场渲染修复和 test45/test46 的有效增量。目标仍是游戏在 1× 下流畅运行，用户期望 60 FPS；现有持续卡顿与部分切回退出未解决。
-
-用户原话和工作约束：
-
-- 「只修驱动」：可以读取 Eden 日志和参考源码；没有授权修改、补丁注入、重建或替换 Eden APK/原生代码。不要反复询问已经明确的范围。
-- 「把驱动中的诊断都关了，性能很差，出问题再开」：诊断默认关闭；有明确排错需要才临时开启，结束后恢复关闭。
-- 「记得随时commit push」：独立阶段及时提交并推送个人仓库 `origin/main`；不 force-push、不重写已推送历史、不向 Mesa/GitLab 上游提交或评论。遵守 AI 标记要求，提交标题优先采用用户原话，保留 `Generated-by: LLM`。
-- 先看本轮 Eden 日志、退出记录和对应 tombstone，再判断闪退；不要跳过模拟器日志直接猜 GPU 根因。
-- 用户游戏运行或报告整机卡慢时，不并行运行合成 GPU 回归。只读观察采样与主动测试负载必须分开。
-- 修改应用配置/替换驱动前确认没有运行中的游戏；先备份，保护存档。不能把原先的退出确认当成后来新会话的退出确认。
-- 最新反馈覆盖短时成功：test46 先报告“切回正常”，随后又退出，当前结论仍是未解决。
-
-本次用户要求写交接文档，未启动新的 GPU 测试或改动设备；下一轮开发由接手 agent 继续。
-
-## 2. 代码、版本与文件位置
-
-这是一个 Git 仓库，`driver/` 是子树，不是应另行推送的旧仓库。远端为 `https://github.com/freefrank/mali-g2-panvk.git`，分支 `main`。
-
-| 项目 | 当前基线 |
+| 以前（PRoot + TermuxService） | 现在（adb） |
 | --- | --- |
-| 本次写文档前的仓库检查点 | `8277b4956d10ae11d563a775034f7e6775e3eb35`；文档提交会更新 HEAD |
-| test46 驱动源码提交 | `49bf70ee39f7bb29ea5be30e7ed6cb9633e0aeb3` |
-| test46 的 driver 子树 | `df8ccad5ef2f85c4f0d0ce23ebe00442e9641c35` |
-| test45 源码对照 | `24e32e8b86164c9375aebab92a037b487f8ed872` |
-| test46 元数据 | [test46-build.json](../fixtures/test46-build.json) |
-| 机器可读续接状态 | [continuation.json](../continuation.json) |
-| 下一驱动试版编号 | `test47`；`eden-perf48/49` 是采样目录，不是驱动版本 |
+| `tools/work/takeover/run.sh x.sh marker` | `tools/device/adb-run.sh x.sh [--bg]` |
+| 直接读写 `/storage/emulated/0/...` | `adb pull` / `adb push` |
+| 读 LOR 私有目录要 `nsenter -t 1 -m --` | `adb shell su -c 'cp ... /storage/emulated/0/Download/...'`，再 `adb pull` |
+| `pm install` 报 binder 错误 | `adb install -r <apk>`，签名冲突时**不要卸载** |
+| `/system/bin/getprop`、`setprop` | `adb shell getprop`、`adb shell su -c 'setprop ...'` |
+| 本地 `llvm-symbolizer` | NDK 里的 `llvm-symbolizer`，配合 `tools/artifacts/symbols/` |
 
-工作区路径：`driver/build-host`、`driver/build-android-arm`、`toolchain/` 为现有构建环境；`tools/build/` 为辅助程序；`tools/artifacts/` 为交付物/符号；`tools/work/` 为原始日志、脚本与临时结果。
+- KernelSU 管理器里要给 `com.android.shell` 授予 root。
+- LOR 日志在 `/storage/emulated/0/Android/data/io.github.freefrank.lostodyssey/files/logs/runtime-*.log`；驱动在应用私有目录的 `files/gpu_driver`。
+- GPU 频率：`/sys/class/devfreq/gpufreq_core/cur_freq`；kbase 调度周期：`/sys/class/misc/mali0/device/csg_scheduling_period`（默认 100 ms）。
 
-`tools/artifacts/`、`tools/work/`、构建目录及部分外部参考被 Git 忽略。**同一工作区的接手 agent 可以直接使用；仅 clone Git 不会得到库、ZIP、符号、原始设备日志或完整工具链。** Git 中保留脱敏摘要及文件哈希，不要把原始日志、私有配置、配对码和密钥推送出去。
+## 7. 文档地图
 
-## 3. 当前驱动包与设置
-
-包文件：
-
-```text
-/storage/emulated/0/Download/panvk-mali-g2-test46-resume-49bf70e-0f5c62e4.zip
-/root/mali-g2-project/tools/artifacts/test46/panvk-mali-g2-test46-resume-49bf70e-0f5c62e4.zip
-```
-
-| 内容 | SHA-256 |
+| 文件 | 内容 |
 | --- | --- |
-| test46 库 | `0f5c62e45a6135d68c91c287e51e970276514056a29a2d7a0fb6fdbe0a0a00b2` |
-| test46 ZIP | `600a55340c99ae9b05e9359fc259bdf462a2dce2a7f93bea94a9471f8ec67497` |
-| test45 库对照 | `7d407064272ac63efa11d8958273da6d8e8cffc327b7bdf6cf8ff5efc827450e` |
-
-未剥离库：`tools/work/eden-test46/test46-unstripped.so`。压缩符号：`tools/artifacts/symbols/test46-unstripped.so.zst`。完整哈希见 manifest，不要用 test45 符号解释 test46 地址。
-
-最后核验：实际运行 PID 12997 的 `/proc/PID/map_files` SHA 与 test46 一致；之后又经原生 PID 20151 的 `/proc/PID/root` 文件视图核对相同 SHA。PID 和无线调试端口都是历史值，接手时重新读取。
-
-| 配置 | 当前值 |
-| --- | --- |
-| 分辨率 | 1×，`resolution_setup=3` |
-| 呈现模式 | Mailbox，`use_vsync=1` |
-| 异步 GPU | `use_asynchronous_gpu_emulation=false` |
-| 异步呈现 | `async_presentation=false`，与异步 GPU 是不同开关 |
-| Eden 验证/GPU 日志/转储 | 关闭 |
-| 驱动诊断 | 关闭；属性为空也使用默认 false |
-| GPU 调度 tick | 恢复为 100ms |
-| 系统窗口模糊 | 恢复原值：`disable_window_blurs=null`，Blur enabled=true |
-
-test46 应用时只改全局 `driver_path` 一行，并更新库、meta 与选择的 ZIP；游戏自定义配置逐字节未变。详见 [应用记录](../fixtures/test46-applied.json)。该报告的 `game_validation=pending` 是应用时点快照，后续失败以其他证据为准。
-
-上轮备份路径：
-
-```text
-/data/data/com.miHoYo.Yuanshen.nightly/files/panvk-backups/test45-before-test46-20261030T122924Z
-```
-
-内有 test45 库、meta、全局及游戏配置。需要回退时先确认当前用户状态与挂载视图，不要自动用历史整份配置覆盖用户后来的修改。
-
-## 4. test46 改动与验证边界
-
-源码入口：
-
-- [panvk_image.c](../../driver/src/panfrost/vulkan/panvk_image.c)：`panvk_DestroyImage` 仅在 Android、kbase、架构 15 且 `image->vk.anb_memory` 非空时等待，再释放图像隐式持有的 ANB 内存。
-- [kbase_kmod.c](../../driver/src/panfrost/lib/kmod/kbase_kmod.c)：`pan_kmod_kbase_csf_wait_idle` 在完成锁下逐组读取 `next_seq-1`，通过条件变量等待 `done_seq` 到达该水位；`done_seq` 在原完成回调之后推进。
-- [kbase_kmod.h](../../driver/src/panfrost/lib/kmod/kbase_kmod.h)：声明等待接口。
-- [vulkan_android.c](../vulkan_android.c)：增加 `MALI_G2_ANB_RETIRE_PENDING` 容错回归。
-
-普通图像、应用显式分配的外部 AHB 内存与正常每帧提交/呈现路径没有新增等待。保留 test45 的 G2 计算/片元仲裁 threshold=4、ratio=3，原队列 Priority=2、核心掩码及缓存/fence 修复保持。
-
-**这是对已经观测到的提前销毁 ANB 映射的保护，不是 Vulkan 合规性证明，也不是完整应用生命周期修复。** 等待范围是已进入 kbase 组的工作；它没有调用通用 `DeviceWaitIdle` 去排空所有潜在的运行时待提交任务。后续审查应关注组生命周期、并发提交/销毁、等待活性与故障处理，不能把尚未验证的边界当作已经覆盖。
-
-最终 stripped 包运行验证：29 项候选用例 + 1 项 test45 预期故障对照，共 30 项通过。其中候选包含 ANB 提前销毁 1、Android 导入/绘制 9、提交/完成/native fence/MSAA/颜色/压缩纹理/深度 19。
-
-- 定向对照：test45 销毁约 0.070ms 返回时 fence 仍 pending，随后 `VK_ERROR_DEVICE_LOST`；test46 等待约 139.821ms，返回时 fence 已完成、流程成功。
-- 这是故意提前销毁资源的容错用例，不能当成合法 Vulkan 应用用法，也不能把 140ms 解读为每帧开销。
-- 另验 27 个 `SHF_ALLOC` 节的 stripped/unstripped 内容及布局一致、ZIP CRC/内部库 SHA、Download 副本 SHA。
-- 每个主动 GPU 用例前均用原生线程名检查确认没有 Eden 游戏负载。
-- 没有取得 test46 在游戏中的稳定 60 FPS 或持久无崩溃证明。
-
-报告：[运行回归](../fixtures/test46-runtime.json)、[文件一致性](../fixtures/test46-packaged-integrity.json)。本地执行脚本 `tools/work/eden-test46/run-validation.py` 固定写 test46 路径、旧 source hash 和 adb serial；新版本必须适配，不能照跑覆盖旧证据。
-
-## 5. 退出现象必须分开判断
-
-时间均为 UTC，原生 tombstone 常显示 `+0800`。
-
-| 事件 | 已确认事实 | 结论与证据 |
-| --- | --- | --- |
-| 早期返回游戏列表 | 旧进程/游戏线程仍活着，重复 MainActivity 盖住 EmulationActivity | 清理任务并改用标准 launcher intent；仅代表当时任务入口修正。[任务证据](../fixtures/test45-task-resume.json) |
-| test45 GPU 页错误 | PID 4234：ANB BO `0x722bc00000`，大小 `0x1d8a000`，在 boot 439423.784365 释放；439427.900551 GPU WRITE 到 `0x722cc7e7c0` | 3,639/3,639 条事件，零丢失；故障地址在已释放 BO 内。促成 test46 容错修复。[生命周期证据](../fixtures/test45-resume-device-loss.json) |
-| test46 12:31:03 | PID 12997，GPU 线程 SIGABRT，未捕获 `VK_ERROR_INITIALIZATION_FAILED`；Eden 末条错误为 CreateSurface 失败 | 与 GPU DEVICE_LOST 不同；本轮未观测新的 Eden GPU 页错误。[异常证据](../fixtures/test46-game-resume.json) |
-| test46 12:36:20 | PID 15848，GPU 线程 SIGSEGV；系统 Vulkan loader `+0x3326c` 执行 `ldr x8,[x25]`，x25=0，swapchain 参数 x1=0 | Eden 向系统取图接口传入空交换链，尚未进入 PanVK 的 AcquireImageANDROID。[最终捕获](../fixtures/test46-surface-capture.json) |
-
-最后一次表面记录共 24/24 事件、8 次 CreateSurface，函数指针全部非空、实际 VkResult 全为成功，包括切回后的两次。因此不能把这个窗口的退出继续说成“表面创建失败”。
-
-参考源码与准确 APK 反汇编显示，`Swapchain::Create` 在 `maxImageExtent` 为 0 时可直接返回，`AcquireNextImage` 没有空交换链检查。**“零尺寸导致此次空句柄”仍是源码支持的解释，本次未直接捕获该次 capabilities 值。** 空句柄和 loader 处的空读则有寄存器与指令直接证据。
-
-标准 ICD 接口不能直接处理尚未到达 ICD 的非法句柄。这个事实不自动排除之前的驱动行为影响重建时序；若继续追因必须补充相应证据，并遵守用户只修驱动的约束。不要为了绕开该崩溃偷偷改 APK、注入 loader 或无依据地串行化每一帧。
-
-易误判点：tombstone 可能残留 `host_memory.cpp:770` assert 的 Abort message，不能覆盖实际信号/PC；内核最新页错误可能来自旧库主动对照 `vulkan_android` PID 17620，不能归给 Eden PID 12997。
-
-## 6. 持续卡顿的已有结论
-
-用户在同一室内曾约 35–45 FPS，战斗约 50 FPS；1× 希望 60 FPS。0.5× 基本 60 FPS，属于诊断对照，不是目标达成。test41 约 55–58 FPS 仍持续抖动，test42 明显改善后仍卡；test45 初期“好了很多”，数秒后游戏和通知栏仍卡。test46 没有新的可靠 FPS 对照。
-
-test44 的联合采样曾把等待链连到 SystemUI dequeue → SurfaceFlinger presentDisplay → HWC 等上一帧 → DRM 提交 → SurfaceFlinger GPU fence。对应通知栏操作窗口，显示提交等待 SF GPU 时间线 p95 约 75.42ms、最大 99.90ms，游戏 GPU 时间线 p95 约 30.09ms；说明该窗口 SF GPU 信号迟到，但仍需区分它自身工作、依赖和调度。
-
-test45 的另一 20 秒窗口中 GPU 利用率 91–99%，大部分 1.248GHz，GPU 温度 45–46.875°C，Thermal Status=0；没有捕获经确认的“顺滑转卡顿”边界，不能全面排除温控/频率策略，也不能与不同通知栏操作窗口直接算性能提升。
-
-已经试过或恢复的状态：
-
-- FIFO → Mailbox：用户反馈卡顿和 FPS 基本相同；当前仍 Mailbox。
-- GPU 调度 tick 100 → 10ms 临时对照：用户仍卡，已恢复 100ms。
-- 窗口模糊临时关闭：已自动恢复；补采缺少新增 SystemUI 帧，不能当有效操作对照。
-- 不并行 GPU 测试时系统仍卡；不能把所有卡顿都归因于诊断程序。
-- 120Hz/低 GPU 利用率的某些采样实际是 Termux 前台，已排除；几次等待采集超时没有取得有效游戏窗口。
-
-证据：[系统合成与 fence](../fixtures/test44-system-composition-profile.json)、[test45 资源/退出调查](../fixtures/test45-resume-investigation.json)。更早试验、test40 撤回等细节查 [STATUS.md](STATUS.md)。
-
-## 7. Android 访问：先核对通道与视图
-
-设备 Xiaomi M367FC / `yingtian`，XRing O3，Mali-G2-Ultra-NX MC16、Valhall v15；Android API 37、已 root。本机是 Termux + proot ARM64 环境，PRoot 的“root”不等于 Android 原生 root。
-
-包名 `com.miHoYo.Yuanshen.nightly`，游戏单独配置 ID `0100000011D90000`。当前精确 APK 的 libyuzu Build ID 为 `7f8a58a085a4c1ab144e470d4941f1857b2f7a81`；后续若用户更新应用，所有偏移需重新核对。
-
-adb 已安装 `android-tools 34.0.4-3`，曾配对连接 `127.0.0.1:33641` 并获得 uid=0，最后已断开。Shizuku 服务曾存在，本轮实际使用 adb 与原生 root 桥。
-
-```sh
-adb devices -l
-adb connect 127.0.0.1:33641
-```
-
-这个 serial 只是上次端口，不能假定仍有效；5555 当时未监听。先查看现有连接/原生 adbd 监听信息，确需重新配对才向用户询问临时配对信息，不记录密钥或配对码。
-
-### 原生 TermuxService root 备用通道
-
-同一工作区已保留只读检查脚本 `tools/work/eden-perf49/check-cleanup.sh`。下面命令让原生 Android sh 执行该脚本，再由其调用 `/system/bin/su -c`：
-
-```sh
-timeout 10 env -u LD_PRELOAD -u LD_LIBRARY_PATH \
-  /data/data/com.termux/files/usr/bin/bash \
-  /data/data/com.termux/files/usr/bin/am startservice --user 0 \
-  -n com.termux/com.termux.app.TermuxService \
-  -a com.termux.service.action.service_execute \
-  -d file:///system/bin/sh \
-  --esa com.termux.execute.arguments \
-  /data/data/com.termux/files/usr/var/lib/proot-distro/containers/base/rootfs/root/mali-g2-project/tools/work/eden-perf49/check-cleanup.sh \
-  --ez com.termux.execute.background true
-```
-
-输出目录 `/storage/emulated/0/Download/panvk-perf49-cleanup/`。重点读取 `app-pid.txt`、`identity.txt`、`process-view-driver-sha.txt`、`probes.txt`、`instances.txt`、`diagnostics.txt`；原始输出保持本地。
-
-该脚本对直接私有路径的检查可能报 ENOENT，但对进程视图的检查仍成功。root 会话的挂载视图曾隐藏 `/data/data/包名`；这不等于驱动删除或应用卸载。**使用原生实时 PID 的 `/proc/PID/root`，不要硬编码 20151。** 若游戏完全退出而无 PID，这个进程视图不存在，应换用可见该目录的原生挂载视图，不能凭空拼旧 PID。
-
-在原生 root shell 中可按以下方式只读核对：
-
-```sh
-package=com.miHoYo.Yuanshen.nightly
-app=$(pidof "$package")
-[ -n "$app" ] || exit 1
-sha256sum "/proc/$app/root/data/data/$package/files/gpu_driver/libvulkan_panfrost.so"
-for f in /proc/$app/task/*/comm; do
-  cat "$f"
-done
-```
-
-线程名必须读 `/proc/PID/task/TID/comm`；本机 `ps -T -o NAME` 输出进程名，不能据此说没有 GPU 线程。`GPU`、`VulkanWorker`、`VulkanPresent`、`GPUFencingThrea`、`CPUCore_*`、`NativeEmulation` 都是要检查的状态线索。
-
-原生 `cmd/settings` 输出直接重定向到共享存储可能 Failed transaction，可尝试 `</dev/null 2>&1 | cat > 文件`；仍须检查正文并读回结果，不能仅凭 `su_exit=0` 判成功。
-
-## 8. 日志、原始证据与符号
-
-| 内容 | 位置/注意 |
-| --- | --- |
-| 全局配置 | `/storage/emulated/0/Android/data/包名/files/config/config.ini` |
-| 游戏配置 | 同目录 `custom/0100000011D90000.ini` |
-| Eden 当前日志 | `/storage/emulated/0/Android/data/包名/files/log/eden_log.txt` |
-| 上轮日志 | `eden_log.txt.old.txt`，不是 `.old`；启动会轮转 |
-| GPU 详细旧日志 | `eden_gpu.log` 可能约 2GB，不要整份复制或读取 |
-| 进程退出记录 | 原生 `dumpsys activity exit-info 包名` |
-| 原生崩溃 | `/data/tombstones/tombstone_NN`；按 PID/时间选本轮，不只按编号猜 |
-| 实际库映射 | 原生 `/proc/PID/maps` 与 `/proc/PID/map_files/范围` 的 SHA |
-| 生命周期证据 | `tools/work/eden-perf48/{initial,repro,lifetime}/` |
-| test46 首次应用/新退出 | `tools/work/eden-test46/{applied,game-validation,new-exit}/` |
-| 最新空句柄/表面记录 | `tools/work/eden-perf49/{surface,repro,final-state}/` |
-| 精确 APK 提取库 | `tools/work/eden-perf46/app-symbols/libyuzu-android.so` |
-| 只读参考源码 | `references/eden-upstream/src/src/video_core/`；版本可能不同于安装 APK |
-
-完整包/符号/原始文件哈希由各 `fixtures/*.json` 指向。Eden 完整栈中的 loader 是 memfd 拷贝，分析时曾对照本机 `/system/lib64/libvulkan.so` 的实际指令；不要直接拿 Mesa 符号解释 Android loader PC。
-
-test46 未剥离库可用于 `llvm-symbolizer -e tools/work/eden-test46/test46-unstripped.so 0x地址`。simpleperf 的库内“相对可执行映射偏移”可能需要换算为 ELF 虚拟地址，不能直接当 PC 使用；各版本 LOAD 偏移以本 ELF 为准。
-
-## 9. 接下来怎样推进驱动
-
-1. 读取本文件和机器状态，确认工作区、分支、实际驱动 SHA、应用版本与用户是否正在游戏；不要重新导入旧包或重复启用诊断。
-2. 区分当前问题是新的 GPU fault/DEVICE_LOST、系统 loader/应用非法句柄，还是同场景帧时间抖动。对新退出先取日志和本轮 tombstone。
-3. 继续性能工作时，采同一室内位置、实际游戏前台的帧时间、GPU 状态和合成 fence，尽量覆盖“初期顺滑→变卡”边界；说明观察性采样本身的限制。已有包没有证明 1× 持久 60 FPS。
-4. 审查 test46 等待范围与已有提交/完成路径，可以据驱动证据完善；不要声称已排空所有应用层待提交工作，也不要无依据扩大为每帧同步。
-5. 新修复先记录独立源码检查点并 push，再构建、做相关且必要的回归、保存符号与脱敏报告、校验包与实际加载 SHA。没有新变更或新疑点时不要反复扩大测试。
-6. 碰到只在系统空句柄路径退出的记录，如实保留边界；用户限定只修驱动，不得借“兼容”之名更改 Eden 或注入系统 loader。此约束不妨碍继续有证据的驱动性能/正确性研究。
-
-### 构建入口
-
-```sh
-env LC_ALL=C \
-  PATH=/root/mali-g2-project/driver/build-host/bin:/root/mali-g2-project/toolchain/bin:/usr/bin:/bin:/usr/sbin:/sbin \
-  ninja -C /root/mali-g2-project/driver/build-android-arm -j3 \
-  src/panfrost/vulkan/libvulkan_panfrost.so
-```
-
-已有 host/Android 构建可增量使用。辅助程序的 Android clang 必须带 `-no-canonical-prefixes`；工具链、gralloc 桩、C++ 静态运行时与 NIR 元数据重建细节见 [BUILD_AND_TEST.md](BUILD_AND_TEST.md)。不要引入设备无法加载的 `libc++.so` 依赖。
-
-确认游戏完全退出且通过原生线程检查后，定向容错回归入口为：
-
-```sh
-cd /root/mali-g2-project/tools
-env PANVK_G2_DIAGNOSTICS=0 \
-  MALI_G2_ANB_RETIRE_PENDING=1 \
-  LD_LIBRARY_PATH=/vendor/lib64:/vendor/lib64/egl:/system/lib64 \
-  build/bin/vulkan_android /path/to/candidate/libvulkan_panfrost.so
-```
-
-原用例故意提前销毁资源，旧库预期失败。新版本测试不要覆盖 test46 归档输出。打包应使用新的版本名/源码 SHA/库 SHA，保留旧包与符号。文档提交后的仓库 HEAD 会不同于已交付包的源码提交；以 manifest 和 driver 子树核对，不能只比较 HEAD 字符串。
-
-## 10. 可直接给下一位 agent 的提示
-
-```text
-在 /root/mali-g2-project 接手 Mali-G2 PanVK/kbase 开发。
-先读 AGENTS.md、driver/AGENTS.md、tools/docs/HANDOFF.md 和 tools/continuation.json。
-当前包 test46，源码 49bf70e，库 SHA 前缀 0f5c62e4；GPU 提前释放 ANB 的容错回归已通过，游戏切回和持续卡顿仍未解决。
-用户只允许修驱动，诊断默认关闭，阶段性 commit/push 到 origin/main。
-Android 已 root；adb 上次断开，可用文档中的 TermuxService 原生 root 桥；私有目录可能需经实时 /proc/PID/root 访问。
-先依据本轮日志和证据继续，不改 Eden、不把历史待验证项当作当前结论；游戏运行时不并行 GPU 合成测试。
-```
+| 本文件 | 当前状态、下一步、迁移 |
+| [BUILD_AND_TEST.md](BUILD_AND_TEST.md) | 构建，以及各个合成回归测试的参数 |
+| [DATA_LAYOUT.md](DATA_LAYOUT.md) | 目录职责和发布规则 |
+| [../device/README.md](../device/README.md) | 设备端脚本 |
+| [../continuation.json](../continuation.json) | 机器可读的当前状态 |
+| [archive/HANDOFF-2026-11-10.md](archive/HANDOFF-2026-11-10.md) | 10-30 到 11-10 的逐日实验记录（LOR 性能排查、test46 Eden 退出分析） |
+| [archive/STATUS-2026-10.md](archive/STATUS-2026-10.md) | test10 时期的状态和更早的快照 |
